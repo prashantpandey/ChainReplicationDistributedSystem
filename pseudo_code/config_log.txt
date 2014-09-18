@@ -1,0 +1,28 @@
+Logging for Client, server, master
+
+
+
+> Initial settings
+	> ip address, port no, 
+> content of received msg
+	> received seq no
+> content of sent msg
+	> sent seq no
+	> bank ip, port
+> internal action taken
+CLIENT:
+	
+	> resend metadata info (resend count)
+	> client flag gets reset when the master informs the client that the request has failed and the destination details changes (send to new head)
+
+SERVER:
+	>
+
+
+
+
+
+MASTER:
+	> UDP packet sent by the server S to the master every 1 sec
+	> when the head fails and a new head is set or tail is set
+

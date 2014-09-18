@@ -1,0 +1,117 @@
+
+/* 
+ Client pseudo code
+
+ General Data-Structures:
+	enum Outcome { Processed, InconsistentWithHistory, InsufficientFunds }
+	class Reply {
+		string reqId;
+		Outcome outcome;
+		float bal;
+	}
+	
+	enum Operation { GetBalance, Deposit, Withdraw, Transfer }
+
+	class Request {
+		string reqId,
+		string bankId;
+		string accountNum;
+		float amount;
+		string destBankId;
+		string destAccountNum;
+	}
+
+	List reqList { reqId, Reply } 			// to maintain the history of requests
+	Map bankServer { bankId, head, tail }		// map between bank and its servers	
+		
+ Events:
+	- Failure: The client receives a response from the master that the head has failed.
+		Update the  new head for corresponding bank.
+		Check to see if there is any pending request. If yes, resend the request depending upon the config file flag. 
+	- Receive: The client reveives a response from the tail, it could be a success or failure.
+		Update the corresponding request in the reqList.
+
+ Functions:
+	- update: 
+		- deposit: 
+			args:	reqId, accountNum, bankId, amount
+			return: {reqId, Outcome, bal}
+				finalBal will be negative for failed transactions
+		- withdraw: 
+			args: reqId, accountNum, bankId, amount
+			return: {reqId, Outcome, bal}
+				finalBal will be negative for failed transactions
+		- transfer: 
+			args: reqId, accountNum, bankId, amount, destAccountNum, destBankId
+			return: {reqId, Outcome, bal}
+				finalBal will be negative for failed transactions
+			This function will have a different signature, instead of passing one bank in the above two cases, we have to pass two banks here.
+
+ 	- Query:
+		- getBalance:
+	
+	- checkTimeout:
+			probes the list of requests to find out which request has not been catered yet.
+			resend that request if the number of retries is smaller than the max retries possible and updates the number of retries.
+			Rightnow we assume that the updateHist operations are not idempotent. Later (if time permits) we will implement more complex logic
+			to support idempotent updates.
+*/
+
+
+	// Load the constants from the config file
+
+	event failure(bankId, serverId, flag):
+		if(flag)
+			updateHead(bankId, serverId);		// update the head for the corresponding bank
+		else
+			updateTail(bankId, serverId);
+		if(flag):
+			invokeReq(reqId);		// invoke the request (query/update) corresponsing to the reqId from reqList
+
+	event receive(reply):
+		updateReqList(reply.reqId, reply);
+
+
+	function query(bankId, accountNum):
+		reqId = genUniqueReqId();
+		tail = getTail(bankId);			// assuming one server in each chain is always available. So that means the head of the chain is always up.
+							// No need to check for the condition when no servers is available in the chain
+		
+		req = new Request(reqId, bankId, accountNum)
+		initialize numRetries;
+		repeat
+			send(Operation:GetBalance, req, tail);
+			pushReqList(reqId, new Reply());	// the query event will push the placeholder for the reply struct in the reqList.
+								// receive event will update the appropriate object in the reqList after receiveing the response.
+			wait for TIMEOUT:
+				 if (checkReqList(reqId)):	// check to see if their is a response corresponding to the reqId in the reqList
+								// The response will be updated in the reqList by the receive event
+					return;
+			numRetries++;
+			until numRetries < MaxRetries
+	end
+
+	// The update function is separate from the query because we expect to implement the resend logic differently.
+	// The query operation is idempotent so the resend logic will comparitively dumb, but in case of update operations 
+	// we have explicitely ensure that  the resend operation is idempotent
+	function update(bankId, accountNum, Operation, amount, destBankID [optional], destAccountNum [optional]):
+		reqId = getUniqueReqId();
+		head = getHead(bankId);
+
+		
+		req = new Request(reqId, bankId, accountNum, amount, destBankId, destAccountNum);
+		initialize numRetries;
+		repeat
+			send(Operation, req, head);			// right now the update operations are not idempotent in case of request lost
+									// later we plan to implement more complex logic here to make sure if a response is lost during the 
+									// transmission then we first query the balance and then perform the update (if needed)
+			pushReqList(reqId, new Reply()); 
+			
+			wait for TIMEOUT:
+				if(checkReqList(reqId)):	
+					return;
+			numRetries++;
+			until numRetries < MaxRetries;
+	end
+				
+

@@ -1,0 +1,51 @@
+
+Bank config details:
+> Bank ID
+> Name
+> Length of chain
+> No of clients
+> Head IP detail
+> Head port detail
+> Tail IP detail
+> Tail port detail
+> Process IP details
+
+Other data related details:
+> Description of request submitted by each client ????
+
+Example:
+bank_id:1, bank_name:HSBC, length_chain:3, no_of_clients: 4, head_ip:192.15.23.56, head_port:80, tail_ip:192.56.36.58, tail_port:80, process_ip:192.35.63.25, process_port:80
+
+
+Server config details:
+> Process IP details
+> Server Id
+> server startup delays
+> server lifetimes
+	> RECEIVE, #
+	> SEND, #
+	> UNBOUND 
+	> RECEIVE, SEND, <Random>
+> IP details of the next server in the the chain
+
+Example:
+server_id:1, startup_delay:20, lifetime_receive: 5, lifetime_send:5, unbound:1 
+
+Master config details:
+> Process IP details
+
+Client config details:
+> Process IP details
+> Bank IP details	<All bank it has accounts in>
+> Bank port details	<All bank it has accounts in>
+> # of time it resends the request
+> Duration it waits for the reply
+> Whether the client resend the request to the new head 	<FLAG>
+> numReq, no of requests which will be sent by this client
+
+Bank Server Mapping details:	[Should be common between bank, master and client]
+// Make sure each bank has unique server and none of the server is repeated over any banks
+> Banks IP details	<Bank Id, IP>
+> Bank port details	<Bank Id, Port>
+> Server IP details	<Server Id, IP>
+> Server port details 	<Server Id, Port>

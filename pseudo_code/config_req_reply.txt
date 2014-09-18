@@ -1,0 +1,20 @@
+Client Request:
+
+Type 1
+
+> seed  	<Pseudo random no generator seed>
+> numReq	<Total no of requests for this client>
+> probGetBalance
+> probDeposit
+> probWithdraw 
+> probTransfer
+
+Type 2
+
+> reqType	
+	> GetBalance
+	> Deposit
+	> Withdraw 
+	> Transfer
+> reqId
+> amount

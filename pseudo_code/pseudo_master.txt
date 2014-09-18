@@ -1,0 +1,86 @@
+
+/*
+ Master pseudo code
+
+ General Data-Structures
+ 
+ Map bankServerChain { bankId, List<Servers> }
+ Map bankServer { bankId, head, tail }
+ Map bankClients { bankId, clientId }
+ List serverTS { serverId, timestamp }
+ enum serverType { Head, Internal, Tail }
+ enum serverRelation { successor, predecessor }
+
+ Events: 
+	- receive	// The server sends the liveness update. The master updates the serverTS list with its own current TS for the corresponding server. We assume that the master and server clocks are in sync (const drift).
+		args: serverId 
+
+	- extendChain(serverId, bankId)	// The new server wants to be added in the chain for a bank.
+		args: ServerId, bankId
+	 		
+ Functions:
+	- notifyClient	// notify the client of the new head/tail. In case of head/tail failure.
+	- notifyServer	// notify the server of the new successor/predecessor for internal failure.
+			// also notify the respective servers if they are new head/tail, in case of head/tail failure.
+	
+	- checkFailure 	// probe the list of servers (every second), calculate the difference between the currentTS and the TS
+			// of each server. If the difference is greater than 5 sec then its a server failure.
+	
+	- handleFailure	// Handles failure for head, tail and internal servers
+		args: serverId, serverType
+		
+
+*/
+
+	event receive(serverId):
+		updateTS(serverId, currTS);
+
+	event extendChain(serverId, bankId):
+		oldTail = updateNewTail(bankId, serverId);
+		notifyHeadTailServer(serverId, serverType:Tail);
+		notifyInternalServer(oldTail, serverId, serverRelation:successor);
+		notifyClient(bankId, serverId, serverType:Tail);	
+
+
+	function notifyClient(bankId, serverId, type [head/tail]):
+		sendClient(bankId, serverId, type);  // Notify all the clients corresponding to the bankId.
+	end
+
+	function notifyInternalServer(serverId):
+		succ = findSuccessor(serverId);
+		pred = findPredecessor(serverId);
+		sendServer(succ, pred, serverRelation:predecessor);
+		sendServer(pred, succ, serverRelation:successor);
+	end
+
+	function notifyHeadTailServer(serverId, type [head/tail]):
+		sendServer(serverId, type);
+	end
+
+	function checkFailure(): 		// Will be called every sec
+		for server in serverTS:
+			if(currentTS-server.serverTS > 5): 	// Implies that the master did not receive any notification
+								// from server in last 5 sec
+				type = findServerType(serverId);
+				handleFailure(serverId, type);
+	end
+				
+
+	function handleFailure(serverId, type):
+		switch(type):
+		case Head:	
+				head = updateNewHead(serverId);
+				notifyClient(bankId, head, serverType:Head);
+				notifyHeadTailServer(head, serverType:Head);
+				break;
+		case Tail:	
+				tail = updateNewTail(serverId);
+				notifyClient(bankId, tail, serverType:Tail);
+				notifyHeadTailServer(tail, serverType:Tail);
+				break;		
+		case Internal:
+				updateServerList(serverId);
+				notifyInternalServer(serverId);
+				break;
+	end
+

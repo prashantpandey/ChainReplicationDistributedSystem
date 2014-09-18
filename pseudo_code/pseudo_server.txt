@@ -1,0 +1,20 @@
+
+/*
+ Server pseudo code
+
+ General Data-Structures
+
+
+	List pendingList { reqId }
+
+ Events:
+	receive()
+
+ Functions:
+	- Failure/Terminate : If the server has exceeded its sent or receive count then it can terminate
+	- Receive : The server receives a request from the client
+			Update request comes at the head server
+			Query request comes at the tail server
+			Update the incomming request in the pendingList
+
+*/ 
