@@ -1,20 +1,61 @@
-
 /*
  Server pseudo code
 
  General Data-Structures
 
+ 	ServertType type;
+ 	Server successor;
+ 	Server predecessor;
 
-	List pendingList { reqId }
+	List pendingReq { seqNum, Request, Operation }
+	List HistoryReq { seqNum, Request, Operation }
+
+	class Request {
+		string reqId,
+		string bankId;
+		string accountNum;
+		float amount;
+		string destBankId;
+		string destAccountNum;
+	}
+
+	enum Outcome { Processed, InconsistentWithHistory, InsufficientFunds }
+
+	class Reply {
+		string reqId;
+		Outcome outcome;
+		float bal;
+	}
+
+	enum Operation { GetBalance, Deposit, Withdraw, Transfer }
+	enum serverRelation { successor, predecessor }
+	enum serverType { Head, Internal, Tail }
 
  Events:
-	receive()
+	- receive 		// event to recieve the requests fromt the clients.
+					// The requests can have four kind of operations.
+					// Update request will be sent to the head server. Head will send sync message to next server in the chain.
+					// Query request will be sent to the tail server. The tail will send the reply back to the client.
+					// assign a unique sequence number to each received request.
+		args:	Operation, Request
+
+	- failure		// event to handle the failure of any adjecent server in the chain
+					// this will just update the current value of the successor/predecessor/type
+					// if the received server relation is predecessor
+					// it will also send the master the sequence number of the last request it received
+					// If the received server relation is successor, then send all the updates greater than the received seqNum to the new successor
+		args:	serverId, serverRelation
+
+	- ack			// will receive the ack from the next server in the chain (successor)
+		args:	reqId, serverId
+
 
  Functions:
-	- Failure/Terminate : If the server has exceeded its sent or receive count then it can terminate
-	- Receive : The server receives a request from the client
-			Update request comes at the head server
-			Query request comes at the tail server
-			Update the incomming request in the pendingList
+	- failure 			// If the server has exceeded its sent or receive count then it should terminate
+						// It has to check whether the configuration is set to "unbound", under which it won't terminate
+						// This function will do nothing but exit(0)
+	
+
+	- sync				// to send sync message to the next server in the chain (:successor)
 
 */ 

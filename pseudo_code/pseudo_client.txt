@@ -1,4 +1,3 @@
-
 /* 
  Client pseudo code
 
@@ -97,7 +96,6 @@
 	function update(bankId, accountNum, Operation, amount, destBankID [optional], destAccountNum [optional]):
 		reqId = getUniqueReqId();
 		head = getHead(bankId);
-
 		
 		req = new Request(reqId, bankId, accountNum, amount, destBankId, destAccountNum);
 		initialize numRetries;
