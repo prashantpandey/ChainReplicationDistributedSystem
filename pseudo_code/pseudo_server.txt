@@ -7,10 +7,11 @@
  	Server successor;
  	Server predecessor;
 
- 	class RequestContext {
+ 	class SyncMsgContext  {
  		string seqNum;
  		Request req;
  		Operation;
+		Outcome outcome;
  	}
 
 	List sentReq {  RequestContext }			// we can use it as a sent updates which are sent to the successor 
@@ -90,7 +91,9 @@
 				else
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
-					sendResponse(reply);
+					reqContext = new RequestContext(generateSequenceNum(), req, opr);
+					sync(reqContext);
+				
 				break;
 
 			case Withdraw:
@@ -103,12 +106,14 @@
 					}
 					else {
 						reply = new Reply(req.reqId, Outcome.Processed, bal);
-						sendResponse(reply);
+						reqContext = new RequestContext(generateSequenceNum(), req, opr);
+						sync(reqContext);
 					}
 				else {
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
-					sendResponse(reply);
+					reqContext = new RequestContext(generateSequenceNum(), req, opr);
+					sync(reqContext);
 				}
 				break;
 					
@@ -149,7 +154,7 @@
 	end
 
 	event ack (seqNum):
-		deleteReq(seqNum); 			// delete all the requests from the sentReq List smaller than seqNum
+		deleteReq(seqNum); 			// delete all the requests from the sentRea List smaller than seqNum
 		sendAck(seqNum, predecessor);
 	end
 
@@ -160,7 +165,9 @@
 	end
 
 	function sync:
-		
+		if (successor!=NULL)
+			sendUpdates(successor)
+			
 	end
 
 	function sendHeartBeat:			// called every second
