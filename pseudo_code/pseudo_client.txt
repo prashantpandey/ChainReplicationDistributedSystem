@@ -66,9 +66,11 @@
 			updateTail(bankId, serverId);
 		if(flag):
 			invokeReq(reqId);		// invoke the request (query/update) corresponsing to the reqId from reqList
+	end
 
 	event receive(reply):
 		updateReqList(reply.reqId, reply);
+	end
 
 
 	function query(bankId, accountNum):

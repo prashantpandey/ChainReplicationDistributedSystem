@@ -33,12 +33,14 @@
 
 	event receive(serverId):
 		updateTS(serverId, currTS);
+	end
 
 	event extendChain(serverId, bankId):
 		oldTail = updateNewTail(bankId, serverId);
 		notifyHeadTailServer(serverId, serverType:Tail);
 		notifyInternalServer(oldTail, serverId, serverRelation:successor);
 		notifyClient(bankId, serverId, serverType:Tail);	
+	end
 
 
 	function notifyClient(bankId, serverId, type [head/tail]):
