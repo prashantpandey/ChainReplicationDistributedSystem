@@ -4,10 +4,17 @@
 
  General Data-Structures
 
-
+	enum Outcome { Processed, InconsistentWithHistory, InsufficientFunds }
+	class Reply {
+		string reqId;
+		Outcome outcome;
+		float bal;
+	}
+	
 	List pendingList { reqId }
 
  Events:
+	- Failure()
 	receive()
 
  Functions:
@@ -16,5 +23,7 @@
 			Update request comes at the head server
 			Query request comes at the tail server
 			Update the incomming request in the pendingList
+	- livenessUpdate : Server sends a UDP packet to the master every one sec, telling its alive
+	- sync : Server sends update to the servers in chain
 
 */ 
