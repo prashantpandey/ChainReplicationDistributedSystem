@@ -10,8 +10,8 @@
  	class SyncMsgContext  {
  		string seqNum;
  		Request req;
- 		Operation;
-		Outcome outcome;
+ 		Operation opr;
+		Reply reply;
  	}
 
 	List sentReq {  RequestContext }			// we can use it as a sent updates which are sent to the successor 
@@ -40,6 +40,10 @@
 	enum serverType { Head, Internal, Tail }
 
  Events:
+
+ 	- sync 			// receive sync requests from predecessor server
+ 					// apply the update
+ 					// propagate the update to the successor
 	- receive 		// event to recieve the requests from the clients.
 					// The requests can have four kind of operations.
 					// Update request will be sent to the head server. Head will send sync message to next server in the chain.
@@ -66,14 +70,19 @@
 						// It has to check whether the configuration is set to "unbound", under which it won't terminate
 						// This function will do nothing but exit(0)
 
-	- sync				// to send sync message to the next server in the chain (:successor)
-		args: RequestContext
 
 	- sendHeartBeat		// send the heart beat signal to the master
 		args:	serverId
 
 */ 
 
+	event sync(SyncContextMsg msg):
+		applyUpdates(msg);
+		if(successor != null)
+			sendSyncUpdate(successor, msg);
+		else
+			sendResponse(msg.reply);
+	end
 
 	event receive(Operation opr, Request req):
 		switch(opr):
@@ -88,12 +97,13 @@
 				if(!flag):
 					bal  = applyDeposit(req);
 					reply = new Reply(req.reqId, Outcome.Processed, bal);
-				else
+				else {
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
-					reqContext = new RequestContext(generateSequenceNum(), req, opr);
-					sync(reqContext);
-				
+				}
+				seqNum = generateSeqNum();
+				msg = new SyncContextMsg(seqNum, req, opr, reply);
+				sendSyncUpdate(successor, msg);
 				break;
 
 			case Withdraw:
@@ -106,15 +116,14 @@
 					}
 					else {
 						reply = new Reply(req.reqId, Outcome.Processed, bal);
-						reqContext = new RequestContext(generateSequenceNum(), req, opr);
-						sync(reqContext);
 					}
 				else {
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
-					reqContext = new RequestContext(generateSequenceNum(), req, opr);
-					sync(reqContext);
 				}
+				seqNum = generateSeqNum();
+				msg = new SyncContextMsg(seqNum, req, opr, reply);
+				sendSyncUpdate(successor, msg);
 				break;
 					
 			case Transfer:
@@ -129,13 +138,14 @@
 						req = new Request(reqId, bankId, accountNum, amount, null, null);
 						head = getHead(req.destBankId);
 						reply  = sendReq(Operation.Deposit, req, head);
-						sendResponse(reply);
 					}
 				else {
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
-					sendResponse(reply);
 				}
+				seqNum = generateSeqNum();
+				msg = new SyncContextMsg(seqNum, req, opr, reply);
+				sendSyncUpdate(successor, msg);
 				break;
 		failure();
 	end
@@ -164,11 +174,6 @@
 			exit(0)
 	end
 
-	function sync:
-		if (successor!=NULL)
-			sendUpdates(successor)
-			
-	end
 
 	function sendHeartBeat:			// called every second
 		sendAckMaster(ownServerId);
