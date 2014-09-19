@@ -14,8 +14,8 @@
 		Reply reply;
  	}
 
-	List sentReq {  RequestContext }			// we can use it as a sent updates which are sent to the successor 
-															// but are not received by the tail
+	List sentReq {  RequestContext }  // we can use it as a sent updates which are sent to the successor 
+					  // but are not received and processed by the tail
 	List historyReq { RequestContext }
 
 	class Request {
@@ -41,59 +41,69 @@
 
  Events:
 
- 	- sync 			// receive sync requests from predecessor server
- 					// apply the update
- 					// propagate the update to the successor
-	- receive 		// event to receive the requests from the clients.
-					// The requests can have four kind of operations.
-					// Update request will be sent to the head server. Head will send sync message to next server in the chain.
-					// Query request will be sent to the tail server. The tail will send the reply back to the client.
-					// assign a unique sequence number to each received request.
-		args:	Operation, Request
+ 	- sync 	
+		- receive sync requests from predecessor server
+ 		- apply the update
+ 		- propagate the update to the successor
+	
+	- receive
+		- event to receive the requests from the clients.
+		- The requests can have four kind of operations.
+		- Update request will be sent to the head server. Head will send sync message to next server in the chain.
+		- Query request will be sent to the tail server. The tail will send the reply back to the client.
+		- assign a unique sequence number to each received request.
+		
+	- failure		
+		- event to handle the failure of any adjacent server in the chain
+		- this will just update the current value of the successor/predecessor/type
+		- if the received server relation is predecessor
+		- it will also send the master the sequence number of the last request it received
+		- If the received server relation is successor, 
+		- then send all the updates greater than the received seqNum to the new successor
+		- the predecessor will halt until it sends all the pending updates to the successor
 
-	- failure		// event to handle the failure of any adjacent server in the chain
-					// this will just update the current value of the successor/predecessor/type
-					// if the received server relation is predecessor
-					// it will also send the master the sequence number of the last request it received
-					// If the received server relation is successor, then send all the updates greater than the received seqNum to the new successor
-					// the predecessor will halt until it sends all the pending updates to the successor
-		args:	serverId, serverRelation
-
-	- ack			// will receive the ack from the next server in the chain (successor)
-					// delete all the req from the pendingReq list smaller than the seqNum received
-					// send the ack to the predecessor
-		args:	RequestContext
-
+	- ack	
+		- will receive the ack from the next server in the chain (successor)
+		- delete all the req from the pendingReq list smaller than the seqNum received
+		- send the ack to the predecessor
+	
+	- checkReq
+		- check to see if the req with the corresponding reqId
+		- is present in the history
 
  Functions:
-	- failure 			// If the server has exceeded its sent or receive count then it should terminate
-						// It has to check whether the configuration is set to "unbound", under which it won't terminate
-						// This function will do nothing but exit(0)
+	- failure 	
+		- If the server has exceeded its sent or receive count then it should terminate
+		- It has to check whether the configuration is set to "unbound", under which it won't terminate
+		- This function will do nothing but exit(0)
 
 
-	- sendHeartBeat		// send the heart beat signal to the master
-		args:	serverId
+	- sendHeartBeat		
+		- send the heart beat signal to the master
 
 */ 
 
+	// callback function to receive sync request from the predecessor server in the chain
 	event sync(SyncContextMsg msg):
-		applyUpdates(msg);
-		if(successor != null)
+		applyUpdates(msg);	// update local history
+		if(successor != null)	
 			sendSyncUpdate(successor, msg);
 		else
-			sendResponse(msg.reply);
+			sendResponse(msg.reply); // if tail then send response to client
+			sendAck(seqNum, predecessor); // send ack to the predecessor 
 	end
 
+	// callback function to receive the request from clients
 	event receive(Operation opr, Request req):
 		switch(opr):
 			case GetBalance:
 				bal = retrieveBal(req);
 				reply = new Reply(req.reqId, Outcome.Processed, bal);
-				sendResponse(reply);
+				sendResponse(reply);	// since query is done on tail server
 				break;
 			
 			case Deposit:
-				flag = checkIfAlreadyProcessed(req);
+				flag = checkIfAlreadyProcessed(req);	// req already present in history
 				if(!flag):
 					bal  = applyDeposit(req);
 					reply = new Reply(req.reqId, Outcome.Processed, bal);
@@ -103,11 +113,11 @@
 				}
 				seqNum = generateSeqNum();
 				msg = new SyncContextMsg(seqNum, req, opr, reply);
-				sendSyncUpdate(successor, msg);
+				sendSyncUpdate(successor, msg);	// since update is done on head
 				break;
 
 			case Withdraw:
-				flag = checkIfAlreadyProcessed(req);
+				flag = checkIfAlreadyProcessed(req); 	// req already present in history
 				if(!flag):
 					bal  = applyWithdraw(req);
 					if(bal < 0) {
@@ -123,20 +133,21 @@
 				}
 				seqNum = generateSeqNum();
 				msg = new SyncContextMsg(seqNum, req, opr, reply);
-				sendSyncUpdate(successor, msg);
+				sendSyncUpdate(successor, msg);	// since update is done on head
 				break;
 					
 			case Transfer:
-				flag = checkIfAlreadyProcessed(req);
+				flag = checkIfAlreadyProcessed(req);	// req already present in history
 				if(!flag):
-					bal = applyWithdraw(req);
+					bal = applyWithdraw(req);	// withdraw the amount from source
 					if(bal < 0) {
 						bal = retrieveBal(req);
 						reply = new Reply(req.reqId, Outcome.InsufficientFunds, bal);
 					}
 					else {
 						req = new Request(reqId, bankId, accountNum, amount, null, null);
-						head = getHead(req.destBankId);
+						head = getHead(req.destBankId);	// send deposit to dest bank
+						// wait for reply from dest
 						reply  = sendReq(Operation.Deposit, req, head);
 					}
 				else {
@@ -145,38 +156,52 @@
 				}
 				seqNum = generateSeqNum();
 				msg = new SyncContextMsg(seqNum, req, opr, reply);
-				sendSyncUpdate(successor, msg);
+				sendSyncUpdate(successor, msg); // since update is done on head
 				break;
+		// check for failure condition after every req
 		failure();
 	end
 
-	event failure(serverId, serverRelation, seqNum):		// Master notifies the server with ServerId about the new predecessor/successor because of a failed server
-
+	// callback function to handle the failure updates from master
+	// Master notifies the server with ServerId about the new predecessor/successor because of a failed server
+	event failure(serverId, serverRelation, seqNum): 
 		switch(serverRelation):
 			case Successor:
-				successor = serverId;			// new successor of the server which listens to this event
-				sendUpdates(seqNum, successor);		// send all the updates greater than seqNum to the new successor
+				successor = serverId;	// new successor of the server which listens to this event
+				sendUpdates(seqNum, successor);	// send all the updates >seqNum to the new successor
 				break;
 			case predecessor:
-				predecessor = serverId;			// new predecessor of the server which listens to this event
-				seqNum = retrieveLastSeqNum();		// Retrieves the seqNum of the last request handled by this server which has reveived this request
+				predecessor = serverId;	// new predecessor of the server which listens to this event
+				seqNum = retrieveLastSeqNum();	// Retrieve the seqNum of the last request 
+								// handled by this server which has received this request
 				sendAckMaster(seqNum);
 				break;
 	end
 
+	// callback function to handle the ack from the successor server in the chain
+	// and sending the ack to the predecessor
 	event ack (seqNum):
-		deleteReq(seqNum); 			// delete all the requests from the sentReq List smaller than seqNum
+		deleteReq(seqNum); 	// delete all the requests from the sentReq List smaller than seqNum
 		sendAck(seqNum, predecessor);
 	end
 
+	event checkReq(reqId):
+		if reqId in historyReq
+			sendResponse(TRUE)
+		else
+			sendResponse(FALSE)
+	end
 
-	function failure:				// called after every receive event
+	// function to check for the failure condition 
+	// called after every receive event
+	function failure:		
 		if(currSendCnt >= MaxSendCnt || currReceiveCnt >= MaxReceiveCnt)
 			exit(0)
 	end
 
-
-	function sendHeartBeat:			// called every second
+	// function to send the heartbeat signal to master
+	// called every second
+	function sendHeartBeat:			
 		sendAckMaster(ownServerId);
 	end
 

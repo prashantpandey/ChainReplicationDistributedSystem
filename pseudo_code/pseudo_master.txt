@@ -11,54 +11,67 @@
  enum serverRelation { successor, predecessor }
 
  Events: 
-	- receive	// The server sends the liveness update. The master updates the serverTS list with its own current TS for the corresponding server. We assume that the master and server clocks are in sync (const drift).
-		args: serverId 
-
-	- extendChain(serverId, bankId)	// The new server wants to be added in the chain for a bank.
-		args: ServerId, bankId
-	 		
- Functions:
-	- notifyClient	// notify the client of the new head/tail, in case of head/tail failure.
-	- notifyServer	// notify the server of the new successor/predecessor for internal failure.
-			// also notify the respective servers if they are new head/tail, in case of head/tail failure.
-	
-	- checkFailure 	// probe the list of servers (every second), calculate the difference between the currentTS and the TS
-			// of each server. If the difference is greater than 5 sec then its a server failure as no liveness
-			// update was received by the master for that particular server in last 5 secs.
-	
-	- handleFailure	// Handles failure for head, tail and internal servers
-		args: serverId, serverType
+	- receive	
+		- The server sends the liveness update. 
+		- The master updates the serverTS list with its own current TS for the corresponding server. 
+		- We assume that the master and server clocks are in sync (const drift).
 		
+	- extendChain	
+		- The new server wants to be added in the chain for a bank.
+		
+ Functions:
+	- notifyClient	
+		- notify the client of the new head/tail, in case of head/tail failure.
+	- notifyServer	
+		- notify the server of the new successor/predecessor for internal failure.
+		- also notify the respective servers if they are new head/tail, in case of head/tail failure.
+	
+	- checkFailure 	
+		- probe the list of servers (every second), calculate the difference between the currentTS and the TS
+		- of each server. If the difference is greater than 5 sec then its a server failure as no liveness
+		- update was received by the master for that particular server in last 5 secs.
+	
+	- handleFailure	
+		- Handles failure for head, tail and internal servers
 
 */
 
+	// callback to receive the heart beat notification from the server
+	// and update the serverTS list
 	event receive(serverId):
 		updateTS(serverId, currTS);
 	end
 
+	// callback function to receive the extend chain notification
+	// from a new server
 	event extendChain(serverId, bankId):
 		oldTail = updateNewTail(bankId, serverId);	// update the tail info in the data structure 
 		notifyHeadTailServer(serverId, serverType:Tail);	// notify the new server that it is tail
-		notifyInternalServer(oldTail, serverId, serverRelation:successor);	// notify the old tail of its successor
+		notifyInternalServer(oldTail, serverId, serverRelation:successor); // notify the old tail of its successor
 		notifyClient(bankId, serverId, serverType:Tail);	// notify the client of the new tail
 	end
 
-
+	// function to notify the client regarding the new head/tail server
 	function notifyClient(bankId, serverId, type [head/tail]):
 		sendClient(bankId, serverId, type);  // Notify all the clients corresponding to the bankId.
 	end
 
+	// function to notify the successor/predecessor server of the failure
+	// of the internal server
 	function notifyInternalServer(serverId):
 		succ = findSuccessor(serverId);
 		pred = findPredecessor(serverId);
-		seqNum = sendServer(succ, pred, serverRelation:predecessor); 		// get the last seqNum received from the successor
-		sendServer(pred, succ, serverRelation:successor, seqNum);			// send the sequence number to the predecessor
+		seqNum = sendServer(succ, pred, serverRelation:predecessor); // get the last seqNum received from the successor
+		sendServer(pred, succ, serverRelation:successor, seqNum); // send the sequence number to the predecessor
 	end
 
+	// function to notify the server that they are new head/tail
 	function notifyHeadTailServer(serverId, type [head/tail]):
 		sendServer(serverId, type);
 	end
 
+	// periodically check whether there is any failed server
+	// depending upon the received time stamp
 	function checkFailure(): 		// Will be called every sec
 		for server in serverTS:
 			if(currentTS-server.serverTS > 5): 	// Implies that the master did not receive any notification
@@ -67,23 +80,23 @@
 				handleFailure(serverId, type);
 	end
 				
-
+	// fucntion to handle the failure of servers head/tail/internal
 	function handleFailure(serverId, type):
 						
 		switch(type):
 		case Head:	
-				head = updateNewHead(serverId); // update the head in the data structure, will return the new head
-				notifyClient(bankId, head, serverType:Head);	// notify the client of the new head
-				notifyHeadTailServer(head, serverType:Head); 	// notify the new head that it is head
-				break;
+			head = updateNewHead(serverId); // update the head in the data structure, will return the new head
+			notifyClient(bankId, head, serverType:Head);	// notify the client of the new head
+			notifyHeadTailServer(head, serverType:Head); 	// notify the new head that it is head
+			break;
 		case Tail:	
-				tail = updateNewTail(serverId);			// update the tail in the data structure, will return the new tail
-				notifyClient(bankId, tail, serverType:Tail);	// notify the client of the new tail
-				notifyHeadTailServer(tail, serverType:Tail);	// notify the new tail that it is tail
-				break;		
+			tail = updateNewTail(serverId);	// update the tail in the data structure, will return the new tail
+			notifyClient(bankId, tail, serverType:Tail);	// notify the client of the new tail
+			notifyHeadTailServer(tail, serverType:Tail);	// notify the new tail that it is tail
+			break;		
 		case Internal:
-				updateServerList(serverId);			// Remove the internal server from the list
-				notifyInternalServer(serverId);			// Inform the internal server about its new sucessor and predecessor
-				break;
+			updateServerList(serverId);	// Remove the internal server from the list
+			notifyInternalServer(serverId); // Inform the internal server about its new sucessor and predecessor
+			break;
 	end
 
