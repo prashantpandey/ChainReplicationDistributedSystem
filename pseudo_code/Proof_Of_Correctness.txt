@@ -61,3 +61,4 @@ Extending a chain:-
 	Therefore as Hist(T+, objId) <= Hist(T, objId) holds throughout this forwarding, the Update Propogation Invariant is preserved.
 
 As the inprocess invariant Hist(T, objId) = Hist(T+, objId) ^ Sent(T) is established T+ starts serving a s the new tail.
+

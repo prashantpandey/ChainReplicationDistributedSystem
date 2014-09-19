@@ -20,7 +20,7 @@
 		- The new server wants to be added in the chain for a bank.
 		
  Functions:
-	- notifyClient	
+	- notifyAll	
 		- notify the client of the new head/tail, in case of head/tail failure.
 	- notifyServer	
 		- notify the server of the new successor/predecessor for internal failure.
@@ -35,11 +35,14 @@
 		- Handles failure for head, tail and internal servers
 
 */
+	/* Load the constants from the config file */
 
 	// callback to receive the heart beat notification from the server
 	// and update the serverTS list
 	event receive(serverId):
-		updateTS(serverId, currTS);
+		synchronize(serverTS) {		// take lock on the serverTS list
+			updateTS(serverId, currTS);
+		}
 	end
 
 	// callback function to receive the extend chain notification
@@ -48,12 +51,12 @@
 		oldTail = updateNewTail(bankId, serverId);	// update the tail info in the data structure 
 		notifyHeadTailServer(serverId, serverType:Tail);	// notify the new server that it is tail
 		notifyInternalServer(oldTail, serverId, serverRelation:successor); // notify the old tail of its successor
-		notifyClient(bankId, serverId, serverType:Tail);	// notify the client of the new tail
+		notifyAll(bankId, serverId, serverType:Tail);	// notify the client of the new tail
 	end
 
 	// function to notify the client regarding the new head/tail server
-	function notifyClient(bankId, serverId, type [head/tail]):
-		sendClient(bankId, serverId, type);  // Notify all the clients corresponding to the bankId.
+	function notifyAll(bankId, serverId, type [head/tail]):
+		broadCast(bankId, serverId, type);  // Notify all the clients/servers corresponding to the bankId.
 	end
 
 	// function to notify the successor/predecessor server of the failure
@@ -73,25 +76,26 @@
 	// periodically check whether there is any failed server
 	// depending upon the received time stamp
 	function checkFailure(): 		// Will be called every sec
-		for server in serverTS:
+		synchronize(serverTS) {		// lock the serverTS list and probe
+		for server in serverTS:	
 			if(currentTS-server.serverTS > 5): 	// Implies that the master did not receive any notification
 								// from server in last 5 sec
 				type = findServerType(serverId);
 				handleFailure(serverId, type);
+		}
 	end
 				
 	// fucntion to handle the failure of servers head/tail/internal
-	function handleFailure(serverId, type):
-						
+	function handleFailure(serverId, type):			
 		switch(type):
 		case Head:	
 			head = updateNewHead(serverId); // update the head in the data structure, will return the new head
-			notifyClient(bankId, head, serverType:Head);	// notify the client of the new head
+			notifyAll(bankId, head, serverType:Head);	// notify the client of the new head
 			notifyHeadTailServer(head, serverType:Head); 	// notify the new head that it is head
 			break;
 		case Tail:	
 			tail = updateNewTail(serverId);	// update the tail in the data structure, will return the new tail
-			notifyClient(bankId, tail, serverType:Tail);	// notify the client of the new tail
+			notifyAll(bankId, tail, serverType:Tail);	// notify the client of the new tail
 			notifyHeadTailServer(tail, serverType:Tail);	// notify the new tail that it is tail
 			break;		
 		case Internal:

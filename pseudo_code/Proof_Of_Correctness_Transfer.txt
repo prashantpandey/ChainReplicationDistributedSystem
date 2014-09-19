@@ -1,0 +1,28 @@
+
+Correctness of Failures:-
+
+Assumption 1: There is atleast one correct replica 
+Assumption 2: In all the failure cases we assume that at most t-1 servers are faulty
+Assumption 3: The second part of the transfer opearation (deposit in dest bank) will never fail**.
+
+**Given the destination bank always exist. We can create non-existent account but not a bank.
+
+
+
+Case 1: Failure of Head
+The transfer operation will be dealt in similar way as any other update operation.
+For more details please refere to Case 1 in general proof of correctness.
+
+Case 2: Failure of Tail
+If the tail server fails, the new tail (which is the predecessor of the old tail) will already have the transfer operation in the sentReq List.
+For more details please refere to Case 2 in general proof of correctness.
+The new tail will probe the sentReq list to find if there's any transfer req whose response is not received.
+If yes, it will resend the request to the destination bank (by first querying for the dest history).
+It will then send the response back to the client and ack down to the predecessor.
+Thus being consistent with the Inprocess Request Invariant. 
+
+
+Case 3: Failure of Internal Server
+The transfer operation will be dealt in similar way as any other update operation.
+For more details please refere to Case 3 in general proof of correctness.
+

@@ -38,13 +38,13 @@
 	- update: 
 		- deposit: 
 			args:	reqId, accountNum, bankId, amount
-			return: {reqId, Outcome, bal}
+			return: reply:{reqId, Outcome, bal}
 		- withdraw: 
 			args: reqId, accountNum, bankId, amount
-			return: {reqId, Outcome, bal}
+			return: reply:{reqId, Outcome, bal}
 		- transfer: 
 			args: reqId, accountNum, bankId, amount, destAccountNum, destBankId
-			return: {reqId, Outcome, bal}
+			return: reply:{reqId, Outcome, bal}
 			- This function will have a different signature, instead of passing one bank as in the above two cases, we have to pass two banks here.
 
  	- Query:
@@ -74,7 +74,7 @@
 	// callback function to handle the responses from server
 	event receive(reply):
 		// update the response in the reqList
-		synchronize(reqList) {
+		synchronize(reqList) {		// take lock on the reqList
 			updateReqList(reply.reqId, reply);
 		}
 	end
@@ -93,11 +93,12 @@
 								// no synchronization needed
 								
 			wait for TIMEOUT:
-				 synchronize(reqList) {
-				 	if (checkReqList(reqId)):	// check to see if there is a response 
+				 synchronize(reqList) {	// take lock on the reqList
+				 	flag = checkReqList(reqId)	// check to see if there is a response 
 								// corresponding to the reqId in the reqList		
-				}
-					return;
+				 }
+				 if(flag)	// if true then return else continue
+					return;		
 			numRetries++;
 			until numRetries < MaxRetries
 	end
@@ -119,13 +120,14 @@
 			
 			wait for TIMEOUT:
 				synchronize(reqList) {
-					if(checkReqList(reqId)):	
+					flag1 = checkReqList(reqId))	
 				}
+				if(flag1)	// if true then return else continue
 					return;
 				else 
-					flag = queryServer(reqIdi); // check to see if the req is processed and 
+					flag2 = queryServer(reqId); // check to see if the req is processed and 
 								    // response is lost
-					if(flag)
+					if(flag2)	// if true then return else continue
 						return;
 			numRetries++;
 			until numRetries < MaxRetries;

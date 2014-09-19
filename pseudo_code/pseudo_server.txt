@@ -14,7 +14,7 @@
 		Reply reply;
  	}
 
-	List sentReq {  RequestContext }  // we can use it as a sent updates which are sent to the successor 
+	List sentReq {  SyncMsgContext }  // we can use it as a sent updates which are sent to the successor 
 					  // but are not received and processed by the tail
 	List historyReq { RequestContext }
 
@@ -55,12 +55,17 @@
 		
 	- failure		
 		- event to handle the failure of any adjacent server in the chain
-		- this will just update the current value of the successor/predecessor/type
+		- this will just update the current value of the successor/predecessor
 		- if the received server relation is predecessor
 		- it will also send the master the sequence number of the last request it received
 		- If the received server relation is successor, 
 		- then send all the updates greater than the received seqNum to the new successor
 		- the predecessor will halt until it sends all the pending updates to the successor
+	
+	- failureHeadTail 
+		- event to handle the failure of head or tail
+		- update the serverType if you are the new head/tail
+		- If tail, check for the pending response for transfer operation
 
 	- ack	
 		- will receive the ack from the next server in the chain (successor)
@@ -82,10 +87,22 @@
 		- send the heart beat signal to the master
 
 */ 
+	/* Load the constants from the config file */
 
 	// callback function to receive sync request from the predecessor server in the chain
 	event sync(SyncContextMsg msg):
-		applyUpdates(msg);	// update local history
+		if(serverType == Tail && msg.opr == Transfer) {
+			// fetch req details from msg context
+			req = new Request(reqId, bankId, accountNum, amount, null, null);
+			head = getHead(req.destBankId);	// send deposit to dest bank
+			// wait for reply from dest
+			msg.reply  = sendReq(Operation.Deposit, req, head);
+			// since query is done on tail server
+			sendResponse(msg.reply); // send response to client
+			sendAck(seqNum, predecessor); // send ack to the predecessor 
+		}
+		applyUpdates(msg);	// update local history with msg context
+		
 		if(successor != null)	
 			sendSyncUpdate(successor, msg);
 		else
@@ -144,12 +161,6 @@
 						bal = retrieveBal(req);
 						reply = new Reply(req.reqId, Outcome.InsufficientFunds, bal);
 					}
-					else {
-						req = new Request(reqId, bankId, accountNum, amount, null, null);
-						head = getHead(req.destBankId);	// send deposit to dest bank
-						// wait for reply from dest
-						reply  = sendReq(Operation.Deposit, req, head);
-					}
 				else {
 					bal = retrieveBal(req);
 					reply = new Reply(req.reqId, Outcome.InconsistentWithHistory, bal);
@@ -176,6 +187,27 @@
 								// handled by this server which has received this request
 				sendAckMaster(seqNum);
 				break;
+	end
+
+	// callback to handle the failure of head/tail server
+	event failureHeadTail(serverType):
+		updateServerType();	// update its own server type
+		if(serverType == Tail) {
+			flag1 = checkTransferReq(sentReq);	// check if there's any transfer req 
+								// without any response
+			repeat until flag1
+				flag2 = queryServer(reqId);	// if req is there in dest history then continue
+					if(flag2)
+						flag1 = false
+					else
+					        // wait to get the reply
+						msg.reply = sendReq();	// else resend the req
+						// since query is done on tail server
+						sendResponse(msg.reply); // send response to client
+						sendAck(seqNum, predecessor); // send ack to the predecessor 
+						
+			}
+		}
 	end
 
 	// callback function to handle the ack from the successor server in the chain
