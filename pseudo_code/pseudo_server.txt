@@ -44,14 +44,14 @@
  	- sync 			// receive sync requests from predecessor server
  					// apply the update
  					// propagate the update to the successor
-	- receive 		// event to recieve the requests from the clients.
+	- receive 		// event to receive the requests from the clients.
 					// The requests can have four kind of operations.
 					// Update request will be sent to the head server. Head will send sync message to next server in the chain.
 					// Query request will be sent to the tail server. The tail will send the reply back to the client.
 					// assign a unique sequence number to each received request.
 		args:	Operation, Request
 
-	- failure		// event to handle the failure of any adjecent server in the chain
+	- failure		// event to handle the failure of any adjacent server in the chain
 					// this will just update the current value of the successor/predecessor/type
 					// if the received server relation is predecessor
 					// it will also send the master the sequence number of the last request it received
@@ -150,21 +150,22 @@
 		failure();
 	end
 
-	event failure(serverId, serverRelation, seqNum):
+	event failure(serverId, serverRelation, seqNum):		// Master notifies the server with ServerId about the new predecessor/successor because of a failed server
+
 		switch(serverRelation):
 			case Successor:
-				successor = serverId;
+				successor = serverId;			// new successor of the server which listens to this event
 				sendUpdates(seqNum, successor);		// send all the updates greater than seqNum to the new successor
 				break;
 			case predecessor:
-				predecessor = serverId;
-				seqNum = retrieveLastSeqNum();
+				predecessor = serverId;			// new predecessor of the server which listens to this event
+				seqNum = retrieveLastSeqNum();		// Retrieves the seqNum of the last request handled by this server which has reveived this request
 				sendAckMaster(seqNum);
 				break;
 	end
 
 	event ack (seqNum):
-		deleteReq(seqNum); 			// delete all the requests from the sentRea List smaller than seqNum
+		deleteReq(seqNum); 			// delete all the requests from the sentReq List smaller than seqNum
 		sendAck(seqNum, predecessor);
 	end
 

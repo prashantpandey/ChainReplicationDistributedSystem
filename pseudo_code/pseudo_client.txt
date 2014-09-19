@@ -27,7 +27,7 @@
 	- Failure: The client receives a response from the master that the head has failed.
 		Update the  new head for corresponding bank.
 		Check to see if there is any pending request. If yes, resend the request depending upon the config file flag. 
-	- Receive: The client reveives a response from the tail, it could be a success or failure.
+	- Receive: The client receives a response from the tail, it could be a success or failure.
 		Update the corresponding request in the reqList.
 
  Functions:
@@ -35,16 +35,13 @@
 		- deposit: 
 			args:	reqId, accountNum, bankId, amount
 			return: {reqId, Outcome, bal}
-				finalBal will be negative for failed transactions
 		- withdraw: 
 			args: reqId, accountNum, bankId, amount
 			return: {reqId, Outcome, bal}
-				finalBal will be negative for failed transactions
 		- transfer: 
 			args: reqId, accountNum, bankId, amount, destAccountNum, destBankId
 			return: {reqId, Outcome, bal}
-				finalBal will be negative for failed transactions
-			This function will have a different signature, instead of passing one bank in the above two cases, we have to pass two banks here.
+			This function will have a different signature, instead of passing one bank as in the above two cases, we have to pass two banks here.
 
  	- Query:
 		- getBalance:
@@ -52,8 +49,7 @@
 	- checkTimeout:
 			probes the list of requests to find out which request has not been catered yet.
 			resend that request if the number of retries is smaller than the max retries possible and updates the number of retries.
-			Rightnow we assume that the updateHist operations are not idempotent. Later (if time permits) we will implement more complex logic
-			to support idempotent updates.
+			Rightnow we assume that the updateHist operations are not idempotent. Later (if time permits) we will implement more complex logic to support idempotent updates.
 */
 
 
@@ -64,8 +60,7 @@
 			updateHead(bankId, serverId);		// update the head for the corresponding bank
 		else
 			updateTail(bankId, serverId);
-		if(flag):
-			invokeReq(reqId);		// invoke the request (query/update) corresponsing to the reqId from reqList
+		invokeReq(reqId);		// invoke the request (query/update) corresponsing to the reqId from reqList
 	end
 
 	event receive(reply):
@@ -75,7 +70,7 @@
 
 	function query(bankId, accountNum):
 		reqId = genUniqueReqId();
-		tail = getTail(bankId);			// assuming one server in each chain is always available. So that means the head of the chain is always up.
+		tail = getTail(bankId);			// assuming one server in each chain is always available. So that means the head/tail of the chain is always up.
 							// No need to check for the condition when no servers is available in the chain
 		
 		req = new Request(reqId, bankId, accountNum)
@@ -85,7 +80,7 @@
 			pushReqList(reqId, new Reply());	// the query event will push the placeholder for the reply struct in the reqList.
 								// receive event will update the appropriate object in the reqList after receiveing the response.
 			wait for TIMEOUT:
-				 if (checkReqList(reqId)):	// check to see if their is a response corresponding to the reqId in the reqList
+				 if (checkReqList(reqId)):	// check to see if there is a response corresponding to the reqId in the reqList
 								// The response will be updated in the reqList by the receive event
 					return;
 			numRetries++;
@@ -93,8 +88,8 @@
 	end
 
 	// The update function is separate from the query because we expect to implement the resend logic differently.
-	// The query operation is idempotent so the resend logic will comparitively dumb, but in case of update operations 
-	// we have explicitely ensure that  the resend operation is idempotent
+	// The query operation is idempotent so the resend logic will be simple, but in case of update operations 
+	// we have explicitely ensure that the resend operation is idempotent
 	function update(bankId, accountNum, Operation, amount, destBankID [optional], destAccountNum [optional]):
 		reqId = getUniqueReqId();
 		head = getHead(bankId);
