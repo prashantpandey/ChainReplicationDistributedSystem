@@ -19,23 +19,23 @@ Request.prototype.getReqId = function() {
     return this.reqId;
 }
 
-Request.protype.getBankId = fuction() {
+Request.prototype.getBankId = function() {
     return this.bankId;
 }
 
-Request.protype.getAccNum = fuction() {
+Request.prototype.getAccNum = function() {
     return this.accNum;
 }
 
-Request.protype.getAmount = fuction() {
+Request.prototype.getAmount = function() {
     return this.amount;
 }
 
-Request.protype.getDestBankId = fuction() {
+Request.prototype.getDestBankId = function() {
     return this.destbankId;
 }
 
-Request.protype.getDestAccNum = fuction() {
+Request.prototype.getDestAccNum = function() {
     return this.destAccNum;
 }
 

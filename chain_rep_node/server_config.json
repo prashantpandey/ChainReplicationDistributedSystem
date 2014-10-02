@@ -95,7 +95,7 @@
     },
     {
         "bankID" : 300,
-        "bankName" : "HSBC",
+        "bankName" : "BOA",
         "chainLength" : 4,
         "numClient" : 6,
         "headServer" : {
@@ -137,6 +137,44 @@
             } 
         ]
     }
+    ],
+    "client" : [
+        {
+            "clientId" : 1000,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        },
+        {
+            "clientId" : 1001,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        },
+        {
+            "clientId" : 1002,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        },
+        {
+            "clientId" : 1003,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        },
+        {
+            "clientId" : 1004,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        },
+        {
+            "clientId" : 1005,
+            "numRetries" : 5,
+            "resendDelay" : 5,
+            "resendFlag" : "true"
+        }
     ]
 }
 

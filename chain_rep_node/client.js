@@ -7,27 +7,50 @@
 
 var http = require('http');
 
+
+var data = {
+    'name' : [
+        { 'fname' : 'prashant', 'lname' : 'pandey'},
+        { 'fname' : 'kavita', 'lname' : 'agarwal'}
+    ]
+};
+       
+var payload = JSON.stringify(data);
+
 // make request object
-var request = http.request(
-    {
-        'host': 'localhost',
-        'port': '8000',
-        'path': '/',
-        'method': 'GET'
-    }
-);
+var options = 
+{
+    'host': 'localhost',
+    'port': '8000',
+    'path': '/',
+    'method': 'POST',
+    'headers' : { 'Content-Type': 'application/json',
+                  'Content-Length': payload.length
+                }
+};
+
 
 // assign callbacks
-request.on('response', 
-    function(response) {
-        console.log('Response status code: ' + response.statusCode);
 
-        response.on('data', 
-            function(data) {
-                console.log('Body: ' + data);
-            }
-        );
-    }
-);
+callback = function(response) {
+    var str = ''
 
-request.end();
+        response.on('data', function(data) {
+                str += data;                
+        });
+
+        response.on('end', function() {
+            console.log(str);
+        });
+}
+
+var req = http.request(options, callback);
+
+
+req.write(payload);
+
+req.on('error', function(e){
+    console.log('problem with the log' + data);
+});
+
+req.end();
