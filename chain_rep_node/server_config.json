@@ -1,0 +1,145 @@
+
+{
+    "master" : {
+        "hostname" : "localhost",
+        "port" : 8080
+    },
+    "bank" : [
+    {
+        "bankID" : 100,
+        "bankName" : "HSBC",
+        "chainLength" : 4,
+        "numClient" : 6,
+        "headServer" : {
+            "hostname" : "localhost",
+            "port"  :   8081
+        },
+        "tailServer" : {
+            "hostname" : "localhost",
+            "port" : 8084
+        },
+        "servers" : [
+            {
+                "serverId" : "101",
+                "hostname" : "localhost",
+                "port" : "8081",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "102",
+                "hostname" : "localhost",
+                "port" : "8082",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "103",
+                "hostname" : "localhost",
+                "port" : "8083",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "104",
+                "hostname" : "localhost",
+                "port" : "8084",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            } 
+        ]
+    },
+    {
+        "bankID" : 200,
+        "bankName" : "CITI",
+        "chainLength" : 4,
+        "numClient" : 6,
+        "headServer" : {
+            "hostname" : "localhost",
+            "port"  :   8085
+        },
+        "tailServer" : {
+            "hostname" : "localhost",
+            "port" : 8088
+        },
+        "servers" : [
+            {
+                "serverId" : "201",
+                "hostname" : "localhost",
+                "port" : "8081",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "202",
+                "hostname" : "localhost",
+                "port" : "8086",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "203",
+                "hostname" : "localhost",
+                "port" : "8087",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "204",
+                "hostname" : "localhost",
+                "port" : "8088",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            } 
+        ]
+    },
+    {
+        "bankID" : 300,
+        "bankName" : "HSBC",
+        "chainLength" : 4,
+        "numClient" : 6,
+        "headServer" : {
+            "hostname" : "localhost",
+            "port"  :   8089
+        },
+        "tailServer" : {
+            "hostname" : "localhost",
+            "port" : 8092
+        },
+        "servers" : [
+            {
+                "serverId" : "301",
+                "hostname" : "localhost",
+                "port" : "8089",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "302",
+                "hostname" : "localhost",
+                "port" : "8090",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "303",
+                "hostname" : "localhost",
+                "port" : "8091",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            },
+            {
+                "serverId" : "304",
+                "hostname" : "localhost",
+                "port" : "8092",
+                "startupDelay" : "5",
+                "serverLifeTime" : "UNBOUND"
+            } 
+        ]
+    }
+    ]
+}
+
+
+    
+
