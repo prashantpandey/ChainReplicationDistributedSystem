@@ -11,10 +11,38 @@
         "chainLength" : 4,
         "numClient" : 6,
         "headServer" : {
+	    "serverId" : 101
             "hostname" : "localhost",
             "port"  :   8081
         },
+	"clients" : [
+	    {
+		"clientId" : 111,
+		"accNum" : "1001",
+	    },
+	    {
+		"clientId" : 222,
+		"accNum" : "1002",
+	    },
+	    {
+		"clientId" : 333,
+		"accNum" : "1003",
+	    }
+	    {
+		"clientId" : 444,
+		"accNum" : "1004",
+	    },
+	    {
+		"clientId" : 555,
+		"accNum" : "1005",
+	    },
+	    {
+		"clientId" : 666,
+		"accNum" : "1006",
+	    }
+	],
         "tailServer" : {
+	    "serverId" : 104
             "hostname" : "localhost",
             "port" : 8084
         },
@@ -55,9 +83,36 @@
         "chainLength" : 4,
         "numClient" : 6,
         "headServer" : {
+	    "serverId" : "104",
             "hostname" : "localhost",
-            "port"  :   8085
+            "port"  :   "8084"
         },
+	"clients" : [
+	    {
+		"clientId" : "111",
+		"accNum" : 1001,
+	    },
+	    {
+		"clientId" : "222",
+		"accNum" : 1002,
+	    },
+	    {
+		"clientId" : "333",
+		"accNum" : 1003,
+	    }
+	    {
+		"clientId" : "444",
+		"accNum" : 1004,
+	    },
+	    {
+		"clientId" : "555",
+		"accNum" : 1005,
+	    },
+	    {
+		"clientId" : "666",
+		"accNum" : 1006,
+	    }
+	],
         "tailServer" : {
             "hostname" : "localhost",
             "port" : 8088
@@ -102,6 +157,32 @@
             "hostname" : "localhost",
             "port"  :   8089
         },
+	"clients" : [
+	    {
+		"clientId" : "111",
+		"accNum" : 1001,
+	    },
+	    {
+		"clientId" : "222",
+		"accNum" : 1002,
+	    },
+	    {
+		"clientId" : "333",
+		"accNum" : 1003,
+	    }
+	    {
+		"clientId" : "444",
+		"accNum" : 1004,
+	    },
+	    {
+		"clientId" : "555",
+		"accNum" : 1005,
+	    },
+	    {
+		"clientId" : "666",
+		"accNum" : 1006,
+	    }
+	],
         "tailServer" : {
             "hostname" : "localhost",
             "port" : 8092
@@ -143,7 +224,9 @@
             "clientId" : 1000,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8081
         },
         {
             "clientId" : 1001,

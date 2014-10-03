@@ -66,7 +66,7 @@ var options =
 
 /* General functions */
 
-/**
+/*
  * check whether the reqId is already been served
  */
 function checkRequest(reqId) {
@@ -78,7 +78,7 @@ function checkRequest(reqId) {
     }
 }
 
-/**
+/*
  * Send heart beat signals to master
  */
 function sendHeartBeat() {
@@ -93,7 +93,7 @@ function sendHeartBeat() {
     req.write(serverId);
 }
 
-/**
+/*
  * Check whether the MaxService limit is reached
  */
 function checkMaxServiceLimit() {
@@ -105,7 +105,7 @@ function checkMaxServiceLimit() {
     }
 }
 
-/**
+/*
  * process the sync request from the predecessor server.
  */
 function sync(payload) {
@@ -156,7 +156,7 @@ function sync(payload) {
     }
 }
 
-/**
+/*
  * create the server and start it
  */
 var server = http.createServer(
