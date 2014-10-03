@@ -7,9 +7,8 @@
 
 var http = require('http');
 
-
 var data = {
-    'name' : [
+    'sync' : [
         { 'fname' : 'prashant', 'lname' : 'pandey'},
         { 'fname' : 'kavita', 'lname' : 'agarwal'}
     ]

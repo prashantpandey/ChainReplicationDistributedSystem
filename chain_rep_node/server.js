@@ -113,11 +113,16 @@ var server = http.createServer(
             var fullBody ='';
             request.on('data',function(chunk) {
                 fullBody += chunk;
-            });    
+            }); 
+            var payload = '';   
             request.on('end', function() {
-                var data = JSON.parse(fullBody);
-                logger.info(data);
+                payload = JSON.parse(fullBody);
+                logger.info(payload);
             });
+
+            if(!payload.sync) {
+                logger.info('sync object received');
+            }
         }
         response.write('Hello World...\n from the server..\n');
         response.end();
