@@ -47,6 +47,20 @@
                 "startupDelay" : "5",
                 "serverLifeTime" : "UNBOUND"
             } 
+        ],
+        "clients" : [
+            {   
+                "clientID" : 1000
+            },
+            {
+                "clientId" : 1001
+            },
+            {
+                "clientId" : 1002
+            },
+            {
+                "clientId" : 1003
+            }
         ]
     },
     {
@@ -91,6 +105,20 @@
                 "startupDelay" : "5",
                 "serverLifeTime" : "UNBOUND"
             } 
+        ],
+        "clients" : [
+            {   
+                "clientID" : 1000
+            },
+            {
+                "clientId" : 1001
+            },
+            {
+                "clientId" : 1002
+            },
+            {
+                "clientId" : 1003
+            }
         ]
     },
     {
@@ -135,6 +163,20 @@
                 "startupDelay" : "5",
                 "serverLifeTime" : "UNBOUND"
             } 
+        ],
+        "clients" : [
+            {   
+                "clientID" : 1000
+            },
+            {
+                "clientId" : 1001
+            },
+            {
+                "clientId" : 1002
+            },
+            {
+                "clientId" : 1003
+            }
         ]
     }
     ],
@@ -143,37 +185,121 @@
             "clientId" : 1000,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001000
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001000
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001000
+                }
+            ]
         },
         {
             "clientId" : 1001,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001001
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001001
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001001
+                }
+            ]
         },
         {
             "clientId" : 1002,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001002
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001002
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001002
+                }
+            ]
         },
         {
             "clientId" : 1003,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001003
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001003
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001003
+                }
+            ]
         },
         {
             "clientId" : 1004,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001004
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001004
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001004
+                }
+            ]
         },
         {
             "clientId" : 1005,
             "numRetries" : 5,
             "resendDelay" : 5,
-            "resendFlag" : "true"
+            "resendFlag" : "true",
+            "banks" : [
+                {
+                    "bankId" : 100,
+                    "accNum" : 1001005
+                },
+                {
+                    "bankId" : 200,
+                    "accNum" : 2001005
+                },
+                {
+                    "bankId" : 300,
+                    "accNum" : 3001005
+                }
+            ]
         }
     ]
 }
