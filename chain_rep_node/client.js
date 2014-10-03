@@ -8,7 +8,7 @@
 var http = require('http');
 
 var data = {
-    'sync' : [
+    'update' : [
         { 'fname' : 'prashant', 'lname' : 'pandey'},
         { 'fname' : 'kavita', 'lname' : 'agarwal'}
     ]
@@ -24,7 +24,7 @@ var options =
     'path': '/',
     'method': 'POST',
     'headers' : { 'Content-Type': 'application/json',
-                  'Content-Length': payload.length
+                  'Content-Length': 'chunked'
                 }
 };
 

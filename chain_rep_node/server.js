@@ -3,22 +3,22 @@
  * It implements Chain Replication algo
  */
 
-/** Custom includes **/
+/* Custom includes */
 var syncMsgContext = require('./SyncMsgContext.js');
 var reply = require('./Reply.js');
 var request = require('./Request.js');
 var logger = require('./Logger.js');
 
-/** Config File include **/
+/* Config File include */
 var config = require('./server_config.json');
 
-/** System includes **/
+/* System includes */
 var http = require('http');
 var sys = require('sys');
 var fs = require('fs');
 var winston = require('winston');
 
-/** Data Structures **/
+/* Data Structures */
 var Outcome = {
     Processed: 0,
     InconsistentWithHistory: 1,
@@ -51,6 +51,18 @@ var serverId;
 
 var sentReq = {};
 var historyReq = {};
+
+/* general options object for making http request */
+var options =
+{
+    'host': '',
+    'port': '',
+    'path': '/',
+    'method': 'POST',
+    'headers' : { 'Content-Type' : 'application/json',
+                   'Content-Length' : 'chunked'
+                }
+};
 
 /* General functions */
 
@@ -94,6 +106,57 @@ function checkMaxServiceLimit() {
 }
 
 /**
+ * process the sync request from the predecessor server.
+ */
+function sync(payload) {
+    if(serverType == 'Tail' && payload.operation == 'Transfer') {
+        var req = payload.request;
+        var head = '';
+        for(bank in config.bank) {
+            if(payload.destBankId == bank.bankId) {
+                head = bank.headServer;
+            }
+        }
+
+        options.host = head.hostname;
+        options.port = head.port;
+        
+        var destReq = {
+            'reqId' : payload.reqId,
+
+        };
+
+        var destRes = '';
+        var req = http.request(options, function(response) {
+            var str = '';
+            response.on('data', function(data){
+                str += data;
+            });
+
+            response.on('end', function(){
+               destRes = str;
+            });
+        });
+
+        req.write(JSON.stringify(destReq));
+        req.on('error', function(e){
+            logger.error('Problem with the request message' + destReq);
+        });
+        req.end();
+       
+        applyUpdate(payload);
+
+        if(successor != undefined) {
+            sendSyncUpdate(payload);
+        }
+        else {
+            sendResponse(payload);
+        }
+        
+    }
+}
+
+/**
  * create the server and start it
  */
 var server = http.createServer(
@@ -108,21 +171,37 @@ var server = http.createServer(
         // 5. checkLogs
         
         if(request.method == 'POST') {
-            // if it is a port request then load the full body of the 
-            // message
+            // if it is a POST request then load the full msg body
             var fullBody ='';
             request.on('data',function(chunk) {
                 fullBody += chunk;
             }); 
             var payload = '';   
+
+            // parse the msg body to JSON once it is fully received
             request.on('end', function() {
                 payload = JSON.parse(fullBody);
-                logger.info(payload);
+                if(payload.sync) {
+                    // write the sync handling logic
+                    logger.info(payload);
+                }
+                else if(payload.query) {
+                    
+                }
+                else if(payload.update) {
+                }
+                else if (payload.failure) {
+                }
+                else if(payload.ack) {
+                }
+                else if(payload.checkLog) {
+                }
+                else {
+                    logger.info('Unknown request payload: ' + fullBody);
+                }
             });
 
-            if(!payload.sync) {
-                logger.info('sync object received');
-            }
+
         }
         response.write('Hello World...\n from the server..\n');
         response.end();
