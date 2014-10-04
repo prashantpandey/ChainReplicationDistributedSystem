@@ -7,18 +7,8 @@
 
 
 var http = require('http');
-var und = require('underscore');
-
-var reqList = [
-    {
-    'reqId': 
-    'status':
-    },
-    {
-    'reqId':
-    'status':
-    } 
-]
+var config = require('./config.json');
+var data = require('./payload.json');
 /**
  * function by which client requests for bal, withdraw or transfer 
  * to different banks.
@@ -27,19 +17,19 @@ var reqList = [
  */
 
 function task() {    
-    for(obj in data.payload) {
-	var bankId = obj.transaction.bankId;
-	var opr = obj.transaction.operation;
-	for(bankObj in config.bank) {
-	    if(bankId == bankObj.bankId) {
+    for( var i = 0; i < data.length; i++) {
+	var bankId = data[i].transaction.bankId;
+	var opr = data[i].transaction.operation;
+	for(var j = 0; j < config.bank.length; i++) {
+	    if(bankId == config.bank[j].bankId) {
 		if(opr == 'bal') {
-		    dest = bankObj.tailServer;
+		    dest = config.bank[j].tailServer;
 		}
 		else if (opr == 'withdraw' || opr == 'deposit') {
-		    dest = bankObj.headServer;
+		    dest = config.bank[j].headServer;
 		}
 	    }
-	    var sendData = data.payload;
+	    var sendData = data[i].payload;
 	    send(sendData, dest, 'client');   
 	}
     }
@@ -66,7 +56,7 @@ function send(data, dest, context) {
                     }
     };
 
-    var req = http.request(options, function{
+    var req = http.request(options, function(){
         var str = '';
         response.on('data', function(data){
             str += data;
@@ -82,3 +72,5 @@ function send(data, dest, context) {
     });
     req.end();
 }
+
+task();

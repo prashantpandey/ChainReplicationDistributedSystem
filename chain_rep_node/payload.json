@@ -1,62 +1,42 @@
 { 
-    'data': [
+    "data": [
 	{ 
-	'payload' : {
-	    'transaction' : {
-		'reqId' : 1,
-		'bankId' : 100,
-		'accNum' : 1000,
-		'amount' : 10,
-		'destBankId' : 101,
-		'destAccNum' : 1001,
-		'operation' : 'bal'
+	"payload" : {
+	    "transaction" : {
+		"reqId" : 1,
+		"bankId" : 100,
+		"accNum" : 1000,
+		"amount" : 10,
+		"destBankId" : 101,
+		"destAccNum" : 1001,
+		"operation" : "bal"
 	    },
-	    'client' : {
-		'clientId' : 111,
-		'hostname' : 'localhost',
-		'port' : 8080
-	    }
-	}
-	},   
-    
-        {
-	'payload' : {
-	    'transaction' : {
-		'reqId' : 2,
-		'bankId' : 200,
-		'accNum' : 1000,
-		'amount' : 10,
-		'destBankId' : 101,
-		'destAccNum' : 1001,
-		'operation' : 'bal'
-	    },
-	    'client' : {
-		'clientId' : 100,
-		'hostname' : 'localhost',
-		'port' : 8080
+	    "client" : {
+		"clientId" : 111,
+		"hostname" : "localhost",
+		"port" : 8080
 	    }
 	}
 	},
 
-	{
-	'payload' : {
-	    'transaction' : {
-		'reqId' : 1,
-		'bankId' : 100,
-		'accNum' : 1000,
-		'amount' : 10,
-		'destBankId' : 101,
-		'destAccNum' : 1001,
-		'operation' : 'update'
+	{ 
+	"payload" : {
+	    "transaction" : {
+		"reqId" : 1,
+		"bankId" : 100,
+		"accNum" : 1000,
+		"amount" : 10,
+		"destBankId" : 101,
+		"destAccNum" : 1001,
+		"operation" : "bal"
 	    },
-	    'client' : {
-		'clientId' : 100,
-		'hostname' : 'localhost',
-		'port' : 8080
+	    "client" : {
+		"clientId" : 111,
+		"hostname" : "localhost",
+		"port" : 8080
 	    }
 	}
 	}
-    ]
+     ]
 }
-   
 
