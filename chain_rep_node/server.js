@@ -1,4 +1,4 @@
-/*
+/**
  * Server side for Banking Application.
  * It implements Chain Replication algo
  */
@@ -10,13 +10,12 @@ var request = require('./Request.js');
 var logger = require('./Logger.js');
 
 /* Config File include */
-var config = require('./server_config.json');
+var config = require('./config.json');
 
 /* System includes */
 var http = require('http');
 var sys = require('sys');
 var fs = require('fs');
-var winston = require('winston');
 
 /* Data Structures */
 var Outcome = {
@@ -83,7 +82,7 @@ function sendHeartBeat() {
                 logger.info('Received ack back from master');
     });
     req.write(serverId);
-}i
+}
 
 // TODO: Phase 3
 /**
@@ -148,7 +147,7 @@ function getBalance(accNum) {
  * @oper: operation type
  */
 function performUpdate(accNum, amount, oper) {
-    switch(oper) :
+    switch(oper) {
         case Operation.Deposit:
             accDetails[accNum] = accDetails[accNum] + amount;
             return Outcome.Processed;
@@ -162,6 +161,7 @@ function performUpdate(accNum, amount, oper) {
             }
         default:
             logger.error('Operation not permitted' + oper);
+    }
 }
 
 /**
@@ -178,14 +178,13 @@ function send(data, dest, context) {
         'host': dest.hostname,
         'port': dest.port,
         'path': '/',
-        utcome
         'method': 'POST',
         'headers' : { 'Content-Type' : 'application/json',
                        'Content-Length' : 'chunked'
                     }
     };
 
-    var req = http.request(options, function{
+    var req = http.request(options, function(response) {
         var str = '';
         response.on('data', function(data){
             str += data;
@@ -231,10 +230,12 @@ function sync(payload) {
  * query the exiting account details for the balance
  * query is performed at the tail
  * the response is sent to the client
+ *
  * @payload: payload received in the query request
  */
 function query(payload) {
     logger.info('Processing the query request: ' + payload);
+    var reqId = payload.transaction.reqId;
     var accNum = payload.transaction.accNum;
     var bal = getBalance(accNum);
     if(bal == undefined) {
@@ -244,11 +245,12 @@ function query(payload) {
         bal = 0;
     }
     var response = {
+        'reqId' : reqId,
         'outcome' : Outcome.Processed,
         'currBal' : bal
     };
     var dest = {
-        'hostname' : payload.client.hostname;
+        'hostname' : payload.client.hostname,
         'port' : payload.client.port
     };
     send(response, dest, 'queryResponse');
@@ -265,6 +267,7 @@ function query(payload) {
  */
 function update(payload) {
     logger.info('Processing the update request ' + payload);
+    var reqId = payload.transaction.reqId;
     var accNum = payload.transaction.accNum;
     var amount = payload.transaction.amount;
     var oper = payload.transaction.operation;
@@ -275,6 +278,7 @@ function update(payload) {
     
     payload = {
         'result' : {
+            'reqId' : reqId,
             'outcome' : outcome,
             'currBal' : currBal
         }
@@ -316,7 +320,7 @@ function checkLogs(payload) {
         res = {'response' : 'false'};
     }
     var dest = {
-        'hostname' : payload.client.hostname;
+        'hostname' : payload.client.hostname,
         'port' : payload.client.port
     };
     send(response, dest, 'checkLogsResponse');
