@@ -15,3 +15,29 @@
     }
 }
 
+{
+    'transaction' : {
+        'reqId' : 1,
+        'bankId' : 100,
+        'accNum' : 1000,
+        'amount' : 10,
+        'destBankId' : 101,
+        'destAccNum' : 1001,
+        'operation' : 'bal'
+    },
+    'client' : {
+        'clientId' : 100,
+        'hostname' : 'localhost',
+        'port' : 8080
+    },
+    'result' : {
+        'outcome' : '',
+        'currBal' : '',
+    }
+}
+
+{
+    'outcome' : '',
+    'bal' : ''
+}
+
