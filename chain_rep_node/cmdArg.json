@@ -4,7 +4,7 @@
     "hostname": "localhost",
     "port" : "8091",
     "startupDelay" : "5",
-    "serverLIfeTime" : "UNBOUND"
+    "serverLifeTime" : "UNBOUND"
     "successor": {
 	"serverId" : "304",
 	"hostname" : "localhost",
