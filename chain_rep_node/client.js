@@ -103,7 +103,7 @@ function send(payload, dest, context) {
             str += payload;
         });
         response.on('end', function(){
-            logger.info(context + ': Acknowledgement received ' + str);
+            logger.info(context + ': Acknowledgement received ' + JSON.stringify(str));
         });
     });
 
