@@ -7,7 +7,7 @@
 var http = require('http');
 var config = require('./config.json');
 var reqData = require('./payload.json');
-var logger = require('./Logger.js');
+var logger = require('./logger.js');
 
 var Outcome = {
     Processed: 0,

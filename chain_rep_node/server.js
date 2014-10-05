@@ -7,7 +7,8 @@
 var syncMsgContext = require('./SyncMsgContext.js');
 var reply = require('./Reply.js');
 var request = require('./Request.js');
-var logger = require('./Logger.js');
+var logger = require('./logger.js');
+var logger = require('./util.js');
 
 /* Config File include */
 var config = require('./config.json');
@@ -43,16 +44,31 @@ var ServerType = {
 }
 
 var totalReqCount = 0;
-var serverType;
-var successor;
-var predecessor;
-var serverId;
+var serverType = '';
+var successor = {};
+var predecessor = {};
+var serverId = '';
+var hostname = '';
+var port = '';
+var serverLifeTime = '';
+var serverStartupDelay = '';
 
 var sentReq = {};
 var historyReq = {};
 var accDetails = {};
 
 /* General functions */
+
+function loadServerConfig() {
+    var arg = process.argv.splice(2);
+    var details = util.findServerInfo(arg[0], argv[1]);
+    hostname = details.hostname;
+    port = details.port;
+    serverLifeTime = details.serverLifeTime;
+    serverStartupDelay = details.serverStartupDelay;
+    successor = details.sucessor;
+    predecessor = details.predecessor;
+}
 
 /**
  * check whether the reqId is already been served
@@ -336,6 +352,8 @@ function checkLogs(payload) {
     return response;
 }
 
+loadServerConfig();
+
 /*
  * create the server and start it
  */
@@ -399,8 +417,8 @@ var server = http.createServer(
         }
     }
 );
-server.listen(8000);
-logger.info('Server running at http://127.0.0.1:8000/');
+server.listen(port);
+logger.info('Server running at ' + hostname + ':' + port);
 
 
 // TODO: Phase 3
