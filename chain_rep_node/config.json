@@ -16,7 +16,7 @@
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8084
+            "port" : 8000
         },
         "servers" : [
             {

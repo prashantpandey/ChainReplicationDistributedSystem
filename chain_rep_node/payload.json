@@ -9,12 +9,12 @@
 		"amount" : 10,
 		"destBankId" : 101,
 		"destAccNum" : 1001,
-		"operation" : "bal"
+		"operation" : 0
 	    },
 	    "client" : {
 		"clientId" : 111,
 		"hostname" : "localhost",
-		"port" : 8080
+		"port" : 8000
 	    }
 	}
 	},
@@ -28,7 +28,7 @@
 		"amount" : 10,
 		"destBankId" : 101,
 		"destAccNum" : 1001,
-		"operation" : "bal"
+		"operation" : 0
 	    },
 	    "client" : {
 		"clientId" : 111,

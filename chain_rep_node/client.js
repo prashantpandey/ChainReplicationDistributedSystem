@@ -6,7 +6,8 @@
 
 var http = require('http');
 var config = require('./config.json');
-var data = require('./payload.json');
+var reqData = require('./payload.json');
+var logger = require('./Logger.js');
 
 var Outcome = {
     Processed: 0,
@@ -22,7 +23,7 @@ var Operation = {
 };
 
 
-var bankServerMap = [];
+var bankServerMap = {};
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -31,14 +32,17 @@ var bankServerMap = [];
  * Also in case of a failure msg from Master, this structure will be updated
  */
 function prepareBankServerMap() {
+    logger.info('Preparing the bank server map');
     for (var i = 0; i < config.bank.length; i++) {
         var serverDetails = {
             "headServer" : config.bank[i].headServer,
             "tailServer" : config.bank[i].tailServer
         };
         var id = config.bank[i].bankId;
-        bankServerMap = { id : serverDetails };
+        bankServerMap[id] = serverDetails;
+        logger.info('Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
     }
+    logger.info('Added ' + i + ' entries to the bank details');
 }
 
 /**
@@ -47,23 +51,27 @@ function prepareBankServerMap() {
  * bal : query requests are sent at the tail server of the bank
  * withdraw/transfer : update requests are sent at the head server of bank
  */
-function task() {
-    // prepare the mapping for the bank
-    prepareBankServerMap();
-
-    for( var i = 0; i < data.length; i++) {
-	var bankId = data[i].transaction.bankId;
-	var opr = data[i].transaction.operation;
-
+function task() { 
+    logger.info('Starting to perform query/update operations');
+    var payloads = reqData.data;
+    for( var i = 0; i < payloads.length; i++) {
+	var bankId = payloads[i].payload.transaction.bankId;
+	var opr = payloads[i].payload.transaction.operation;
+        var  data = {};
+        var dest = {};
+        
 	if(opr == Operation.GetBalance) {
+            data['query'] = payloads[i].payload;
 	    dest = bankServerMap[bankId].tailServer;
 	}
 	else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
+            data['update'] = payloads[i].payload;
 	    dest = bankServerMap[bankId].headServer;
 	}
 	
-        var sendData = data[i].payload;
-	send(sendData, dest, 'client');   
+        logger.info('Performing ' + opr + ' on bank: ' + bankId);
+        logger.info('Destination info: ' + JSON.stringify(dest));
+	send(data, dest, 'client');   
     }
 }
 
@@ -71,41 +79,49 @@ function task() {
  * generic function to send request to destination entity
  * destination could be client, master or some other server in chain
  *
- * @data: data to sent as body of the request
+ * @payload: payload to sent as body of the request
  * @dest: address(hostname:port) of the destination entity
  * @context: context info (who's invoking the function)
  */
-function send(data, dest, context) {
+function send(payload, dest, context) {
+    logger.info('payload: ' + JSON.stringify(payload));
+    logger.info('dest: ' + JSON.stringify(dest));
+
     var options =
     {
         'host': dest.hostname,
         'port': dest.port,
         'path': '/',
         'method': 'POST',
-        'headers' : { 'Content-Type' : 'application/json',
-                       'Content-Length' : 'chunked'
+        'headers' : { 'Content-Type' : 'application/json'
                     }
     };
 
-    var req = http.request(options, function(){
+    var req = http.request(options, function(response){
         var str = '';
-        response.on('data', function(data){
-            str += data;
+        response.on('data', function(payload){
+            str += payload;
         });
         response.on('end', function(){
-            logger.info(context + ': Acknowledgement received' + str);
+            logger.info(context + ': Acknowledgement received ' + str);
         });
     });
 
-    req.write(JSON.stringify(data));
+    req.write(JSON.stringify(payload));
     req.on('error', function(e){
-        logger.error(context + ': Problem occured while requesting' + e)
+        logger.error(context + ': Problem occured while requesting ' + e)
     });
     req.end();
 }
 
+// prepare the mapping for the bank
+prepareBankServerMap();
+
 /**
  * Invoking the task function 
- * tp perform update operation on the server
+ * to perform update operation on the server
  */
 task();
+
+
+

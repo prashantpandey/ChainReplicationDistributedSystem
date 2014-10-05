@@ -60,7 +60,7 @@ var accDetails = {};
  * @reqId: request Id to be checked
  */
 function checkRequest(reqId) {
-    if (reqId  in historyReq) {
+    if (reqId in historyReq) {
         return true;
     }
     else {
@@ -107,7 +107,7 @@ function checkMaxServiceLimit() {
 function applyUpdate(payload) {
     var reqId = payload.transaction.reqId;
     if(!checkRequest(reqId)) {
-        historyReq = {'reqId' : payload};
+        historyReq[reqId] = payload;
         accDetails[payload.transaction.accNum] = payload.result.currBal;
         return true;
     }
@@ -127,7 +127,7 @@ function applyUpdate(payload) {
  */
 function appendSentReq(payload) {
     var reqId = payload.transaction.reqId;
-    sentReq = {'reqId' : payload};
+    sentReq[reqId] = payload;
 }
 
 /**
@@ -142,7 +142,7 @@ function getBalance(accNum) {
 /**
  * perform the transaction on the account
  *
- * @accNum: account number on which to perform the update
+  * @accNum: account number on which to perform the update
  * @amount: amount to be used in transaction
  * @oper: operation type
  */
@@ -209,6 +209,7 @@ function send(data, dest, context) {
 function sync(payload) {
     // TODO: Implement the transfer logic to be implement at the tail server
     logger.info('Processing sync request: ' + payload);
+    var reqId = payload.query.transaction.reqId
     applyUpdate(payload);
    
     if(successorType == "Tail") {
@@ -223,7 +224,12 @@ function sync(payload) {
         appendSentReq(payload);
         send(payload, predecessor, 'sendSyncReq');
     }
+    var response = {
+        'reqId' : reqId,
+        'outcome' : Outcome.Processed
+    };
     logger.info('Sync request processed');
+    return response;
 }
 
 /**
@@ -234,14 +240,14 @@ function sync(payload) {
  * @payload: payload received in the query request
  */
 function query(payload) {
-    logger.info('Processing the query request: ' + payload);
-    var reqId = payload.transaction.reqId;
-    var accNum = payload.transaction.accNum;
+    logger.info('Processing the query request: ' + JSON.stringify(payload));
+    var reqId = payload.query.transaction.reqId
+    var accNum = payload.query.transaction.accNum;
     var bal = getBalance(accNum);
     if(bal == undefined) {
         logger.error('Account number not found' + accNum);
         logger.info('Creating a new account with the given account number');
-        accDetails = {accNum : 0};
+        accDetails[accNum] = 0;
         bal = 0;
     }
     var response = {
@@ -249,12 +255,8 @@ function query(payload) {
         'outcome' : Outcome.Processed,
         'currBal' : bal
     };
-    var dest = {
-        'hostname' : payload.client.hostname,
-        'port' : payload.client.port
-    };
-    send(response, dest, 'queryResponse');
     logger.info('Query request processed');
+    return response;
 }
 
 /**
@@ -267,26 +269,24 @@ function query(payload) {
  */
 function update(payload) {
     logger.info('Processing the update request ' + payload);
-    var reqId = payload.transaction.reqId;
-    var accNum = payload.transaction.accNum;
-    var amount = payload.transaction.amount;
-    var oper = payload.transaction.operation;
+    var reqId = payload.query.transaction.reqId;
+    var accNum = payload.query.transaction.accNum;
+    var amount = payload.query.transaction.amount;
+    var oper = payload.query.transaction.operation;
 
     var outcome = performUpdate(accNum, amount, oper);
     var currBal = getBalance(accNum);
     logger.info('Transaction Outcome: ' + outcome + 'Current Bal: ' + currBal);
     
-    payload = {
-        'result' : {
-            'reqId' : reqId,
-            'outcome' : outcome,
-            'currBal' : currBal
-        }
+    var response = {
+        'reqId' : reqId,
+        'outcome' : outcome,
+        'currBal' : currBal
     };
     appendSentReq(payload);
-    historyReq = {'reqId' : payload};
-    send(payload, predecessor, 'sendSyncReq');
+    historyReq[reqId] = payload;
     logger.info('Processed the update request');
+    return response;
 }
 
 /**
@@ -296,6 +296,7 @@ function update(payload) {
  * @serverId: server Id of predecessor
  */
 function handleAck(payload) {
+    logger.info('Processing the acknowledgement ' + payload);
     var reqId = payload.reqId;
     var serverId = payload.serverId;
 
@@ -305,6 +306,12 @@ function handleAck(payload) {
         }
     }
     send(payload, predecessor, 'sendSyncReq');
+    var response = {
+        'reqId' : reqId,
+        'outcome' : Outcome.Processed
+    };
+    logger.info('Processed the acknowledgement');
+    return response;
 }
 
 /**
@@ -314,10 +321,16 @@ function checkLogs(payload) {
     var reqId = payload.reqId;
     var response = '';
     if(checkRequest(reqId)) {
-        res = {'response' : 'true'};
+        res = {
+            'reqId' : reqId,
+            'response' : 'true'
+        };
     }
     else {
-        res = {'response' : 'false'};
+        res = {
+            'reqId' : reqId,
+            'response' : 'false'
+        };
     }
     var dest = {
         'hostname' : payload.client.hostname,
@@ -341,24 +354,32 @@ var server = http.createServer(
         // 4. acknowledgement
         // 5. checkLogs
         
+        logger.info('Request received from client');
+        var res = {};
         if(request.method == 'POST') {
-            // if it is a POST request then load the full msg body
             var fullBody ='';
+            
+            // if it is a POST request then load the full msg body
             request.on('data',function(chunk) {
+                logger.info('got data');
                 fullBody += chunk;
-            }); 
-            var payload = '';
-            request.on('end', function() {
-                // parse the msg body to JSON once it is fully received
-                payload = JSON.parse(fullBody);
+            });
 
+            request.on('end', function() {
+                logger.info('got end');
+
+                // parse the msg body to JSON once it is fully received
+                var payload = JSON.parse(fullBody);
+
+                logger.info(payload);
                 // sequester the request based upon the element present
                 // in the message body
+                
                 if(payload.sync) {
                     sync(payload); 
                 }
                 else if(payload.query) {
-                    query(payload);   
+                    res = query(payload);   
                 }
                 else if(payload.update) {
                     update(payload);
@@ -376,10 +397,11 @@ var server = http.createServer(
                 else {
                     logger.info('Unknown request payload: ' + fullBody);
                 }
+                
             });
         }
-        response.write('Hello World...\n from the server..\n');
-        response.end();
+        
+        response.end(JSON.stringify(res));
     }
 );
 server.listen(8000);
