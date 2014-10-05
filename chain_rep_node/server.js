@@ -245,7 +245,7 @@ function query(payload) {
     var accNum = payload.query.transaction.accNum;
     var bal = getBalance(accNum);
     if(bal == undefined) {
-        logger.error('Account number not found' + accNum);
+        logger.error('Account number not found: ' + accNum);
         logger.info('Creating a new account with the given account number');
         accDetails[accNum] = 0;
         bal = 0;
@@ -255,7 +255,7 @@ function query(payload) {
         'outcome' : Outcome.Processed,
         'currBal' : bal
     };
-    logger.info('Query request processed');
+    logger.info('Query request processed: ' + JSON.stringify(response));
     return response;
 }
 
@@ -321,23 +321,19 @@ function checkLogs(payload) {
     var reqId = payload.reqId;
     var response = '';
     if(checkRequest(reqId)) {
-        res = {
+        response = {
             'reqId' : reqId,
             'response' : 'true'
         };
     }
     else {
-        res = {
+        response = {
             'reqId' : reqId,
             'response' : 'false'
         };
     }
-    var dest = {
-        'hostname' : payload.client.hostname,
-        'port' : payload.client.port
-    };
-    send(response, dest, 'checkLogsResponse');
     logger.info('Check logs request processed');
+    return response;
 }
 
 /*
@@ -355,9 +351,9 @@ var server = http.createServer(
         // 5. checkLogs
         
         logger.info('Request received from client');
-        var res = {};
         if(request.method == 'POST') {
             var fullBody ='';
+            var res = {};
             
             // if it is a POST request then load the full msg body
             request.on('data',function(chunk) {
@@ -376,32 +372,31 @@ var server = http.createServer(
                 // in the message body
                 
                 if(payload.sync) {
-                    sync(payload); 
+                    res['result'] = sync(payload); 
                 }
                 else if(payload.query) {
-                    res = query(payload);   
+                    res['result'] = query(payload);   
                 }
                 else if(payload.update) {
-                    update(payload);
+                    res['result'] = update(payload);
                 }
                 else if (payload.failure) {
                     // TODO: Phase 3
                     handleChainFailure(payload);
                 }
                 else if(payload.ack) {
-                    handleAck(payload);
+                    res['result'] = handleAck(payload);
                 }
                 else if(payload.checkLog) {
-                    checklogs(payload)
+                    res['result'] = checklogs(payload)
                 }
                 else {
                     logger.info('Unknown request payload: ' + fullBody);
                 }
-                
+                logger.info('Response: ' + JSON.stringify(res)); 
+                response.end(JSON.stringify(res));
             });
         }
-        
-        response.end(JSON.stringify(res));
     }
 );
 server.listen(8000);
