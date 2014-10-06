@@ -70,7 +70,8 @@ function loadServerConfig(bId, sId) {
     serverType = details.type
     serverLifeTime = details.serverLifeTime;
     serverStartupDelay = details.serverStartupDelay;
-    successor = details.sucessor;
+    logger.info('ServerId: '+ serverId + ' Successor: ' + JSON.stringify(details.successor) + ' Predecessor: ' + JSON.stringify(details.predecessor));
+    successor = details.successor;
     predecessor = details.predecessor;
 }
 
@@ -198,20 +199,19 @@ function performUpdate(accNum, amount, oper) {
  * @context: context info (who's invoking the function)
  */
 function send(data, dest, context) {
+    logger.info(serverId + ' ' + JSON.stringify(dest) + ' ' + context);
     var options =
     {
         'host': dest.hostname,
         'port': dest.port,
         'path': '/',
         'method': 'POST',
-        'headers' : { 'Content-Type' : 'application/json',
-                       'Content-Length' : 'chunked'
-                    }
+        'headers' : { 'Content-Type' : 'application/json'}
     };
 
     var req = http.request(options, function(response) {
         var str = '';
-        response.on('data', function(data){
+        response.on('data', function(data) {
             str += data;
         });
         response.on('end', function(){
@@ -238,7 +238,7 @@ function sync(payload) {
     var reqId = payload.reqId;
     applyUpdate(payload);
    
-    if(serverType == "Tail") {
+    if(serverType == 2) {
         var dest = {
             'hostname' : payload.payload.update.hostname,
             'port' : payload.payload.update.port
@@ -248,19 +248,23 @@ function sync(payload) {
             'outcome' : payload.outcome,
             'currBal' : payload.currBal
         };
+
         send(response, dest, 'sendResponse');
+        /*
         var ack = {
             'ack' : 1,
             'reqId' : reqId,
             'serverId' : serverId
         };
         send(ack, predecessor, 'sendAck');
+        */
     }
     else {
         appendSentReq(payload);
         send(payload, successor, 'sendSyncReq');
     }
     var response = {
+        'genack' : 1,
         'reqId' : reqId,
         'outcome' : Outcome.Processed
     };
@@ -344,8 +348,9 @@ function handleAck(payload) {
             sentReq.remove(req);
         }
     }
-    send(payload, predecessor, 'sendSyncReq');
+    send(payload, predecessor, 'ack');
     var response = {
+        'genack' : 1,
         'reqId' : reqId,
         'outcome' : Outcome.Processed
     };
@@ -418,11 +423,11 @@ var server = http.createServer(
                     res['result'] = sync(payload); 
                 }
                 else if(payload.query) {
-                    res['result'] = query(payload);   
+                    res = query(payload);   
                 }
                 else if(payload.update) {
                     syncRes = update(payload);
-                    sync(syncRes, successor, 'sendSyncReq');
+                    send(syncRes, successor, 'sendSyncReq');
                     res['result'] = Outcome.InTransit;
                 }
                 else if (payload.failure) {
@@ -433,10 +438,10 @@ var server = http.createServer(
                     res['result'] = handleAck(payload);
                 }
                 else if(payload.checkLog) {
-                    res['result'] = checklogs(payload)
+                    res = checklogs(payload)
                 }
-                else {
-                    logger.info('Unknown request payload: ' + fullBody);
+                else if (payload.genack){
+                    logger.info('Gen request payload: ' + fullBody);
                 }
                 logger.info('Response: ' + JSON.stringify(res)); 
                 response.end(JSON.stringify(res));

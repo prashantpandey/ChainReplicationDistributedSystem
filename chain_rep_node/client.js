@@ -66,9 +66,17 @@ function task() {
                 var payload = payloads[j].payload;
 	        var bankId = payload.bankId;
         	var opr = payload.operation;
+                var reqId = payload.reqId;
                 var  data = {};
                 var dest = {};
-        
+        /*
+                if(reqId > 1) {
+                    for(;!responses[reqId];) {
+                        setTimeout(function(){}, 10000);
+                        logger.info('waiting for response from previous query');
+                    }
+                }
+        */
 	        if(opr == Operation.GetBalance) {
                     data['query'] = payload;
         	    dest = bankServerMap[bankId].tailServer;
@@ -81,6 +89,7 @@ function task() {
                 logger.info('Performing ' + opr + ' on bank: ' + bankId);
                 logger.info('Destination info: ' + JSON.stringify(dest));
         	send(data, dest, 'client');   
+                
             }
         }
     }
@@ -113,10 +122,12 @@ function send(payload, dest, context) {
             str += payload;
         });
         response.on('end', function(){
-            logger.info(context + ': Acknowledgement received ' + JSON.stringify(str));
+            var resBody = JSON.parse(str);
+            logger.info('Received data: ' + str);
             if(payload.query) {
                 logger.info('Adding response to db');
-                responses[str.reqId] = str;
+                responses[resBody.reqId] = resBody;
+                logger.info('Responses: ' + JSON.stringify(responses));
             }
         });
     });
@@ -137,15 +148,18 @@ var server = http.createServer(function(request, response) {
     
     logger.info('Response received from Server');
     if(request.method == 'POST') {
-        var str = {};
+        var str = '';
         
-        response.on('data', function(chunk) {
+        request.on('data', function(chunk) {
             str += chunk;
         });
 
         request.on('end', function() {
+            var resBody = JSON.parse(str);
+            logger.info('Received data: ' + str);
             logger.info('Adding response to db');
-            responses[str.reqId] = str;
+            responses[resBody.reqId] = resBody;
+            logger.info('Responses: ' + JSON.stringify(responses));
         });
     }
 
