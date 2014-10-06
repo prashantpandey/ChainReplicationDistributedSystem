@@ -70,7 +70,7 @@ function loadServerConfig(bId, sId) {
     serverType = details.type
     serverLifeTime = details.serverLifeTime;
     serverStartupDelay = details.serverStartupDelay;
-    logger.info('ServerId: '+ serverId + ' Successor: ' + JSON.stringify(details.successor) + ' Predecessor: ' + JSON.stringify(details.predecessor));
+    // logger.info('ServerId: '+ serverId + ' Successor: ' + JSON.stringify(details.successor) + ' Predecessor: ' + JSON.stringify(details.predecessor));
     successor = details.successor;
     predecessor = details.predecessor;
 }
@@ -130,14 +130,16 @@ function checkMaxServiceLimit() {
  */
 function applyUpdate(payload) {
     var reqId = payload.reqId;
-    logger.info('ServerId: '+ serverId + ' ' + JSON.stringify(historyReq) + ' ' + reqId);
+    // logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(historyReq) + ' RequestId: ' + reqId);
+    // logger.info('ServerId: '+ serverId + ' payload for sync req: ' + JSON.stringify(payload));
+    var accNum = payload.payload.update.accNum;
     if(!checkRequest(reqId)) {
         historyReq[reqId] = payload.payload;
-        accDetails[payload.payload.accNum] = payload.currBal;
+        accDetails[accNum] = payload.currBal;
         return true;
     }
     else {
-        logger.error("Request Inconsistent with history" + payload);
+        logger.error("Request Inconsistent with history" + JSON.stringify(payload));
         return false;
     }
 }
@@ -172,7 +174,7 @@ function getBalance(accNum) {
  * @oper: operation type
  */
 function performUpdate(accNum, amount, oper) {
-    logger.info('ServerId: '+ serverId + ' Performing update opr ' + accNum + ' ' + amount + ' ' + oper +' ' + accDetails[accNum] + ' ' + getBalance(accNum));
+    // logger.info('ServerId: '+ serverId + ' Performing update opr ' + accNum + ' ' + amount + ' ' + oper +' ' + accDetails[accNum] + ' ' + getBalance(accNum));
     logger.info('ServerId: '+ serverId + ' Account info: ' + JSON.stringify(accDetails));
     switch(oper) {
         case Operation.Deposit:
@@ -268,6 +270,7 @@ function sync(payload) {
         'outcome' : Outcome.Processed
     };
     logger.info('ServerId: '+ serverId + ' Sync request processed');
+    logger.info('ServerId: '+ serverId + ' acc details: ' + JSON.stringify(accDetails));
     return response;
 }
 
@@ -289,7 +292,7 @@ function query(payload) {
         accDetails[accNum] = 0;
         bal = 0;
     }
-    logger.info('ServerId: '+ serverId + ' Account info: ' + JSON.stringify(accDetails));
+    // logger.info('ServerId: '+ serverId + ' Account info: ' + JSON.stringify(accDetails));
     var response = {
         'reqId' : reqId,
         'outcome' : Outcome.Processed,
@@ -347,9 +350,8 @@ function update(payload) {
  * @serverId: server Id of predecessor
  */
 function handleAck(payload) {
-    logger.info('ServerId: '+ serverId + ' Processing the acknowledgement ' + payload);
+    logger.info('ServerId: '+ serverId + ' Processing the acknowledgement ' + JSON.stringify(payload));
     var reqId = payload.reqId;
-    var serverId = payload.serverId;
 
     for(req in sentReq) {
         if(reqId < req.reqId) {
