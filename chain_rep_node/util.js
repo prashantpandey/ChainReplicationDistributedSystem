@@ -6,7 +6,7 @@ var exec = require('child_process').exec
 var config = require('./config.json');
 
 /* Custom includes */
-var logger = require('./Logger.js');
+var logger = require('./logger.js');
 
 /* Global declarations */
 var bankServers = [];
@@ -35,13 +35,13 @@ function parseConfig() {
 
 exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
     parseConfig();
-    logger.info('In parse server info function');
-//    logger.info(JSON.stringify(bankServers));
+    // logger.info('In parse server info function. bankId: ' + bankId + ' serverId: ' + serverId);
+    // logger.info(JSON.stringify(bankServers));
     var succ = {};
     var pred = {};
     var serverDict = {};
     var flag = 0;
-    for (var i = 0; i < bankServers.length; i++){
+    for (var i = 0; i < bankServers.length; i++) {
 	if (bankServers[i]['bankId'] == bankId) {
 	    serversList = bankServers[i]['servers'];
 	    servListLen = serversList.length;
@@ -50,6 +50,7 @@ exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
 		if(serversList[j].serverId == serverId) {
 		    serverDict['hostname'] = serversList[j].hostname;
 		    serverDict['port'] = serversList[j].port;
+		    serverDict['type'] = serversList[j].type;
 		    serverDict['startupDelay'] = serversList[j].startupDelay;
 		    serverDict['serverLifeTime'] = serversList[j].serverLifeTime;
 		    serverDict['successor'] = findSuccPredServer(bankId, serverId, 1); 
@@ -63,7 +64,7 @@ exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
 	}
     }
     if(flag) {
-	logger.info(JSON.stringify(serverDict));
+	// logger.info(JSON.stringify(serverDict));
 	return serverDict;
     }
 }
@@ -71,6 +72,7 @@ exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
 /**
  * generic function to find the successor and predecessor of a bank's
  * server.
+ *
  * @bankId : bank Id
  * @serverId : server Id for which succ/pred has to be found
  * succFlag : 1 means successor has to be found, 0 means predecessor
@@ -78,15 +80,17 @@ exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
 function findSuccPredServer(bankId, serverId, succFlag) {
     parseConfig();
 
-    logger.info('In sucessor and predecessor function');
+    // logger.info('In sucessor and predecessor function');
     var serverList;
     var servListLen;
 
+    /*
     if (succFlag)
-	logger.info('Computing successor of serverId :' + serverId + 'for bankId:' + bankId );
+        logger.info('Computing successor of serverId :' + serverId + 'for bankId:' + bankId );
     else
-	logger.info('Computing predecessor of serverId :' + serverId + 'for bankId:' + bankId );
-    
+        logger.info('Computing predecessor of serverId :' + serverId + 'for bankId:' + bankId );
+   */
+
     for(var i = 0; i < bankServers.length; i++) {
 	if(bankServers[i]['bankId'] == bankId) {
 	    serverList = bankServers[i]['servers'];
@@ -107,7 +111,7 @@ function findSuccPredServer(bankId, serverId, succFlag) {
 	    break;
 	}
     }
-    logger.info('Exiting predecessors and successor functions');
+    // logger.info('Exiting predecessors and successor functions');
 }
 
 //parseServerInfo(100, "104");

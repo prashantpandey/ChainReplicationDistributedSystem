@@ -12,40 +12,44 @@
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
-            "port"  : 8081
+            "port"  : 8101
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8000
+            "port" : 8104
         },
         "servers" : [
             {
-                "serverId" : "101",
+                "serverId" : 101,
                 "hostname" : "localhost",
-                "port" : "8101",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8101,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 0
             },
             {
-                "serverId" : "102",
+                "serverId" : 102,
                 "hostname" : "localhost",
-                "port" : "8102",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8102,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "103",
+                "serverId" : 103,
                 "hostname" : "localhost",
-                "port" : "8103",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8103,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "104",
+                "serverId" : 104,
                 "hostname" : "localhost",
-                "port" : "8104",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8104,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 2
             } 
         ],
         "clients" : [
@@ -70,40 +74,44 @@
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
-            "port"  :   8085
+            "port"  :   8201
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8088
+            "port" : 8204
         },
         "servers" : [
             {
-                "serverId" : "201",
+                "serverId" : 201,
                 "hostname" : "localhost",
-                "port" : "8201",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8201,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 0
             },
             {
-                "serverId" : "202",
+                "serverId" : 202,
                 "hostname" : "localhost",
-                "port" : "8202",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8202,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "203",
+                "serverId" : 203,
                 "hostname" : "localhost",
-                "port" : "8203",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8203,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "204",
+                "serverId" : 204,
                 "hostname" : "localhost",
-                "port" : "8204",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8204,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 2
             } 
         ],
         "clients" : [
@@ -128,40 +136,44 @@
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
-            "port"  :   8089
+            "port"  :   8301
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8092
+            "port" : 8304
         },
         "servers" : [
             {
-                "serverId" : "301",
+                "serverId" : 301,
                 "hostname" : "localhost",
-                "port" : "8301",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8301,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 0
             },
             {
-                "serverId" : "302",
+                "serverId" : 302,
                 "hostname" : "localhost",
-                "port" : "8302",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8302,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "303",
+                "serverId" : 303,
                 "hostname" : "localhost",
-                "port" : "8303",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8303,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 1
             },
             {
-                "serverId" : "304",
+                "serverId" : 304,
                 "hostname" : "localhost",
-                "port" : "8304",
-                "startupDelay" : "5",
-                "serverLifeTime" : "UNBOUND"
+                "port" : 8304,
+                "startupDelay" : 5,
+                "serverLifeTime" : "UNBOUND",
+                "type" : 2 
             } 
         ],
         "clients" : [
@@ -303,7 +315,3 @@
         }
     ]
 }
-
-
-    
-

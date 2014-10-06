@@ -24,6 +24,9 @@ var Operation = {
 
 
 var bankServerMap = {};
+var responses = {};
+var clientId = '';
+var port = '';
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -40,9 +43,9 @@ function prepareBankServerMap() {
         };
         var id = config.bank[i].bankId;
         bankServerMap[id] = serverDetails;
-        logger.info('Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
+        // logger.info('Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
     }
-    logger.info('Added ' + i + ' entries to the bank details');
+    // logger.info('Added ' + i + ' entries to the bank details');
 }
 
 /**
@@ -53,25 +56,33 @@ function prepareBankServerMap() {
  */
 function task() { 
     logger.info('Starting to perform query/update operations');
-    var payloads = reqData.data;
-    for( var i = 0; i < payloads.length; i++) {
-	var bankId = payloads[i].payload.transaction.bankId;
-	var opr = payloads[i].payload.transaction.operation;
-        var  data = {};
-        var dest = {};
+    var data = reqData.data;
+    // logger.info('Data: ' + JSON.stringify(data));
+    for( var i = 0; i < data.length; i++) {
+        if(data[i].clientId == clientId) {
+            var payloads = data[i].payloads;
+            var len = data[i].payloads.length;
+            for(var j = 0; j < len; j++) {
+                var payload = payloads[j].payload;
+	        var bankId = payload.bankId;
+        	var opr = payload.operation;
+                var  data = {};
+                var dest = {};
         
-	if(opr == Operation.GetBalance) {
-            data['query'] = payloads[i].payload;
-	    dest = bankServerMap[bankId].tailServer;
-	}
-	else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
-            data['update'] = payloads[i].payload;
-	    dest = bankServerMap[bankId].headServer;
-	}
+	        if(opr == Operation.GetBalance) {
+                    data['query'] = payload;
+        	    dest = bankServerMap[bankId].tailServer;
+	        }
+        	else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
+                    data['update'] = payload;
+        	    dest = bankServerMap[bankId].headServer;
+	        }
 	
-        logger.info('Performing ' + opr + ' on bank: ' + bankId);
-        logger.info('Destination info: ' + JSON.stringify(dest));
-	send(data, dest, 'client');   
+                logger.info('Performing ' + opr + ' on bank: ' + bankId);
+                logger.info('Destination info: ' + JSON.stringify(dest));
+        	send(data, dest, 'client');   
+            }
+        }
     }
 }
 
@@ -85,7 +96,6 @@ function task() {
  */
 function send(payload, dest, context) {
     logger.info('payload: ' + JSON.stringify(payload));
-    logger.info('dest: ' + JSON.stringify(dest));
 
     var options =
     {
@@ -104,6 +114,10 @@ function send(payload, dest, context) {
         });
         response.on('end', function(){
             logger.info(context + ': Acknowledgement received ' + JSON.stringify(str));
+            if(payload.query) {
+                logger.info('Adding response to db');
+                responses[str.reqId] = str;
+            }
         });
     });
 
@@ -113,6 +127,35 @@ function send(payload, dest, context) {
     });
     req.end();
 }
+
+/**
+ * Server to receive responses from the tail
+ *
+ */
+var server = http.createServer(function(request, response) {
+    response.writeHead(200, {'Content-Type' : 'text/plain'});
+    
+    logger.info('Response received from Server');
+    if(request.method == 'POST') {
+        var str = {};
+        
+        response.on('data', function(chunk) {
+            str += chunk;
+        });
+
+        request.on('end', function() {
+            logger.info('Adding response to db');
+            responses[str.reqId] = str;
+        });
+    }
+
+});
+
+var arg = process.argv.splice(2);
+clientId = arg[0];
+port = arg[1];
+server.listen(port);
+logger.info('Client server running at http://127.0.0.1:' + port);
 
 // prepare the mapping for the bank
 prepareBankServerMap();

@@ -8,7 +8,7 @@ var syncMsgContext = require('./SyncMsgContext.js');
 var reply = require('./Reply.js');
 var request = require('./Request.js');
 var logger = require('./logger.js');
-var logger = require('./util.js');
+var util = require('./util.js');
 
 /* Config File include */
 var config = require('./config.json');
@@ -22,7 +22,8 @@ var fs = require('fs');
 var Outcome = {
     Processed: 0,
     InconsistentWithHistory: 1,
-    InsufficientFunds: 2
+    InsufficientFunds: 2,
+    InTransit: 3
 }
 
 var Operation = {
@@ -59,11 +60,14 @@ var accDetails = {};
 
 /* General functions */
 
-function loadServerConfig() {
-    var arg = process.argv.splice(2);
-    var details = util.findServerInfo(arg[0], argv[1]);
+function loadServerConfig(bId, sId) {
+    var details = util.parseServerInfo(bId, sId);
+    // logger.info('Fetched details using util: ' + JSON.stringify(details));
+    bankId = bId;
+    serverId = sId;
     hostname = details.hostname;
     port = details.port;
+    serverType = details.type
     serverLifeTime = details.serverLifeTime;
     serverStartupDelay = details.serverStartupDelay;
     successor = details.sucessor;
@@ -76,12 +80,15 @@ function loadServerConfig() {
  * @reqId: request Id to be checked
  */
 function checkRequest(reqId) {
+    return historyReq[reqId];
+    /*
     if (reqId in historyReq) {
         return true;
     }
     else {
         return false;
     }
+    */
 }
 
 // TODO: Phase 3
@@ -121,10 +128,11 @@ function checkMaxServiceLimit() {
  * @payload: received payload
  */
 function applyUpdate(payload) {
-    var reqId = payload.transaction.reqId;
+    var reqId = payload.reqId;
+    logger.info(JSON.stringify(historyReq) + ' ' + reqId);
     if(!checkRequest(reqId)) {
-        historyReq[reqId] = payload;
-        accDetails[payload.transaction.accNum] = payload.result.currBal;
+        historyReq[reqId] = payload.payload;
+        accDetails[payload.payload.accNum] = payload.currBal;
         return true;
     }
     else {
@@ -142,8 +150,8 @@ function applyUpdate(payload) {
  * @payload: payload to be appended to the sentReq
  */
 function appendSentReq(payload) {
-    var reqId = payload.transaction.reqId;
-    sentReq[reqId] = payload;
+    var reqId = payload.reqId;
+    sentReq[reqId] = payload.payload;
 }
 
 /**
@@ -158,7 +166,7 @@ function getBalance(accNum) {
 /**
  * perform the transaction on the account
  *
-  * @accNum: account number on which to perform the update
+ * @accNum: account number on which to perform the update
  * @amount: amount to be used in transaction
  * @oper: operation type
  */
@@ -175,8 +183,9 @@ function performUpdate(accNum, amount, oper) {
                 accDetails[accNum] = accDetails[accNum] - amount;
                 return Outcome.Processed;
             }
-        default:
+        default: 
             logger.error('Operation not permitted' + oper);
+            return Outcome.InconsistentWithHistory;
     }
 }
 
@@ -223,22 +232,33 @@ function send(data, dest, context) {
  * @payload: payload recieved from the sync request
  */
 function sync(payload) {
+    logger.info('In Server: ' + serverId);
     // TODO: Implement the transfer logic to be implement at the tail server
-    logger.info('Processing sync request: ' + payload);
-    var reqId = payload.query.transaction.reqId
+    logger.info('Processing sync request: ' + JSON.stringify(payload));
+    var reqId = payload.reqId;
     applyUpdate(payload);
    
-    if(successorType == "Tail") {
-        send(payload.result, payload.client, 'sendResponse');
+    if(serverType == "Tail") {
+        var dest = {
+            'hostname' : payload.payload.update.hostname,
+            'port' : payload.payload.update.port
+        };
+        var response = {
+            'reqId' : payload.reqId,
+            'outcome' : payload.outcome,
+            'currBal' : payload.currBal
+        };
+        send(response, dest, 'sendResponse');
         var ack = {
+            'ack' : 1,
             'reqId' : reqId,
             'serverId' : serverId
         };
-        send(ack, successor, 'sendAck');
+        send(ack, predecessor, 'sendAck');
     }
     else {
         appendSentReq(payload);
-        send(payload, predecessor, 'sendSyncReq');
+        send(payload, successor, 'sendSyncReq');
     }
     var response = {
         'reqId' : reqId,
@@ -257,8 +277,8 @@ function sync(payload) {
  */
 function query(payload) {
     logger.info('Processing the query request: ' + JSON.stringify(payload));
-    var reqId = payload.query.transaction.reqId
-    var accNum = payload.query.transaction.accNum;
+    var reqId = payload.query.reqId
+    var accNum = payload.query.accNum;
     var bal = getBalance(accNum);
     if(bal == undefined) {
         logger.error('Account number not found: ' + accNum);
@@ -284,21 +304,24 @@ function query(payload) {
  * @payload: payload received in the upadate request
  */
 function update(payload) {
-    logger.info('Processing the update request ' + payload);
-    var reqId = payload.query.transaction.reqId;
-    var accNum = payload.query.transaction.accNum;
-    var amount = payload.query.transaction.amount;
-    var oper = payload.query.transaction.operation;
+    logger.info('Processing the update request ' + JSON.stringify(payload));
+    var reqId = payload.update.reqId;
+    var accNum = payload.update.accNum;
+    var amount = payload.update.amount;
+    var oper = payload.update.operation;
 
     var outcome = performUpdate(accNum, amount, oper);
     var currBal = getBalance(accNum);
     logger.info('Transaction Outcome: ' + outcome + 'Current Bal: ' + currBal);
     
     var response = {
+        'sync' : 1,
         'reqId' : reqId,
         'outcome' : outcome,
-        'currBal' : currBal
+        'currBal' : currBal,
+        'payload' : payload
     };
+
     appendSentReq(payload);
     historyReq[reqId] = payload;
     logger.info('Processed the update request');
@@ -352,7 +375,9 @@ function checkLogs(payload) {
     return response;
 }
 
-loadServerConfig();
+var arg = process.argv.splice(2);
+logger.info('Retrieved cmd line args: ' + arg[0] + ' ' + arg[1]);
+loadServerConfig(arg[0], arg[1]);
 
 /*
  * create the server and start it
@@ -374,13 +399,13 @@ var server = http.createServer(
             var res = {};
             
             // if it is a POST request then load the full msg body
-            request.on('data',function(chunk) {
-                logger.info('got data');
+            request.on('data', function(chunk) {
+                // logger.info('got data');
                 fullBody += chunk;
             });
 
             request.on('end', function() {
-                logger.info('got end');
+                // logger.info('got end');
 
                 // parse the msg body to JSON once it is fully received
                 var payload = JSON.parse(fullBody);
@@ -396,7 +421,9 @@ var server = http.createServer(
                     res['result'] = query(payload);   
                 }
                 else if(payload.update) {
-                    res['result'] = update(payload);
+                    syncRes = update(payload);
+                    sync(syncRes, successor, 'sendSyncReq');
+                    res['result'] = Outcome.InTransit;
                 }
                 else if (payload.failure) {
                     // TODO: Phase 3
@@ -418,7 +445,7 @@ var server = http.createServer(
     }
 );
 server.listen(port);
-logger.info('Server running at ' + hostname + ':' + port);
+logger.info('Server running at http://127.0.0.1:' + port);
 
 
 // TODO: Phase 3

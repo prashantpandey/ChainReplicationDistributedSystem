@@ -9,8 +9,8 @@
 var syncMsgContext = require('./SyncMsgContext.js');
 var reply = require('./Reply.js');
 var request = require('./Request.js');
-var logger = require('./Logger.js');
-var util = require('./Util.js');
+var logger = require('./logger.js');
+var util = require('./util.js');
 
 /* Config File include */
 var config = require('./server_config.json');
