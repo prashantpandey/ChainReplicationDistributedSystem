@@ -248,16 +248,14 @@ function sync(payload) {
             'outcome' : payload.outcome,
             'currBal' : payload.currBal
         };
-
         send(response, dest, 'sendResponse');
-        /*
+        
         var ack = {
             'ack' : 1,
             'reqId' : reqId,
             'serverId' : serverId
         };
-        send(ack, predecessor, 'sendAck');
-        */
+        send(ack, predecessor, 'sendAck'); 
     }
     else {
         appendSentReq(payload);
@@ -348,7 +346,9 @@ function handleAck(payload) {
             sentReq.remove(req);
         }
     }
-    send(payload, predecessor, 'ack');
+    if(serverType != 0) {
+        send(payload, predecessor, 'ack');
+    }
     var response = {
         'genack' : 1,
         'reqId' : reqId,
