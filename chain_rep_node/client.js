@@ -123,7 +123,7 @@ function send(payload, dest, context) {
         });
         response.on('end', function(){
             var resBody = JSON.parse(str);
-            logger.info('Received data: ' + str);
+            // logger.info('Received data: ' + str);
             if(payload.query) {
                 logger.info('Adding response to db');
                 responses[resBody.reqId] = resBody;
@@ -156,7 +156,7 @@ var server = http.createServer(function(request, response) {
 
         request.on('end', function() {
             var resBody = JSON.parse(str);
-            logger.info('Received data: ' + str);
+            // logger.info('Received data: ' + str);
             logger.info('Adding response to db');
             responses[resBody.reqId] = resBody;
             logger.info('Responses: ' + JSON.stringify(responses));

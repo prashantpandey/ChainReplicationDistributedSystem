@@ -130,7 +130,7 @@ function checkMaxServiceLimit() {
  */
 function applyUpdate(payload) {
     var reqId = payload.reqId;
-    logger.info(JSON.stringify(historyReq) + ' ' + reqId);
+    logger.info('ServerId: '+ serverId + JSON.stringify(historyReq) + ' ' + reqId);
     if(!checkRequest(reqId)) {
         historyReq[reqId] = payload.payload;
         accDetails[payload.payload.accNum] = payload.currBal;
@@ -172,6 +172,8 @@ function getBalance(accNum) {
  * @oper: operation type
  */
 function performUpdate(accNum, amount, oper) {
+    logger.info('ServerId: '+ serverId + 'Performing update opr ' + accNum + ' ' + amount + ' ' + oper +' ' + accDetails[accNum] + ' ' + getBalance(accNum));
+    logger.info('ServerId: '+ serverId + 'Account info: ' + JSON.stringify(accDetails));
     switch(oper) {
         case Operation.Deposit:
             accDetails[accNum] = accDetails[accNum] + amount;
@@ -232,9 +234,8 @@ function send(data, dest, context) {
  * @payload: payload recieved from the sync request
  */
 function sync(payload) {
-    logger.info('In Server: ' + serverId);
     // TODO: Implement the transfer logic to be implement at the tail server
-    logger.info('Processing sync request: ' + JSON.stringify(payload));
+    logger.info('ServerId: '+ serverId + 'Processing sync request: ' + JSON.stringify(payload));
     var reqId = payload.reqId;
     applyUpdate(payload);
    
@@ -266,7 +267,7 @@ function sync(payload) {
         'reqId' : reqId,
         'outcome' : Outcome.Processed
     };
-    logger.info('Sync request processed');
+    logger.info('ServerId: '+ serverId + 'Sync request processed');
     return response;
 }
 
@@ -278,22 +279,23 @@ function sync(payload) {
  * @payload: payload received in the query request
  */
 function query(payload) {
-    logger.info('Processing the query request: ' + JSON.stringify(payload));
+    logger.info('ServerId: '+ serverId + 'Processing the query request: ' + JSON.stringify(payload));
     var reqId = payload.query.reqId
     var accNum = payload.query.accNum;
     var bal = getBalance(accNum);
     if(bal == undefined) {
-        logger.error('Account number not found: ' + accNum);
-        logger.info('Creating a new account with the given account number');
+        logger.error('ServerId: '+ serverId + 'Account number not found: ' + accNum);
+        logger.info('ServerId: '+ serverId + 'Creating a new account with the given account number');
         accDetails[accNum] = 0;
         bal = 0;
     }
+    logger.info('ServerId: '+ serverId + 'Account info: ' + JSON.stringify(accDetails));
     var response = {
         'reqId' : reqId,
         'outcome' : Outcome.Processed,
         'currBal' : bal
     };
-    logger.info('Query request processed: ' + JSON.stringify(response));
+    logger.info('ServerId: '+ serverId + 'Query request processed: ' + JSON.stringify(response));
     return response;
 }
 
@@ -306,15 +308,23 @@ function query(payload) {
  * @payload: payload received in the upadate request
  */
 function update(payload) {
-    logger.info('Processing the update request ' + JSON.stringify(payload));
+    logger.info('ServerId: '+ serverId + 'Processing the update request ' + JSON.stringify(payload));
     var reqId = payload.update.reqId;
     var accNum = payload.update.accNum;
     var amount = payload.update.amount;
     var oper = payload.update.operation;
-
-    var outcome = performUpdate(accNum, amount, oper);
     var currBal = getBalance(accNum);
-    logger.info('Transaction Outcome: ' + outcome + 'Current Bal: ' + currBal);
+    
+    if(currBal == undefined) {
+        logger.error('ServerId: '+ serverId + 'Account number not found: ' + accNum);
+        logger.info('ServerId: '+ serverId + 'Creating a new account with the given account number');
+        accDetails[accNum] = 0;
+        bal = 0; 
+    }
+    
+    var outcome = performUpdate(accNum, amount, oper);
+    currBal = getBalance(accNum);
+    logger.info('ServerId: '+ serverId + 'Transaction Outcome: ' + outcome + 'Current Bal: ' + currBal);
     
     var response = {
         'sync' : 1,
@@ -326,7 +336,7 @@ function update(payload) {
 
     appendSentReq(payload);
     historyReq[reqId] = payload;
-    logger.info('Processed the update request');
+    logger.info('ServerId: '+ serverId + 'Processed the update request');
     return response;
 }
 
@@ -337,7 +347,7 @@ function update(payload) {
  * @serverId: server Id of predecessor
  */
 function handleAck(payload) {
-    logger.info('Processing the acknowledgement ' + payload);
+    logger.info('ServerId: '+ serverId + 'Processing the acknowledgement ' + payload);
     var reqId = payload.reqId;
     var serverId = payload.serverId;
 
@@ -354,7 +364,7 @@ function handleAck(payload) {
         'reqId' : reqId,
         'outcome' : Outcome.Processed
     };
-    logger.info('Processed the acknowledgement');
+    logger.info('ServerId: '+ serverId + 'Processed the acknowledgement');
     return response;
 }
 
@@ -398,7 +408,7 @@ var server = http.createServer(
         // 4. acknowledgement
         // 5. checkLogs
         
-        logger.info('Request received from client');
+        logger.info('ServerId: '+ serverId + 'Request received');
         if(request.method == 'POST') {
             var fullBody ='';
             var res = {};
