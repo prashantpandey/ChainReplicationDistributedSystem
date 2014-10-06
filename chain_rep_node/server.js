@@ -324,7 +324,7 @@ function update(payload) {
     
     var outcome = performUpdate(accNum, amount, oper);
     currBal = getBalance(accNum);
-    logger.info('ServerId: '+ serverId + ' Transaction Outcome: ' + outcome + 'Current Bal: ' + currBal);
+    logger.info('ServerId: '+ serverId + ' Transaction Outcome: ' + outcome + ' Current Bal: ' + currBal);
     
     var response = {
         'sync' : 1,

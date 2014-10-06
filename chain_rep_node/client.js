@@ -58,7 +58,7 @@ function performOperation(payload) {
     var bankId = payload.bankId;
     var opr = payload.operation;
     var reqId = payload.reqId;
-    var  data = {};
+    var data = {};
     var dest = {};
 
     if(opr == Operation.GetBalance) {
@@ -75,73 +75,16 @@ function performOperation(payload) {
 }
 
 /**
- * function by which client requests for bal, withdraw or transfer 
- * to different banks.
- * bal : query requests are sent at the tail server of the bank
- * withdraw/transfer : update requests are sent at the head server of bank
+ *
  */
-function task() { 
-    logger.info('Starting to perform query/update operations');
-    var data = reqData.data;
-    // logger.info('Data: ' + JSON.stringify(data));
-    for( var i = 0; i < data.length; i++) {
-        if(data[i].clientId == clientId) {
-            var payloads = data[i].payloads;
-            var len = data[i].payloads.length;
-            for(var j = 0; j < len; j++) {
-                var payload = payloads[j].payload;
-                var reqId = payload.reqId;
-                logger.info('Processing request: ' + reqId);
-                if(reqId > 1) {
-                    var prevReq = reqId - 1;
-                    var intervalObject = setInterval(function() {
-                        if(responses[prevReq]) {
-                            logger.info('Got the response to previous opr: ' + prevReq);
-                            performOperation(payload);
-                            clearInterval(intervalObject);
-                        }
-                        else {
-                            logger.info('Still waiting for response for previous query: ' + prevReq);
-                            logger.info('Current responses: ' + JSON.stringify(responses));
-                        }
-                    }, 3000);
-                }
-                else  {
-                    performOperation(payload); 
-                }
-                
-                /*
-	        var bankId = payload.bankId;
-        	var opr = payload.operation;
-                var reqId = payload.reqId;
-                var  data = {};
-                var dest = {};
-        
-                if(reqId > 1) {
-                    var prevReqId = reqId - 1;
-                        setTimeout(function() {
-                            
-                        }, 10000);
-                        logger.info('waiting for response from previous query');
-                }
-
-	        if(opr == Operation.GetBalance) {
-                    data['query'] = payload;
-        	    dest = bankServerMap[bankId].tailServer;
-	        }
-        	else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
-                    data['update'] = payload;
-        	    dest = bankServerMap[bankId].headServer;
-	        }
-	
-                logger.info('Performing ' + opr + ' on bank: ' + bankId);
-                logger.info('Destination info: ' + JSON.stringify(dest));
-        	send(data, dest, 'client');   
-                */ 
-            }
-        }
-    }
+function sleep(ms) {        
+    var fiber = Fiber.current;
+    setTimeout(function() {
+        fiber.run();
+    }, ms);
+    Fiber.yield();
 }
+
 
 /**
  * generic function to send request to destination entity
@@ -226,7 +169,63 @@ prepareBankServerMap();
  * Invoking the task function 
  * to perform update operation on the server
  */
-task();
+// task();
 
+/**
+ * function by which client requests for bal, withdraw or transfer 
+ * to different banks.
+ * bal : query requests are sent at the tail server of the bank
+ * withdraw/transfer : update requests are sent at the head server of bank
+ */
+Fiber(function() { 
+    logger.info('Starting to perform query/update operations');
+    var data = reqData.data;
+    // logger.info('Data: ' + JSON.stringify(data));
+    for( var i = 0; i < data.length; i++) {
+        if(data[i].clientId == clientId) {
+            var payloads = data[i].payloads;
+            var len = data[i].payloads.length;
+            for(var j = 0; j < len; j++) {
+                var payload = payloads[j].payload;
+                var reqId = payload.reqId;
+                logger.info('Processing request: ' + reqId);
+                if(reqId > 1) {
+                    var prevReq = reqId - 1;
+                    if(responses[prevReq]) {
+                        performOperation(payload);
+                        continue;
+                    }                    
+                    else {
+                        for(;!responses[prevReq];) {
+                            sleep(3000);
+                        }
+                        performOperation(payload);
+                        continue;
+                    }
+                    /*
+                    if(responses[prevReq]) {
+                        performOperation(payload);
+                        continue;
+                    }
+                    var intervalObject = setInterval(function() {
+                        if(responses[prevReq]) {
+                            logger.info('Got the response to previous opr: ' + prevReq);
+                            performOperation(payload);
+                            clearInterval(intervalObject);
+                        }
+                        else {
+                            logger.info('Still waiting for response for previous query: ' + prevReq);
+                            logger.info('Current responses: ' + JSON.stringify(responses));
+                        }
+                    }, 3000);
+                    */
+                }
+                else  {
+                    performOperation(payload); 
+                }
+            }
+        }
+    }
+}).run();
 
 
