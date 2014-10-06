@@ -8,6 +8,7 @@ var http = require('http');
 var config = require('./config.json');
 var reqData = require('./payload.json');
 var logger = require('./logger.js');
+var Fiber = require('fibers');
 
 var Outcome = {
     Processed: 0,
@@ -49,6 +50,31 @@ function prepareBankServerMap() {
 }
 
 /**
+ * function to perform operation on the bank servers
+ *
+ * @payload: which contains the request message body
+ */
+function performOperation(payload) {
+    var bankId = payload.bankId;
+    var opr = payload.operation;
+    var reqId = payload.reqId;
+    var  data = {};
+    var dest = {};
+
+    if(opr == Operation.GetBalance) {
+        data['query'] = payload;
+        dest = bankServerMap[bankId].tailServer;
+    }
+    else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
+        data['update'] = payload;
+        dest = bankServerMap[bankId].headServer;
+    }
+    logger.info('Performing ' + opr + ' on bank: ' + bankId);
+    logger.info('Destination info: ' + JSON.stringify(dest));
+    send(data, dest, 'client');   
+}
+
+/**
  * function by which client requests for bal, withdraw or transfer 
  * to different banks.
  * bal : query requests are sent at the tail server of the bank
@@ -64,19 +90,40 @@ function task() {
             var len = data[i].payloads.length;
             for(var j = 0; j < len; j++) {
                 var payload = payloads[j].payload;
+                var reqId = payload.reqId;
+                if(reqId > 1) {
+                    var prevReq = reqId - 1;
+                    var intervalObject = setInterval(function() {
+                        if(responses[prevReq]) {
+                            logger.info('Got the response to previous opr: ' + prevReq);
+                            performOperation(payload);
+                            clearInterval(intervalObject);
+                        }
+                        else {
+                            logger.info('Still waiting for response for previous query: ' + prevReq);
+                            logger.info('Current responses: ' + JSON.stringify(responses));
+                        }
+                    }, 3000);
+                }
+                else  {
+                    performOperation(payload); 
+                }
+                
+                /*
 	        var bankId = payload.bankId;
         	var opr = payload.operation;
                 var reqId = payload.reqId;
                 var  data = {};
                 var dest = {};
-        /*
+        
                 if(reqId > 1) {
-                    for(;!responses[reqId];) {
-                        setTimeout(function(){}, 10000);
+                    var prevReqId = reqId - 1;
+                        setTimeout(function() {
+                            
+                        }, 10000);
                         logger.info('waiting for response from previous query');
-                    }
                 }
-        */
+
 	        if(opr == Operation.GetBalance) {
                     data['query'] = payload;
         	    dest = bankServerMap[bankId].tailServer;
@@ -89,7 +136,7 @@ function task() {
                 logger.info('Performing ' + opr + ' on bank: ' + bankId);
                 logger.info('Destination info: ' + JSON.stringify(dest));
         	send(data, dest, 'client');   
-                
+                */ 
             }
         }
     }
@@ -116,12 +163,12 @@ function send(payload, dest, context) {
                     }
     };
 
-    var req = http.request(options, function(response){
+    var req = http.request(options, function(response) {
         var str = '';
-        response.on('data', function(payload){
+        response.on('data', function(payload) {
             str += payload;
         });
-        response.on('end', function(){
+        response.on('end', function() {
             var resBody = JSON.parse(str);
             // logger.info('Received data: ' + str);
             if(payload.query) {
