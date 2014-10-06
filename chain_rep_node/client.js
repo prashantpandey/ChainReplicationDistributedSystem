@@ -91,6 +91,7 @@ function task() {
             for(var j = 0; j < len; j++) {
                 var payload = payloads[j].payload;
                 var reqId = payload.reqId;
+                logger.info('Processing request: ' + reqId);
                 if(reqId > 1) {
                     var prevReq = reqId - 1;
                     var intervalObject = setInterval(function() {
