@@ -36,7 +36,7 @@ var port = '';
  * Also in case of a failure msg from Master, this structure will be updated
  */
 function prepareBankServerMap() {
-    logger.info('Preparing the bank server map');
+    logger.info('ClientId: ' + clientId  + ' Preparing the bank server map');
     for (var i = 0; i < config.bank.length; i++) {
         var serverDetails = {
             "headServer" : config.bank[i].headServer,
@@ -44,9 +44,9 @@ function prepareBankServerMap() {
         };
         var id = config.bank[i].bankId;
         bankServerMap[id] = serverDetails;
-        // logger.info('Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
+        // logger.info('ClientId: ' + clientId  + ' Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
     }
-    // logger.info('Added ' + i + ' entries to the bank details');
+    // logger.info('ClientId: ' + clientId  + ' Added ' + i + ' entries to the bank details');
 }
 
 /**
@@ -69,8 +69,8 @@ function performOperation(payload) {
         data['update'] = payload;
         dest = bankServerMap[bankId].headServer;
     }
-    logger.info('Performing ' + opr + ' on bank: ' + bankId);
-    logger.info('Destination info: ' + JSON.stringify(dest));
+    logger.info('ClientId: ' + clientId  + ' Performing ' + opr + ' on bank: ' + bankId);
+    logger.info('ClientId: ' + clientId  + ' Destination info: ' + JSON.stringify(dest));
     send(data, dest, 'client');   
 }
 
@@ -95,7 +95,7 @@ function sleep(ms) {
  * @context: context info (who's invoking the function)
  */
 function send(payload, dest, context) {
-    logger.info('payload: ' + JSON.stringify(payload));
+    logger.info('ClientId: ' + clientId  + ' payload: ' + JSON.stringify(payload));
 
     var options =
     {
@@ -114,18 +114,18 @@ function send(payload, dest, context) {
         });
         response.on('end', function() {
             var resBody = JSON.parse(str);
-            // logger.info('Received data: ' + str);
+            // logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
             if(payload.query) {
-                logger.info('Adding response to db');
+                logger.info('ClientId: ' + clientId  + ' Adding response to db');
                 responses[resBody.reqId] = resBody;
-                logger.info('Responses: ' + JSON.stringify(responses));
+                logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
             }
         });
     });
 
     req.write(JSON.stringify(payload));
     req.on('error', function(e){
-        logger.error(context + ': Problem occured while requesting ' + e)
+        logger.error('ClientId: ' + clientId  + ' ' + context + ': Problem occured while requesting ' + e)
     });
     req.end();
 }
@@ -137,7 +137,7 @@ function send(payload, dest, context) {
 var server = http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type' : 'text/plain'});
     
-    logger.info('Response received from Server');
+    logger.info('ClientId: ' + clientId  + ' Response received from Server');
     if(request.method == 'POST') {
         var str = '';
         
@@ -147,10 +147,10 @@ var server = http.createServer(function(request, response) {
 
         request.on('end', function() {
             var resBody = JSON.parse(str);
-            // logger.info('Received data: ' + str);
-            logger.info('Adding response to db');
+            // logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
+            logger.info('ClientId: ' + clientId  + ' Adding response to db');
             responses[resBody.reqId] = resBody;
-            logger.info('Responses: ' + JSON.stringify(responses));
+            logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
         });
     }
 
@@ -160,7 +160,7 @@ var arg = process.argv.splice(2);
 clientId = arg[0];
 port = arg[1];
 server.listen(port);
-logger.info('Client server running at http://127.0.0.1:' + port);
+logger.info('ClientId: ' + clientId  + ' Client server running at http://127.0.0.1:' + port);
 
 // prepare the mapping for the bank
 prepareBankServerMap();
@@ -197,7 +197,7 @@ Fiber(function() {
                     }                    
                     else {
                         for(;!responses[prevReq];) {
-                            sleep(3000);
+                            sleep(2000);
                         }
                         performOperation(payload);
                         continue;
