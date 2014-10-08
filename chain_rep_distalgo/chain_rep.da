@@ -1,0 +1,47 @@
+import sys
+import json
+
+class Server(process):
+    def setup(total_pings, serverId):
+        self.accDetails = {}
+
+    def main():
+        await(len(listof(p, received(('Query',req), from_=p))) == total_pings)
+
+    def receive(msg=('Query',req), from_=p):
+        output(json.dumps(req))
+        output("Received request from client: " + str(req['clientId']))
+        num = req['accNum']
+        res = {}
+        res['reqId'] = req['reqId']
+        res['outcome'] = 0
+        if num in accDetails:
+            res['currBal'] = accDetails[num]
+        else:
+            output("Account does not exists. Creating new account")
+            accDetails[num] = 0
+            res['currBal'] = 0
+
+        send(('Response',res), to=p)
+
+class Client(process):
+    def setup(p, nrounds): pass
+
+    def main():
+        for i in range(nrounds):
+            clk = logical_clock()
+            req = { "reqId" : 1, "opr" : "bal", "clientId" : 100, "accNum" : 1000 }    
+            output("Sending request to server")
+            send(('Query',req), to=p)
+            await(some(received(('Pong',), clk=rclk), has=(rclk > clk)))
+
+    def receive(msg=('Response',res)):
+        output("Received response from server")
+        output("Current Balance: " + str(res['currBal']))
+
+def main():
+    config(clock='Lamport')
+    server = new(Server, [1, 1], num= 1)
+    client = new(Client, [server, 1], num= 1)
+    start(server)
+    start(client)

@@ -1,9 +1,0 @@
-# server side code for the chain replication algo
-
-import sys
-
-class Server(process):
-    def setup(succ, pred, serverId, serverType, port): pass
-
-    def main():
-        await()

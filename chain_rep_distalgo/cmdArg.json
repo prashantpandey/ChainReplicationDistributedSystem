@@ -1,0 +1,25 @@
+{
+    "serverId": "303",
+    "bankId" : "",
+    "hostname": "localhost",
+    "port" : "8091",
+    "startupDelay" : "5",
+    "serverLifeTime" : "UNBOUND"
+    "successor": {
+	"serverId" : "304",
+	"hostname" : "localhost",
+	"port" : "8092",
+	"startupDelay" : "5",
+	"serverLIfeTime" : "UNBOUND"
+	},
+    "predecessor": {
+	"serverId" : "302",
+	"hostname" : "localhost",
+	"port" : "8090",
+	"startupDelay" : "5",
+	"serverLIfeTime" : "UNBOUND"
+	}
+}
+    
+    
+    
