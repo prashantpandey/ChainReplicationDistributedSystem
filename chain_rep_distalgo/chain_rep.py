@@ -11,6 +11,22 @@ PatternExpr_8 = da.pat.FreePattern('rclk')
 PatternExpr_10 = da.pat.TuplePattern([da.pat.ConstantPattern('Response'), da.pat.FreePattern('res')])
 import sys
 import json
+import pickle
+import re
+FLAGS = ((re.VERBOSE | re.MULTILINE) | re.DOTALL)
+WHITESPACE = re.compile('[ \\t\\n\\r]*', FLAGS)
+
+class ConcatJSONDecoder(json.JSONDecoder):
+
+    def decode(self, s, _w=WHITESPACE.match):
+        s_len = len(s)
+        objs = []
+        end = 0
+        while (not (end == s_len)):
+            (obj, end) = self.raw_decode(s, idx=_w(s, end).end())
+            end = _w(s, end).end()
+            objs.append(obj)
+        return objs
 
 class Server(da.DistProcess):
 
@@ -20,18 +36,18 @@ class Server(da.DistProcess):
         self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_0', PatternExpr_0, sources=[PatternExpr_1], destinations=None, timestamps=None, record_history=True, handlers=[]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_1', PatternExpr_3, sources=[PatternExpr_4], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_0]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_2', PatternExpr_5, sources=[PatternExpr_6], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_1])])
 
     def main(self):
-        _st_label_8 = 0
-        while (_st_label_8 == 0):
-            _st_label_8 += 1
+        _st_label_22 = 0
+        while (_st_label_22 == 0):
+            _st_label_22 += 1
             if (len([p for (_, (_, _, p), (_ConstantPattern11_, req)) in self._ServerReceivedEvent_0 if (_ConstantPattern11_ == 'Query')]) == self.total_pings):
-                _st_label_8 += 1
+                _st_label_22 += 1
             else:
-                super()._label('_st_label_8', block=True)
-                _st_label_8 -= 1
+                super()._label('_st_label_22', block=True)
+                _st_label_22 -= 1
 
     def setup(self, total_pings, serverId):
-        self.serverId = serverId
         self.total_pings = total_pings
+        self.serverId = serverId
         self.accDetails = {}
 
     def _Server_handler_0(self, req, p):
@@ -51,7 +67,7 @@ class Server(da.DistProcess):
     _Server_handler_0._labels = None
     _Server_handler_0._notlabels = None
 
-    def _Server_handler_1(self, req, p):
+    def _Server_handler_1(self, p, req):
         self.output(json.dumps(req))
         self.output(((('Received request: ' + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
@@ -102,18 +118,18 @@ class Client(da.DistProcess):
                         if (rclk > clk):
                             return True
                 return False
-            _st_label_55 = 0
-            while (_st_label_55 == 0):
-                _st_label_55 += 1
+            _st_label_69 = 0
+            while (_st_label_69 == 0):
+                _st_label_69 += 1
                 if ExistentialOpExpr_0():
-                    _st_label_55 += 1
+                    _st_label_69 += 1
                 else:
-                    super()._label('_st_label_55', block=True)
-                    _st_label_55 -= 1
+                    super()._label('_st_label_69', block=True)
+                    _st_label_69 -= 1
             else:
-                if (_st_label_55 != 2):
+                if (_st_label_69 != 2):
                     continue
-            if (_st_label_55 != 2):
+            if (_st_label_69 != 2):
                 break
 
     def setup(self, p, nrounds):
@@ -129,6 +145,8 @@ class Client(da.DistProcess):
 
 def main():
     da.api.config(clock='Lamport')
+    payload = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    data = json.load(payload, cls=ConcatJSONDecoder)
     server = da.api.new(Server, [1, 1], num=1)
     client = da.api.new(Client, [server, 1], num=1)
     da.api.start(server)

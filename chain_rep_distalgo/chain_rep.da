@@ -1,6 +1,26 @@
 import sys
 import json
+import pickle
+import re
 
+FLAGS = re.VERBOSE | re.MULTILINE | re.DOTALL
+WHITESPACE = re.compile(r'[ \t\n\r]*', FLAGS)
+
+# JSON decoder class for reading and parsing json objects from file
+class ConcatJSONDecoder(json.JSONDecoder):
+    def decode(self, s, _w=WHITESPACE.match):
+        s_len = len(s)
+
+        objs = []
+        end = 0
+        while end != s_len:
+            obj, end = self.raw_decode(s, idx=_w(s, end).end())
+            end = _w(s, end).end()
+            objs.append(obj)
+        
+        return objs
+
+# Server class for handling requests from client
 class Server(process):
     def setup(total_pings, serverId):
         self.accDetails = {}
@@ -53,6 +73,7 @@ class Server(process):
         send(('Response',res), to=p)
         
 
+# Client class for performing operations on server
 class Client(process):
     def setup(p, nrounds): pass
 
@@ -70,8 +91,12 @@ class Client(process):
         output("Received response from server for request: " + str(res['reqId']))
         output("Current Balance: " + str(res['currBal']))
 
+    
 def main():
     config(clock='Lamport')
+    payload = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    data = json.load(payload, cls=ConcatJSONDecoder)      
+
     server = new(Server, [1, 1], num= 1)
     client = new(Client, [server, 1], num= 1)
     start(server)
