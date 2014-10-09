@@ -23,12 +23,11 @@ class ConcatJSONDecoder(json.JSONDecoder):
 
 # Server class for handling requests from client
 class Server(process):
-    def setup(total_pings, serverId):
-        self.cnt = 0
+    def setup(serverId):
         self.accDetails = {}
 
     def main():
-        await(cnt == total_pings)
+        await(False)
 
     def receive(msg=('Query', req), from_=p):
         output(json.dumps(req))
@@ -54,11 +53,11 @@ class Server(process):
         res['reqId'] = req['reqId']
         if num in accDetails:
             bal = accDetails[num]
-            if req['opr'] == 1:
+            if req['operation'] == 1:
                 accDetails[num] = bal + amt
                 output("Updating the bal: " + str(bal + num))
                 res['outcome'] = 'Processed'
-            elif req['opr'] == 2:
+            elif req['operation'] == 2:
                 if(bal < amt):
                     output("Not sufficient balance")
                     res['outcome'] = 'InsufficientBalance'
@@ -75,7 +74,8 @@ class Server(process):
 
 # Client class for performing operations on server
 class Client(process):
-    def setup(p, data): pass
+    def setup(p, data):
+        self.lastRecv = 0
             
     def main():
         for d in data:
@@ -92,13 +92,16 @@ class Client(process):
                     else:
                         type = 'Update'
                     clk = logical_clock()
+                    await(lastRecv == (reqId - 1))
                     output("Sending request to server: " + str(req['reqId']))
                     send((type, req), to=p)
-                    await(some(received(('Response', res)), has=(res['reqId'] == (reqId - 1))))
 
-    def receive(msg=('Response',res)):
+        await(False)
+
+    def receive(msg=('Response', res)):
         output("Received response from server for request: " + str(res['reqId']))
-        output("Current Balance: " + str(res['currBal']))
+        output("Current Balance: " + str(res['currBal'])) 
+        lastRecv = res['reqId']
 
 
 def main():
@@ -107,7 +110,7 @@ def main():
     data = json.load(payload, cls=ConcatJSONDecoder)
 
     config(clock='Lamport')
-    server = new(Server, [1, 4], num= 1)
+    server = new(Server, [1], num= 1)
     client = new(Client, [server, data], num= 1)
     start(server)
     start(client)
