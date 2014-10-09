@@ -11,9 +11,7 @@
 		    "amount" : 0,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
-		    "operation" : 0,
-                    "port" : 8111,
-                    "hostname" : "localhost"
+		    "operation" : 0
 	        }
                 },
                 {
@@ -24,9 +22,7 @@
 		    "amount" : 100,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
-		    "operation" : 1,
-                    "port" : 8111,
-                    "hostname" : "localhost"
+		    "operation" : 1
 	        }
                 },
                 {
@@ -37,9 +33,7 @@
 		    "amount" : 10,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
-		    "operation" : 2,
-                    "port" : 8111,
-                    "hostname" : "localhost"
+		    "operation" : 2
 	        }
                 },
                 {
@@ -50,9 +44,7 @@
 		    "amount" : 0,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
-		    "operation" : 0,
-                    "port" : 8111,
-                    "hostname" : "localhost"
+		    "operation" : 0
 	        }
                 }
             ]
