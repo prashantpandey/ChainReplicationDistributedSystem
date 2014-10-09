@@ -20,15 +20,15 @@ class ConcatJSONDecoder(json.JSONDecoder):
         
         return objs
 
+
 # Server class for handling requests from client
 class Server(process):
     def setup(total_pings, serverId):
-        self.stopServing = False
+        self.cnt = 0
         self.accDetails = {}
 
     def main():
-        # await(len(listof(p, received(('Query',req), from_=p))) == total_pings)
-        await(stopServing)
+        await(cnt == total_pings)
 
     def receive(msg=('Query', req), from_=p):
         output(json.dumps(req))
@@ -43,7 +43,6 @@ class Server(process):
             output("Account does not exists. Creating new account")
             accDetails[num] = 0
             res['currBal'] = 0
-        
         send(('Response',res), to=p)
 
     def receive(msg=('Update', req), from_=p):
@@ -70,20 +69,13 @@ class Server(process):
             output("Account does not exists. Creating new account")
             accDetails[num] =  amt
             res['outcome'] = 'Processed'
-        
         res['currBal'] = accDetails[num]
         send(('Response',res), to=p)
 
-    def receive(msg=('StopServing',), from_=p):
-        res = {}
-        res['outcome'] = 'Stopping'
-        send(('Response', res), to=p)
-        stopServing = True
-        
 
 # Client class for performing operations on server
 class Client(process):
-    def setup(p, nrounds, data): pass
+    def setup(p, data): pass
             
     def main():
         for d in data:
@@ -93,6 +85,7 @@ class Client(process):
                     # output("payload: " + json.dumps(payload['payload']))
                     req = payload['payload']
                     req['clientId'] = clientId
+                    reqId = req['reqId']
                     type = ''
                     if req['operation'] == 0:
                         type = 'Query'
@@ -101,22 +94,20 @@ class Client(process):
                     clk = logical_clock()
                     output("Sending request to server: " + str(req['reqId']))
                     send((type, req), to=p)
-                    await(some(received(('Response',), clk=rclk), has=(rclk > clk)))
-
-        send(('StopServing',), to=p)
-
+                    await(some(received(('Response', res)), has=(res['reqId'] == (reqId - 1))))
 
     def receive(msg=('Response',res)):
         output("Received response from server for request: " + str(res['reqId']))
         output("Current Balance: " + str(res['currBal']))
 
-    
+
 def main():
     config(clock='Lamport')
     payload = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
     data = json.load(payload, cls=ConcatJSONDecoder)
 
-    server = new(Server, [1, 1], num= 1)
-    client = new(Client, [server, 1, data], num= 1)
+    config(clock='Lamport')
+    server = new(Server, [1, 4], num= 1)
+    client = new(Client, [server, data], num= 1)
     start(server)
     start(client)
