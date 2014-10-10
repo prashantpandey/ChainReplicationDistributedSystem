@@ -23,7 +23,7 @@ class ConcatJSONDecoder(json.JSONDecoder):
 
 # Server class for handling requests from client
 class Server(process):
-    def setup(serverId):
+    def setup(config, succ, pred):
         self.accDetails = {}
 
     def main():
@@ -74,9 +74,19 @@ class Server(process):
 
 # Client class for performing operations on server
 class Client(process):
-    def setup(p, data):
+    def setup(servers, config, data):
         self.lastRecv = 0
-            
+        self.bankServerMap = {}
+
+    def prepareBankServerMap():
+       for c in config:
+           for bank in c['bank']:
+               id = bank['bankId']
+               server = {}
+               server['headServer'] = bank['headServer'] 
+               server['tailServer'] = bank['tailServer']
+               bankServerMap[id] = server
+
     def main():
         for d in data:
             for item in d['data']:
@@ -103,14 +113,60 @@ class Client(process):
         output("Current Balance: " + str(res['currBal'])) 
         lastRecv = res['reqId']
 
+def loadConfig(config):
+    count = {}
+    servers = 0
+    for c in config:
+        for bank in c['bank']:
+            servers += len(bank['servers'])
+        count['total_servers'] = servers
+        count['total_clients'] = len(c['client'])
+    print(json.dumps(count))
+    return count
 
 def main():
     config(clock='Lamport')
-    payload = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
-    data = json.load(payload, cls=ConcatJSONDecoder)
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    data = json.load(dataFile, cls=ConcatJSONDecoder)
+    cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
+    config = json.load(cfgFile, cls=ConcatJSONDecoder)
+    
+    count = loadConfig(config)
+    
+    servers = new(Server, num = count['total_servers'])
+    clients = new(Client, num = count['total_clients'])
 
-    config(clock='Lamport')
-    server = new(Server, [1], num= 1)
-    client = new(Client, [server, data], num= 1)
-    start(server)
-    start(client)
+    
+    clientMap = []
+    for c in config:
+        for client in c['client']:
+            clientMap.append(client)
+
+    serverMap = []
+    for c in config:
+        for bank in c['bank']:
+            for s in bank['servers']:
+                conf = {}
+                conf['bankId'] = bank['bankId']
+                conf['type'] = s['type']
+                conf['serverId'] = s['serverId']
+                serverMap.append(conf)
+    
+    i = 0
+    serList = list(servers)
+    for process, config in zip(serList, serverMap):
+        if config['type'] == 0:
+            setup({process}, (config, None, serList[i+1]))
+        elif config['type'] == 2:
+            setup({process}, (config, serList[i-1], None))
+        else:
+            setup({process}, (config, serList[i-1], serList[i+1]))
+        i += 1
+
+    cltList = list(clients)
+    for process, config in zip(cltList, clientMap):
+        setup({process}, (servers, config, data))
+
+    #start(server)
+    #start(client)
+

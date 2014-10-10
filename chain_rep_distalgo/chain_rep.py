@@ -40,11 +40,13 @@ class Server(da.DistProcess):
                 super()._label('_st_label_22', block=True)
                 _st_label_22 -= 1
 
-    def setup(self, serverId):
-        self.serverId = serverId
+    def setup(self, config, succ, pred):
+        self.config = config
+        self.succ = succ
+        self.pred = pred
         self.accDetails = {}
 
-    def _Server_handler_0(self, req, p):
+    def _Server_handler_0(self, p, req):
         self.output(json.dumps(req))
         self.output(((('Received request: ' + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
@@ -110,34 +112,45 @@ class Client(da.DistProcess):
                     else:
                         type = 'Update'
                     clk = self.logical_clock()
-                    _st_label_76 = 0
-                    while (_st_label_76 == 0):
-                        _st_label_76 += 1
+                    _st_label_85 = 0
+                    while (_st_label_85 == 0):
+                        _st_label_85 += 1
                         if (self.lastRecv == (reqId - 1)):
-                            _st_label_76 += 1
+                            _st_label_85 += 1
                         else:
-                            super()._label('_st_label_76', block=True)
-                            _st_label_76 -= 1
+                            super()._label('_st_label_85', block=True)
+                            _st_label_85 -= 1
                     else:
-                        if (_st_label_76 != 2):
+                        if (_st_label_85 != 2):
                             continue
-                    if (_st_label_76 != 2):
+                    if (_st_label_85 != 2):
                         break
                     self.output(('Sending request to server: ' + str(req['reqId'])))
-                    self._send((type, req), self.p)
-        _st_label_79 = 0
-        while (_st_label_79 == 0):
-            _st_label_79 += 1
+                    self._send((type, req), p)
+        _st_label_88 = 0
+        while (_st_label_88 == 0):
+            _st_label_88 += 1
             if False:
-                _st_label_79 += 1
+                _st_label_88 += 1
             else:
-                super()._label('_st_label_79', block=True)
-                _st_label_79 -= 1
+                super()._label('_st_label_88', block=True)
+                _st_label_88 -= 1
 
-    def setup(self, p, data):
-        self.p = p
+    def setup(self, servers, config, data):
+        self.config = config
+        self.servers = servers
         self.data = data
         self.lastRecv = 0
+        self.bankServerMap = {}
+
+    def prepareBankServerMap(self):
+        for c in self.config:
+            for bank in c['bank']:
+                id = bank['bankId']
+                server = {}
+                server['headServer'] = bank['headServer']
+                server['tailServer'] = bank['tailServer']
+                self.bankServerMap[id] = server
 
     def _Client_handler_2(self, res):
         self.output(('Received response from server for request: ' + str(res['reqId'])))
@@ -146,12 +159,49 @@ class Client(da.DistProcess):
     _Client_handler_2._labels = None
     _Client_handler_2._notlabels = None
 
+def loadConfig(config):
+    count = {}
+    servers = 0
+    for c in config:
+        for bank in c['bank']:
+            servers += len(bank['servers'])
+        count['total_servers'] = servers
+        count['total_clients'] = len(c['client'])
+    print(json.dumps(count))
+    return count
+
 def main():
     da.api.config(clock='Lamport')
-    payload = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
-    data = json.load(payload, cls=ConcatJSONDecoder)
-    da.api.config(clock='Lamport')
-    server = da.api.new(Server, [1], num=1)
-    client = da.api.new(Client, [server, data], num=1)
-    da.api.start(server)
-    da.api.start(client)
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    data = json.load(dataFile, cls=ConcatJSONDecoder)
+    cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
+    config = json.load(cfgFile, cls=ConcatJSONDecoder)
+    count = loadConfig(config)
+    servers = da.api.new(Server, num=count['total_servers'])
+    clients = da.api.new(Client, num=count['total_clients'])
+    clientMap = []
+    for c in config:
+        for client in c['client']:
+            clientMap.append(client)
+    serverMap = []
+    for c in config:
+        for bank in c['bank']:
+            for s in bank['servers']:
+                conf = {}
+                conf['bankId'] = bank['bankId']
+                conf['type'] = s['type']
+                conf['serverId'] = s['serverId']
+                serverMap.append(conf)
+    i = 0
+    serList = list(servers)
+    for (process, config) in zip(serList, serverMap):
+        if (config['type'] == 0):
+            da.api.setup({process}, (config, None, serList[(i + 1)]))
+        elif (config['type'] == 2):
+            da.api.setup({process}, (config, serList[(i - 1)], None))
+        else:
+            da.api.setup({process}, (config, serList[(i - 1)], serList[(i + 1)]))
+        i += 1
+    cltList = list(clients)
+    for (process, config) in zip(cltList, clientMap):
+        da.api.setup({process}, (servers, config, data))
