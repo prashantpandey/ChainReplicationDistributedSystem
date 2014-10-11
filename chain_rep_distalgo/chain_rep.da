@@ -23,15 +23,24 @@ class ConcatJSONDecoder(json.JSONDecoder):
 
 # Server class for handling requests from client
 class Server(process):
-    def setup(config, succ, pred):
+    def setup(clients, config, pred, succ):
+        self.serverId = config['serverId']
         self.accDetails = {}
+        self.history = {}
+        self.sentReq = {}
+        self.clientProcessList = list(clients)
 
+    # main function
+    # a place holder to keep the server alive
     def main():
+        output("ServerId: " + str(serverId) + " starting the server operations")
         await(False)
 
+    # callback function to handle the query requests from the client
+    # must be the tail server ih the chain
     def receive(msg=('Query', req), from_=p):
-        output(json.dumps(req))
-        output("Received request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
+        output("ServerId: " + str(serverId) + " Received Query request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
         num = req['accNum']
         res = {}
         res['reqId'] = req['reqId']
@@ -44,76 +53,125 @@ class Server(process):
             res['currBal'] = 0
         send(('Response',res), to=p)
 
+    # callback function to handle the update requests from the clients
+    # must be the head server in the chain
     def receive(msg=('Update', req), from_=p):
-        output(json.dumps(req))
-        output("Received request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
+        output("ServerId: " + str(serverId) + " Received Update request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
         num = req['accNum']
         amt = req['amount']
+        reqId = req['reqId']
         res = {}
-        res['reqId'] = req['reqId']
+        res['reqId'] = reqId
         if num in accDetails:
             bal = accDetails[num]
             if req['operation'] == 1:
                 accDetails[num] = bal + amt
-                output("Updating the bal: " + str(bal + num))
+                output("ServerId: " + str(serverId) + " Updating the bal: " + str(bal + num))
                 res['outcome'] = 'Processed'
             elif req['operation'] == 2:
                 if(bal < amt):
-                    output("Not sufficient balance")
+                    output("ServerId: " + str(serverId) + " Not sufficient balance")
                     res['outcome'] = 'InsufficientBalance'
                 else:
                     accDetails[num] = bal - amt
                     res['outcome'] = 'Processed'
         else:
-            output("Account does not exists. Creating new account")
+            output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
             accDetails[num] =  amt
             res['outcome'] = 'Processed'
         res['currBal'] = accDetails[num]
-        send(('Response',res), to=p)
+        res['payload'] = req
+        history[reqId] = req
+        sentReq[reqId] = req
+        send(('Sync', res), to=succ)
 
-
+    # callback function to handle the Sync request from successor
+    def receive(msg=('Sync', req), from_=p):
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
+        output("ServerId: " + str(serverId) + " Received Sync request: " + str(req['reqId']))
+        num = req['payload']['accNum']
+        reqId = req['reqId']
+        clientId = req['payload']['clientId']
+        accDetails[num] = req['currBal']
+        history[reqId] = req['payload']
+        sentReq[reqId] = req['payload']
+        if config['type'] == 2:
+            client = clientProcessList[clientId]
+            del req['payload']
+            res = req
+            send(('Response', res), to=client)
+            send(('Ack', reqId, serverId), to=pred)
+        else:
+            send(('Sync', req), to=succ)
+    
+    # callback method to handle the Ack request from the predecessor
+    def receive(msg=('Ack', reqId, serverId), from_=p):
+        output("ServerId: " + str(serverId) + " " + str(reqId))
+        output("ServerId: " + str(serverId) + " Received Ack request: " + str(reqId))
+        for key in range(0, reqId):
+            if key in sentReq:
+                del sentReq[key]
+        
 # Client class for performing operations on server
 class Client(process):
+    # setup function for the client process
     def setup(servers, config, data):
+        self.clientId = config['clientId']
+        self.serverProcessList = list(servers)
         self.lastRecv = 0
-        self.bankServerMap = {}
+        self.responses = []
 
-    def prepareBankServerMap():
-       for c in config:
-           for bank in c['bank']:
-               id = bank['bankId']
-               server = {}
-               server['headServer'] = bank['headServer'] 
-               server['tailServer'] = bank['tailServer']
-               bankServerMap[id] = server
+    # will return the process corresponding to the 
+    # "serverId"
+    def findServer(opr, bankId):
+        if opr == 0:
+            for bank in config['banks']:
+                if bankId == bank['bankId']:
+                    return bank['tailServer']
+        else:
+            for bank in config['banks']:
+                if bankId == bank['bankId']:
+                    return bank['headServer']
 
+    # main function to read the payload file and
+    # invoke requests to the server
     def main():
+        output("ClientId: " + str(clientId) + " starting the client operations")
         for d in data:
             for item in d['data']:
-                clientId = item['clientId']
-                for payload in item['payloads']:
-                    # output("payload: " + json.dumps(payload['payload']))
-                    req = payload['payload']
-                    req['clientId'] = clientId
-                    reqId = req['reqId']
-                    type = ''
-                    if req['operation'] == 0:
-                        type = 'Query'
-                    else:
-                        type = 'Update'
-                    clk = logical_clock()
-                    await(lastRecv == (reqId - 1))
-                    output("Sending request to server: " + str(req['reqId']))
-                    send((type, req), to=p)
-
+                if clientId == item['clientId']:
+                    for payload in item['payloads']:
+                        # output("payload: " + json.dumps(payload['payload']))
+                        req = payload['payload']
+                        req['clientId'] = clientId
+                        reqId = req['reqId']
+                        type = ''
+                        if req['operation'] == 0:
+                            type = 'Query'
+                        else:
+                            type = 'Update'
+                        clk = logical_clock()
+                        await(lastRecv == (reqId - 1))
+                        output("ClientId: " + str(clientId) + " Sending request to server: " + str(req['reqId']))
+                        idx = findServer(req['operation'], req['bankId'])
+                        p = serverProcessList[idx] 
+                        send((type, req), to=p)
         await(False)
 
+    # callback function to recieve the reponse back from the server
+    # will append the response to the "responses" list
     def receive(msg=('Response', res)):
-        output("Received response from server for request: " + str(res['reqId']))
-        output("Current Balance: " + str(res['currBal'])) 
+        output("ClientId: " + str(clientId) + " Received response from server for request: " + str(res['reqId']))
+        output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
+        responses.append(res)
         lastRecv = res['reqId']
+        output("Responses: " + json.dumps(responses))
 
-def loadConfig(config):
+
+# count number of client and server processes
+# using the config file
+def countProcesses(config):
     count = {}
     servers = 0
     for c in config:
@@ -121,27 +179,35 @@ def loadConfig(config):
             servers += len(bank['servers'])
         count['total_servers'] = servers
         count['total_clients'] = len(c['client'])
-    print(json.dumps(count))
+    print('Bootstraping: Calculating #  of processes: ' + json.dumps(count))
     return count
 
+# main function for bootstraping the servers and clients
 def main():
     config(clock='Lamport')
+
+    print('Bootstraping: loading and parsing the config file')
+    # load and parse the 'config' and 'payload' files in JSON format
+
     dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
     
-    count = loadConfig(config)
+    # calculate the number of client and servers needed
+    count = countProcesses(config)
     
+    # create the respective # of processes
     servers = new(Server, num = count['total_servers'])
     clients = new(Client, num = count['total_clients'])
 
-    
+    # create a list of clients config objects
     clientMap = []
     for c in config:
         for client in c['client']:
             clientMap.append(client)
 
+    # create a list of server config objects
     serverMap = []
     for c in config:
         for bank in c['bank']:
@@ -150,23 +216,30 @@ def main():
                 conf['bankId'] = bank['bankId']
                 conf['type'] = s['type']
                 conf['serverId'] = s['serverId']
-                serverMap.append(conf)
-    
+                serverMap.append(conf) 
+
+    # setup servers/clients
+    print('Bootstraping: Setting up client/server processes')
     i = 0
     serList = list(servers)
     for process, config in zip(serList, serverMap):
         if config['type'] == 0:
-            setup({process}, (config, None, serList[i+1]))
+            setup({process}, (clients, config, None, serList[i+1]))
         elif config['type'] == 2:
-            setup({process}, (config, serList[i-1], None))
+            setup({process}, (clients, config, serList[i-1], None))
         else:
-            setup({process}, (config, serList[i-1], serList[i+1]))
+            setup({process}, (clients, config, serList[i-1], serList[i+1]))
         i += 1
 
+    # setup the client processes
+    # the "clientId" of the client will be the index of the 
+    # client process in the "clients" list
     cltList = list(clients)
     for process, config in zip(cltList, clientMap):
         setup({process}, (servers, config, data))
 
-    #start(server)
-    #start(client)
+    print('Bootstraping: Starting client/server processes')
+    # Start the server and client processes
+    start(servers)
+    start(clients)
 

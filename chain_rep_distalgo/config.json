@@ -10,43 +10,29 @@
         "bankName" : "HSBC",
         "chainLength" : 4,
         "numClient" : 6,
-        "headServer" : {
-            "hostname" : "localhost",
-            "port"  : 8101
-        },
-        "tailServer" : {
-            "hostname" : "localhost",
-            "port" : 8104
-        },
+        "headServer" : 0,
+        "tailServer" : 3,
         "servers" : [
             {
-                "serverId" : 101,
-                "hostname" : "localhost",
-                "port" : 8101,
+                "serverId" : 0,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 0
             },
             {
-                "serverId" : 102,
-                "hostname" : "localhost",
-                "port" : 8102,
+                "serverId" : 1,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 103,
-                "hostname" : "localhost",
-                "port" : 8103,
+                "serverId" : 2,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 104,
-                "hostname" : "localhost",
-                "port" : 8104,
+                "serverId" : 3,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 2
@@ -54,16 +40,16 @@
         ],
         "clients" : [
             {   
-                "clientId" : 1000
+                "clientId" : 0
             },
             {
-                "clientId" : 1001
+                "clientId" : 1
             },
             {
-                "clientId" : 1002
+                "clientId" : 2
             },
             {
-                "clientId" : 1003
+                "clientId" : 3
             }
         ]
     },
@@ -72,43 +58,29 @@
         "bankName" : "CITI",
         "chainLength" : 4,
         "numClient" : 6,
-        "headServer" : {
-            "hostname" : "localhost",
-            "port"  :   8201
-        },
-        "tailServer" : {
-            "hostname" : "localhost",
-            "port" : 8204
-        },
+        "headServer" : 4,
+        "tailServer" : 7,
         "servers" : [
             {
-                "serverId" : 201,
-                "hostname" : "localhost",
-                "port" : 8201,
+                "serverId" : 4,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 0
             },
             {
-                "serverId" : 202,
-                "hostname" : "localhost",
-                "port" : 8202,
+                "serverId" : 5,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 203,
-                "hostname" : "localhost",
-                "port" : 8203,
+                "serverId" : 6,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 204,
-                "hostname" : "localhost",
-                "port" : 8204,
+                "serverId" : 7,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 2
@@ -116,16 +88,16 @@
         ],
         "clients" : [
             {   
-                "clientId" : 1000
+                "clientId" : 0
             },
             {
-                "clientId" : 1001
+                "clientId" : 1
             },
             {
-                "clientId" : 1002
+                "clientId" : 2
             },
             {
-                "clientId" : 1003
+                "clientId" : 3
             }
         ]
     },
@@ -134,43 +106,29 @@
         "bankName" : "BOA",
         "chainLength" : 4,
         "numClient" : 6,
-        "headServer" : {
-            "hostname" : "localhost",
-            "port"  :   8301
-        },
-        "tailServer" : {
-            "hostname" : "localhost",
-            "port" : 8304
-        },
+        "headServer" : 8,
+        "tailServer" : 11,
         "servers" : [
             {
-                "serverId" : 301,
-                "hostname" : "localhost",
-                "port" : 8301,
+                "serverId" : 8,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 0
             },
             {
-                "serverId" : 302,
-                "hostname" : "localhost",
-                "port" : 8302,
+                "serverId" : 9,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 303,
-                "hostname" : "localhost",
-                "port" : 8303,
+                "serverId" : 10,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1
             },
             {
-                "serverId" : 304,
-                "hostname" : "localhost",
-                "port" : 8304,
+                "serverId" : 11,
                 "startupDelay" : 5,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 2 
@@ -178,137 +136,173 @@
         ],
         "clients" : [
             {   
-                "clientId" : 1000
+                "clientId" : 0
             },
             {
-                "clientId" : 1001
+                "clientId" : 1
             },
             {
-                "clientId" : 1002
+                "clientId" : 2
             },
             {
-                "clientId" : 1003
+                "clientId" : 3
             }
         ]
     }
     ],
     "client" : [
         {
-            "clientId" : 1000,
+            "clientId" : 0,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001000
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001000
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001000
                 }
             ]
         },
         {
-            "clientId" : 1001,
+            "clientId" : 1,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001001
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001001
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001001
                 }
             ]
         },
         {
-            "clientId" : 1002,
+            "clientId" : 2,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001002
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001002
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001002
                 }
             ]
         },
         {
-            "clientId" : 1003,
+            "clientId" : 3,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001003
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001003
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001003
                 }
             ]
         },
         {
-            "clientId" : 1004,
+            "clientId" : 4,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001004
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001004
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001004
                 }
             ]
         },
         {
-            "clientId" : 1005,
+            "clientId" : 5,
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
                 {
                     "bankId" : 100,
+                    "headServer" : 0,
+                    "tailServer" : 3,
                     "accNum" : 1001005
                 },
                 {
                     "bankId" : 200,
+                    "headServer" : 4,
+                    "tailServer" : 7,
                     "accNum" : 2001005
                 },
                 {
                     "bankId" : 300,
+                    "headServer" : 8,
+                    "tailServer" : 11,
                     "accNum" : 3001005
                 }
             ]
