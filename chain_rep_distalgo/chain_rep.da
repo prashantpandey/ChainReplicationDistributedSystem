@@ -23,6 +23,7 @@ class ConcatJSONDecoder(json.JSONDecoder):
 
 # Server class for handling requests from client
 class Server(process):
+    # setup the server process
     def setup(clients, config, pred, succ):
         self.serverId = config['serverId']
         self.accDetails = {}
@@ -51,7 +52,7 @@ class Server(process):
             output("Account does not exists. Creating new account")
             accDetails[num] = 0
             res['currBal'] = 0
-        send(('Response',res), to=p)
+        send(('Response',res), to=p)        # send the response back to the client
 
     # callback function to handle the update requests from the clients
     # must be the head server in the chain
@@ -82,9 +83,9 @@ class Server(process):
             res['outcome'] = 'Processed'
         res['currBal'] = accDetails[num]
         res['payload'] = req
-        history[reqId] = req
-        sentReq[reqId] = req
-        send(('Sync', res), to=succ)
+        history[reqId] = req            # add request to the history object
+        sentReq[reqId] = req            # add request to the sent object
+        send(('Sync', res), to=succ)    # send Sync request
 
     # callback function to handle the Sync request from successor
     def receive(msg=('Sync', req), from_=p):
@@ -100,12 +101,13 @@ class Server(process):
             client = clientProcessList[clientId]
             del req['payload']
             res = req
-            send(('Response', res), to=client)
-            send(('Ack', reqId, serverId), to=pred)
+            send(('Response', res), to=client)          # send reponse back to client 
+            send(('Ack', reqId, serverId), to=pred)     # send ack back to the predecessor
         else:
-            send(('Sync', req), to=succ)
+            send(('Sync', req), to=succ)                # send Sync request to the successor
     
     # callback method to handle the Ack request from the predecessor
+    # will delete the requests smaller than the received "reqId" from sent list
     def receive(msg=('Ack', reqId, serverId), from_=p):
         output("ServerId: " + str(serverId) + " " + str(reqId))
         output("ServerId: " + str(serverId) + " Received Ack request: " + str(reqId))
@@ -123,7 +125,7 @@ class Client(process):
         self.responses = []
 
     # will return the process corresponding to the 
-    # "serverId"
+    # head/tail server of the given bank
     def findServer(opr, bankId):
         if opr == 0:
             for bank in config['banks']:
@@ -157,14 +159,14 @@ class Client(process):
                         idx = findServer(req['operation'], req['bankId'])
                         p = serverProcessList[idx] 
                         send((type, req), to=p)
-        await(False)
+        await(False)            # will keep the client process alive
 
     # callback function to recieve the reponse back from the server
     # will append the response to the "responses" list
     def receive(msg=('Response', res)):
         output("ClientId: " + str(clientId) + " Received response from server for request: " + str(res['reqId']))
         output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
-        responses.append(res)
+        responses.append(res)           # add the received response to the responses object
         lastRecv = res['reqId']
         output("Responses: " + json.dumps(responses))
 
