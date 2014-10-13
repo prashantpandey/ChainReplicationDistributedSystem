@@ -46,10 +46,10 @@ class Server(da.DistProcess):
                 _st_label_27 -= 1
 
     def setup(self, clients, config, pred, succ):
-        self.config = config
         self.succ = succ
-        self.clients = clients
+        self.config = config
         self.pred = pred
+        self.clients = clients
         self.serverId = config['serverId']
         self.accDetails = {}
         self.history = {}
@@ -60,16 +60,28 @@ class Server(da.DistProcess):
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Query request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
+        reqId = req['reqId']
         res = {}
-        res['reqId'] = req['reqId']
-        res['outcome'] = 'Processed'
-        res['accNum'] = num
-        if (num in self.accDetails):
-            res['currBal'] = self.accDetails[num]
+        self.output(json.dumps(self.history))
+        if (reqId in self.history):
+            hist = self.history[reqId]
+            if (hist['payload']['accNum'] == num):
+                res = hist['response']
+                self.output(((('ServerId: ' + str(self.serverId)) + ' Query request already exists in history: ') + json.dumps(res)))
         else:
-            self.output('Account does not exists. Creating new account')
-            self.accDetails[num] = 0
-            res['currBal'] = 0
+            res['reqId'] = reqId
+            res['outcome'] = 'Processed'
+            res['accNum'] = num
+            if (num in self.accDetails):
+                res['currBal'] = self.accDetails[num]
+            else:
+                self.output((('ServerId: ' + str(self.serverId)) + ' Account does not exists. Creating new account'))
+                self.accDetails[num] = 0
+                res['currBal'] = 0
+        hist = {}
+        hist['payload'] = req
+        hist['response'] = res
+        self.history[reqId] = hist
         self._send(('Response', res), p)
     _Server_handler_0._labels = None
     _Server_handler_0._notlabels = None
@@ -81,31 +93,41 @@ class Server(da.DistProcess):
         amt = req['amount']
         reqId = req['reqId']
         res = {}
-        res['reqId'] = reqId
-        res['accNum'] = num
-        if (num in self.accDetails):
-            bal = self.accDetails[num]
-            if (req['operation'] == 1):
-                self.accDetails[num] = (bal + amt)
-                self.output(((('ServerId: ' + str(self.serverId)) + ' Updating the bal: ') + str((bal + num))))
-                res['outcome'] = 'Processed'
-            elif (req['operation'] == 2):
-                if (bal < amt):
-                    self.output((('ServerId: ' + str(self.serverId)) + ' Not sufficient balance'))
-                    res['outcome'] = 'InsufficientBalance'
-                else:
-                    self.accDetails[num] = (bal - amt)
-                    res['outcome'] = 'Processed'
+        if (reqId in self.history):
+            hist = self.history[reqId]
+            if (hist['payload']['accNum'] == num):
+                res = hist['response']
+                self.output(((('ServerId: ' + str(self.serverId)) + ' Query request already exists in history: ') + json.dumps(res)))
         else:
-            self.output((('ServerId: ' + str(self.serverId)) + ' Account does not exists. Creating new account'))
-            if (req['operation'] == 1):
-                self.accDetails[num] = amt
+            res['reqId'] = reqId
+            res['accNum'] = num
+            if (num in self.accDetails):
+                bal = self.accDetails[num]
+                if (req['operation'] == 1):
+                    self.accDetails[num] = (bal + amt)
+                    self.output(((('ServerId: ' + str(self.serverId)) + ' Updating the bal: ') + str((bal + num))))
+                    res['outcome'] = 'Processed'
+                elif (req['operation'] == 2):
+                    if (bal < amt):
+                        self.output((('ServerId: ' + str(self.serverId)) + ' Not sufficient balance'))
+                        res['outcome'] = 'InsufficientBalance'
+                    else:
+                        self.accDetails[num] = (bal - amt)
+                        res['outcome'] = 'Processed'
             else:
-                self.accDetails[num] = 0
-            res['outcome'] = 'Processed'
-        res['currBal'] = self.accDetails[num]
-        res['payload'] = req
-        self.history[reqId] = req
+                self.output((('ServerId: ' + str(self.serverId)) + ' Account does not exists. Creating new account'))
+                if (req['operation'] == 1):
+                    self.accDetails[num] = amt
+                    res['outcome'] = 'Processed'
+                else:
+                    self.accDetails[num] = 0
+                    res['outcome'] = 'InSufficientFunds'
+            res['currBal'] = self.accDetails[num]
+            res['payload'] = req
+        hist = {}
+        hist['payload'] = req
+        hist['response'] = res
+        self.history[reqId] = hist
         self.sentReq[reqId] = req
         self._send(('Sync', res), self.succ)
     _Server_handler_1._labels = None
@@ -131,7 +153,7 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, reqId, p, serverId):
+    def _Server_handler_3(self, serverId, reqId, p):
         self.output(((('ServerId: ' + str(serverId)) + ' ') + str(reqId)))
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
         nums = reqId.split('.')
@@ -166,41 +188,41 @@ class Client(da.DistProcess):
                         nums = reqId.split('.')
                         if (int(nums[1]) > 1):
                             self.output(((('ReqId: ' + reqId) + ' LastReqId: ') + self.lastRecv))
-                            _st_label_129 = 0
-                            while (_st_label_129 == 0):
-                                _st_label_129 += 1
+                            _st_label_149 = 0
+                            while (_st_label_149 == 0):
+                                _st_label_149 += 1
                                 if (int(self.numsLR[1]) == (int(nums[1]) - 1)):
-                                    _st_label_129 += 1
+                                    _st_label_149 += 1
                                 else:
-                                    super()._label('_st_label_129', block=True)
-                                    _st_label_129 -= 1
+                                    super()._label('_st_label_149', block=True)
+                                    _st_label_149 -= 1
                             else:
-                                if (_st_label_129 != 2):
+                                if (_st_label_149 != 2):
                                     continue
-                            if (_st_label_129 != 2):
+                            if (_st_label_149 != 2):
                                 break
                         self.output(((('ClientId: ' + str(self.clientId)) + ' Sending request to server: ') + str(req['reqId'])))
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
                         self._send((type, req), p)
-        _st_label_134 = 0
-        while (_st_label_134 == 0):
-            _st_label_134 += 1
+        _st_label_154 = 0
+        while (_st_label_154 == 0):
+            _st_label_154 += 1
             if False:
-                _st_label_134 += 1
+                _st_label_154 += 1
             else:
-                super()._label('_st_label_134', block=True)
-                _st_label_134 -= 1
+                super()._label('_st_label_154', block=True)
+                _st_label_154 -= 1
 
     def setup(self, servers, config, data):
+        self.servers = servers
         self.config = config
         self.data = data
-        self.servers = servers
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
         self.lastRecv = '0.0'
         self.numsLR = self.lastRecv.split('.')
-        self.responses = []
+        self.responses = {}
 
     def findServer(self, opr, bankId):
         if (opr == 0):
@@ -215,7 +237,7 @@ class Client(da.DistProcess):
     def _Client_handler_4(self, res):
         self.output(((('ClientId: ' + str(self.clientId)) + ' Received response from server for request: ') + str(res['reqId'])))
         self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
-        self.responses.append(res)
+        self.responses[res['reqId']] = res
         self.lastRecv = res['reqId']
         self.numsLR = self.lastRecv.split('.')
         self.output(('last received updated: ' + self.lastRecv))

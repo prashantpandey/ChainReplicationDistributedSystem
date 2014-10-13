@@ -44,8 +44,9 @@ class Server(process):
         reqId = req['reqId']
         res = {}
         
+        output(json.dumps(history)) 
         if reqId in history:
-            hist = history['reqId']
+            hist = history[reqId]
             if hist['payload']['accNum'] == num:
                 res = hist['response']
                 output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
@@ -63,7 +64,7 @@ class Server(process):
         hist = {}
         hist['payload'] = req
         hist['response'] = res
-        history['reqId'] = hist
+        history[reqId] = hist
         send(('Response',res), to=p)        # send the response back to the client
 
     # callback function to handle the update requests from the clients
@@ -76,7 +77,7 @@ class Server(process):
         reqId = req['reqId']
         res = {}
         if reqId in history:
-            hist = history['reqId']
+            hist = history[reqId]
             if hist['payload']['accNum'] == num:
                 res = hist['response']
                 output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
@@ -100,9 +101,10 @@ class Server(process):
                 output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
                 if req['operation'] == 1:
                     accDetails[num] =  amt
+                    res['outcome'] = 'Processed'
                 else:
                     accDetails[num] =  0
-                res['outcome'] = 'Processed'
+                    res['outcome'] = 'InSufficientFunds'
             res['currBal'] = accDetails[num]
             res['payload'] = req
         
@@ -154,7 +156,7 @@ class Client(process):
         self.serverProcessList = list(servers)
         self.lastRecv = '0.0'
         self.numsLR = lastRecv.split(".")
-        self.responses = []
+        self.responses = {}
 
     # will return the process corresponding to the 
     # head/tail server of the given bank
@@ -201,7 +203,7 @@ class Client(process):
     def receive(msg=('Response', res)):
         output("ClientId: " + str(clientId) + " Received response from server for request: " + str(res['reqId']))
         output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
-        responses.append(res)           # add the received response to the responses object
+        responses[res['reqId']] = res           # add the received response to the responses object
         lastRecv = res['reqId']
         numsLR = lastRecv.split(".")
         output("last received updated: " + lastRecv)
