@@ -294,13 +294,24 @@ function query(payload) {
             logger.info('ServerId: '+ serverId + ' Query request already exists in history: ' + JSON.stringify(response));
             return response;
         }
+        else {
+            var response = {
+                'reqId' : reqId,
+                'outcome' : Outcome.InconsistentWithHistory,
+                'currBal' : 0,
+                'accNum' : accNum
+            };
+            logger.info('ServerId: '+ serverId + ' Query request Inconsistent with history: ' + JSON.stringify(response));
+            return response;
+        }
     }
     
     var bal = getBalance(accNum);
     if(bal == undefined) {
         logger.error('ServerId: '+ serverId + ' Account number not found: ' + accNum);
         logger.info('ServerId: '+ serverId + ' Creating a new account with the given account number');
-        accDetails[accNum] = 0;
+        // don't create an account on tail, if one doesn't exist
+        // accDetails[accNum] = 0;
         bal = 0;
     }
     // logger.info('ServerId: '+ serverId + ' Account info: ' + JSON.stringify(accDetails));
@@ -339,12 +350,22 @@ function update(payload) {
 
     if(historyReq[reqId]) {
         var history = historyReq[reqId];
-        if(history.payload.update.accNum == accNum && history.payload.update.amount == amount) {
+        if(history.payload.update.accNum == accNum && history.payload.update.amount == amount && history.payload.update.operation == oper) {
             var response = history.response;
             delete response['payload'];
             delete response['sync'];
             logger.info('Updated response: ' + JSON.stringify(history.response));
             logger.info('ServerId: '+ serverId + ' Update request already exists in history: ' + JSON.stringify(response));
+            return response;
+        }
+        else {
+            var response = {
+                'reqId' : reqId,
+                'outcome' : Outcome.InconsistentWithHistory,
+                'currBal' : 0,
+                'accNum' : accNum
+            };
+            logger.info('ServerId: '+ serverId + ' Update request Inconsistent with history: ' + JSON.stringify(response));
             return response;
         }
     }

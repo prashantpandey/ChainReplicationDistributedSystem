@@ -46,8 +46,8 @@ class Server(da.DistProcess):
                 _st_label_27 -= 1
 
     def setup(self, clients, config, pred, succ):
-        self.succ = succ
         self.config = config
+        self.succ = succ
         self.pred = pred
         self.clients = clients
         self.serverId = config['serverId']
@@ -62,12 +62,19 @@ class Server(da.DistProcess):
         num = req['accNum']
         reqId = req['reqId']
         res = {}
+        flag = True
         self.output(json.dumps(self.history))
         if (reqId in self.history):
+            flag = False
             hist = self.history[reqId]
             if (hist['payload']['accNum'] == num):
                 res = hist['response']
                 self.output(((('ServerId: ' + str(self.serverId)) + ' Query request already exists in history: ') + json.dumps(res)))
+            else:
+                res['reqId'] = reqId
+                res['outcome'] = 'InconsistentWithHistory'
+                res['accNum'] = num
+                res['currBal'] = 0
         else:
             res['reqId'] = reqId
             res['outcome'] = 'Processed'
@@ -76,12 +83,12 @@ class Server(da.DistProcess):
                 res['currBal'] = self.accDetails[num]
             else:
                 self.output((('ServerId: ' + str(self.serverId)) + ' Account does not exists. Creating new account'))
-                self.accDetails[num] = 0
                 res['currBal'] = 0
-        hist = {}
-        hist['payload'] = req
-        hist['response'] = res
-        self.history[reqId] = hist
+        if flag:
+            hist = {}
+            hist['payload'] = req
+            hist['response'] = res
+            self.history[reqId] = hist
         self._send(('Response', res), p)
     _Server_handler_0._labels = None
     _Server_handler_0._notlabels = None
@@ -91,13 +98,23 @@ class Server(da.DistProcess):
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Update request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
         amt = req['amount']
+        oper = req['operation']
         reqId = req['reqId']
         res = {}
+        flag = True
         if (reqId in self.history):
+            flag = False
             hist = self.history[reqId]
-            if (hist['payload']['accNum'] == num):
+            if ((hist['payload']['accNum'] == num) and (hist['payload']['operation'] == oper) and (hist['payload']['amount'] == amt)):
                 res = hist['response']
-                self.output(((('ServerId: ' + str(self.serverId)) + ' Query request already exists in history: ') + json.dumps(res)))
+                self.output(((('ServerId: ' + str(self.serverId)) + ' Update request already exists in history: ') + json.dumps(res)))
+            else:
+                res['reqId'] = reqId
+                res['outcome'] = 'InconsistentWithHistory'
+                res['accNum'] = num
+                res['currBal'] = 0
+                self.output(((('ServerId: ' + str(self.serverId)) + ' Update request inconsistent with history: ') + json.dumps(res)))
+            self._send(('Response', res), p)
         else:
             res['reqId'] = reqId
             res['accNum'] = num
@@ -124,16 +141,17 @@ class Server(da.DistProcess):
                     res['outcome'] = 'InSufficientFunds'
             res['currBal'] = self.accDetails[num]
             res['payload'] = req
-        hist = {}
-        hist['payload'] = req
-        hist['response'] = res
-        self.history[reqId] = hist
-        self.sentReq[reqId] = req
-        self._send(('Sync', res), self.succ)
+        if flag:
+            hist = {}
+            hist['payload'] = req
+            hist['response'] = res
+            self.history[reqId] = hist
+            self.sentReq[reqId] = req
+            self._send(('Sync', res), self.succ)
     _Server_handler_1._labels = None
     _Server_handler_1._notlabels = None
 
-    def _Server_handler_2(self, req, p):
+    def _Server_handler_2(self, p, req):
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((('ServerId: ' + str(self.serverId)) + ' Received Sync request: ') + str(req['reqId'])))
         num = req['payload']['accNum']
@@ -153,7 +171,7 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, serverId, reqId, p):
+    def _Server_handler_3(self, reqId, p, serverId):
         self.output(((('ServerId: ' + str(serverId)) + ' ') + str(reqId)))
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
         nums = reqId.split('.')
@@ -188,36 +206,36 @@ class Client(da.DistProcess):
                         nums = reqId.split('.')
                         if (int(nums[1]) > 1):
                             self.output(((('ReqId: ' + reqId) + ' LastReqId: ') + self.lastRecv))
-                            _st_label_149 = 0
-                            while (_st_label_149 == 0):
-                                _st_label_149 += 1
+                            _st_label_165 = 0
+                            while (_st_label_165 == 0):
+                                _st_label_165 += 1
                                 if (int(self.numsLR[1]) == (int(nums[1]) - 1)):
-                                    _st_label_149 += 1
+                                    _st_label_165 += 1
                                 else:
-                                    super()._label('_st_label_149', block=True)
-                                    _st_label_149 -= 1
+                                    super()._label('_st_label_165', block=True)
+                                    _st_label_165 -= 1
                             else:
-                                if (_st_label_149 != 2):
+                                if (_st_label_165 != 2):
                                     continue
-                            if (_st_label_149 != 2):
+                            if (_st_label_165 != 2):
                                 break
                         self.output(((('ClientId: ' + str(self.clientId)) + ' Sending request to server: ') + str(req['reqId'])))
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
                         self._send((type, req), p)
-        _st_label_154 = 0
-        while (_st_label_154 == 0):
-            _st_label_154 += 1
+        _st_label_170 = 0
+        while (_st_label_170 == 0):
+            _st_label_170 += 1
             if False:
-                _st_label_154 += 1
+                _st_label_170 += 1
             else:
-                super()._label('_st_label_154', block=True)
-                _st_label_154 -= 1
+                super()._label('_st_label_170', block=True)
+                _st_label_170 -= 1
 
     def setup(self, servers, config, data):
-        self.servers = servers
         self.config = config
         self.data = data
+        self.servers = servers
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
         self.lastRecv = '0.0'
@@ -259,7 +277,7 @@ def countProcesses(config):
 def main():
     da.api.config(clock='Lamport')
     print('Bootstraping: loading and parsing the config file')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)

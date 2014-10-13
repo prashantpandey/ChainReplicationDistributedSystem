@@ -38,18 +38,26 @@ class Server(process):
     # callback function to handle the query requests from the client
     # must be the tail server ih the chain
     def receive(msg=('Query', req), from_=p):
-        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         output("ServerId: " + str(serverId) + " Received Query request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         num = req['accNum']
         reqId = req['reqId']
         res = {}
-        
-        output(json.dumps(history)) 
+        flag = True
+
+        # output(json.dumps(history)) 
         if reqId in history:
+            flag = False
             hist = history[reqId]
             if hist['payload']['accNum'] == num:
                 res = hist['response']
                 output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
+            else:
+                res['reqId'] = reqId
+                res['outcome'] = 'InconsistentWithHistory'
+                res['accNum'] = num
+                res['currBal'] = 0
+                output("ServerId: " + str(serverId) + " Query request already inconsistent with history: " + json.dumps(res))
         else:
             res['reqId'] = reqId
             res['outcome'] = 'Processed'
@@ -58,29 +66,43 @@ class Server(process):
                 res['currBal'] = accDetails[num]
             else:
                 output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
-                accDetails[num] = 0
+                # don't create the account on tail, if one doesn't exist
+                # accDetails[num] = 0
                 res['currBal'] = 0
         
-        hist = {}
-        hist['payload'] = req
-        hist['response'] = res
-        history[reqId] = hist
+        if flag:
+            hist = {}
+            hist['payload'] = req
+            hist['response'] = res
+            history[reqId] = hist
         send(('Response',res), to=p)        # send the response back to the client
 
     # callback function to handle the update requests from the clients
     # must be the head server in the chain
     def receive(msg=('Update', req), from_=p):
-        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         output("ServerId: " + str(serverId) + " Received Update request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         num = req['accNum']
         amt = req['amount']
+        oper = req['operation']
         reqId = req['reqId']
         res = {}
+        flag = True
+
         if reqId in history:
+            flag = False
             hist = history[reqId]
-            if hist['payload']['accNum'] == num:
+            if hist['payload']['accNum'] == num and hist['payload']['operation'] == oper and hist['payload']['amount'] == amt:
+            #if hist['payload']['accNum'] == num:
                 res = hist['response']
-                output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
+                output("ServerId: " + str(serverId) + " Update request already exists in history: " + json.dumps(res))
+            else:
+                res['reqId'] = reqId
+                res['outcome'] = 'InconsistentWithHistory'
+                res['accNum'] = num
+                res['currBal'] = 0
+                output("ServerId: " + str(serverId) + " Update request inconsistent with history: " + json.dumps(res))
+            send(('Response', res), to=p)    # send the response back to client
         else:
             res['reqId'] = reqId
             res['accNum'] = num
@@ -108,19 +130,18 @@ class Server(process):
             res['currBal'] = accDetails[num]
             res['payload'] = req
         
-        hist = {}
-        hist['payload'] = req
-        hist['response'] = res
-        
-        history[reqId] = hist            # add request to the history object
-        sentReq[reqId] = req            # add request to the sent object
-        
-        send(('Sync', res), to=succ)    # send Sync request
+        if flag:
+            hist = {}
+            hist['payload'] = req
+            hist['response'] = res 
+            history[reqId] = hist            # add request to the history object
+            sentReq[reqId] = req            # add request to the sent object
+            send(('Sync', res), to=succ)    # send Sync request
 
     # callback function to handle the Sync request from successor
     def receive(msg=('Sync', req), from_=p):
-        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         output("ServerId: " + str(serverId) + " Received Sync request: " + str(req['reqId']))
+        output("ServerId: " + str(serverId) + " " + json.dumps(req))
         num = req['payload']['accNum']
         reqId = req['reqId']
         clientId = req['payload']['clientId']
@@ -139,8 +160,8 @@ class Server(process):
     # callback method to handle the Ack request from the predecessor
     # will delete the requests smaller than the received "reqId" from sent list
     def receive(msg=('Ack', reqId, serverId), from_=p):
-        output("ServerId: " + str(serverId) + " " + str(reqId))
         output("ServerId: " + str(serverId) + " Received Ack request: " + str(reqId))
+        # output("ServerId: " + str(serverId) + " " + str(reqId))
         nums = reqId.split(".")
         for i in range(0, int(nums[1])):
             key = nums[0] + '.' + str(i)
@@ -190,11 +211,11 @@ class Client(process):
                         clk = logical_clock()
                         nums = reqId.split(".")
                         if int(nums[1]) > 1:
-                            output("ReqId: " + reqId + " LastReqId: " + lastRecv)
+                            # output("ReqId: " + reqId + " LastReqId: " + lastRecv)
                             await(int(numsLR[1]) == int(nums[1]) - 1)
-                        output("ClientId: " + str(clientId) + " Sending request to server: " + str(req['reqId']))
                         idx = findServer(req['operation'], req['bankId'])
                         p = serverProcessList[idx] 
+                        output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + idx)
                         send((type, req), to=p)
         await(False)            # will keep the client process alive
 
@@ -206,7 +227,7 @@ class Client(process):
         responses[res['reqId']] = res           # add the received response to the responses object
         lastRecv = res['reqId']
         numsLR = lastRecv.split(".")
-        output("last received updated: " + lastRecv)
+        # output("last received updated: " + lastRecv)
         output("Responses: " + json.dumps(responses))
 
 
@@ -230,8 +251,10 @@ def main():
     print('Bootstraping: loading and parsing the config file')
     # load and parse the 'config' and 'payload' files in JSON format
 
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
+    # dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
+    # dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/samePayload.json')
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)

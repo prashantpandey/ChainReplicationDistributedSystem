@@ -6,8 +6,10 @@
 
 var http = require('http');
 var config = require('./config.json');
-var reqData = require('./randomPayload.json');
-//var reqData = require('./payload.json');
+var reqData = require('./inconsistentHistoryPayload.json');
+// var reqData = require('./samePayload.json');
+// var reqData = require('./randomPayload.json');
+// var reqData = require('./payload.json');
 var logger = require('./logger.js');
 var Fiber = require('fibers');
 
@@ -70,7 +72,7 @@ function performOperation(payload) {
         data['update'] = payload;
         dest = bankServerMap[bankId].headServer;
     }
-    logger.info('ClientId: ' + clientId  + ' Performing ' + opr + ' on bank: ' + bankId);
+    logger.info('ClientId: ' + clientId  + ' Performing request ' + reqId + ' on bank: ' + bankId);
     logger.info('ClientId: ' + clientId  + ' Destination info: ' + JSON.stringify(dest));
     send(data, dest, 'client');   
 }
