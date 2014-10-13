@@ -47,9 +47,9 @@ class Server(da.DistProcess):
 
     def setup(self, clients, config, pred, succ):
         self.config = config
-        self.succ = succ
         self.pred = pred
         self.clients = clients
+        self.succ = succ
         self.serverId = config['serverId']
         self.accDetails = {}
         self.history = {}
@@ -57,13 +57,12 @@ class Server(da.DistProcess):
         self.clientProcessList = list(clients)
 
     def _Server_handler_0(self, req, p):
-        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Query request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
+        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['accNum']
         reqId = req['reqId']
         res = {}
         flag = True
-        self.output(json.dumps(self.history))
         if (reqId in self.history):
             flag = False
             hist = self.history[reqId]
@@ -75,6 +74,7 @@ class Server(da.DistProcess):
                 res['outcome'] = 'InconsistentWithHistory'
                 res['accNum'] = num
                 res['currBal'] = 0
+                self.output(((('ServerId: ' + str(self.serverId)) + ' Query request already inconsistent with history: ') + json.dumps(res)))
         else:
             res['reqId'] = reqId
             res['outcome'] = 'Processed'
@@ -94,8 +94,8 @@ class Server(da.DistProcess):
     _Server_handler_0._notlabels = None
 
     def _Server_handler_1(self, req, p):
-        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Update request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
+        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['accNum']
         amt = req['amount']
         oper = req['operation']
@@ -152,8 +152,8 @@ class Server(da.DistProcess):
     _Server_handler_1._notlabels = None
 
     def _Server_handler_2(self, p, req):
-        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((('ServerId: ' + str(self.serverId)) + ' Received Sync request: ') + str(req['reqId'])))
+        self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['payload']['accNum']
         reqId = req['reqId']
         clientId = req['payload']['clientId']
@@ -171,8 +171,7 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, reqId, p, serverId):
-        self.output(((('ServerId: ' + str(serverId)) + ' ') + str(reqId)))
+    def _Server_handler_3(self, serverId, reqId, p):
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
         nums = reqId.split('.')
         for i in range(0, int(nums[1])):
@@ -205,24 +204,25 @@ class Client(da.DistProcess):
                         clk = self.logical_clock()
                         nums = reqId.split('.')
                         if (int(nums[1]) > 1):
-                            self.output(((('ReqId: ' + reqId) + ' LastReqId: ') + self.lastRecv))
-                            _st_label_165 = 0
-                            while (_st_label_165 == 0):
-                                _st_label_165 += 1
-                                if (int(self.numsLR[1]) == (int(nums[1]) - 1)):
-                                    _st_label_165 += 1
+                            _st_label_163 = 0
+                            while (_st_label_163 == 0):
+                                _st_label_163 += 1
+                                if (self.lastRecv in self.responses):
+                                    _st_label_163 += 1
                                 else:
-                                    super()._label('_st_label_165', block=True)
-                                    _st_label_165 -= 1
+                                    super()._label('_st_label_163', block=True)
+                                    _st_label_163 -= 1
                             else:
-                                if (_st_label_165 != 2):
+                                if (_st_label_163 != 2):
                                     continue
-                            if (_st_label_165 != 2):
+                            if (_st_label_163 != 2):
                                 break
-                        self.output(((('ClientId: ' + str(self.clientId)) + ' Sending request to server: ') + str(req['reqId'])))
+                        '\n                        if int(nums[1]) > 1:\n                            # output("ReqId: " + reqId + " LastReqId: " + lastRecv)\n                            await(int(numsLR[1]) == int(nums[1]) - 1)\n                        '
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
+                        self.output(((((('ClientId: ' + str(self.clientId)) + ' Sending request:') + str(req['reqId'])) + ' to server: ') + str(idx)))
                         self._send((type, req), p)
+                        self.lastRecv = reqId
         _st_label_170 = 0
         while (_st_label_170 == 0):
             _st_label_170 += 1
@@ -256,9 +256,6 @@ class Client(da.DistProcess):
         self.output(((('ClientId: ' + str(self.clientId)) + ' Received response from server for request: ') + str(res['reqId'])))
         self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
         self.responses[res['reqId']] = res
-        self.lastRecv = res['reqId']
-        self.numsLR = self.lastRecv.split('.')
-        self.output(('last received updated: ' + self.lastRecv))
         self.output(('Responses: ' + json.dumps(self.responses)))
     _Client_handler_4._labels = None
     _Client_handler_4._notlabels = None

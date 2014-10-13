@@ -211,12 +211,18 @@ class Client(process):
                         clk = logical_clock()
                         nums = reqId.split(".")
                         if int(nums[1]) > 1:
+                            await(lastRecv in responses)                   
+                        """
+                        if int(nums[1]) > 1:
                             # output("ReqId: " + reqId + " LastReqId: " + lastRecv)
                             await(int(numsLR[1]) == int(nums[1]) - 1)
+                        """
                         idx = findServer(req['operation'], req['bankId'])
                         p = serverProcessList[idx] 
-                        output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + idx)
+                        output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + str(idx))
                         send((type, req), to=p)
+                        lastRecv = reqId
+
         await(False)            # will keep the client process alive
 
     # callback function to recieve the reponse back from the server
@@ -225,8 +231,8 @@ class Client(process):
         output("ClientId: " + str(clientId) + " Received response from server for request: " + str(res['reqId']))
         output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
         responses[res['reqId']] = res           # add the received response to the responses object
-        lastRecv = res['reqId']
-        numsLR = lastRecv.split(".")
+        #lastRecv = res['reqId']
+        #numsLR = lastRecv.split(".")
         # output("last received updated: " + lastRecv)
         output("Responses: " + json.dumps(responses))
 
