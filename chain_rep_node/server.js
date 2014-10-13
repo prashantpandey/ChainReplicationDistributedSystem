@@ -341,6 +341,9 @@ function update(payload) {
         var history = historyReq[reqId];
         if(history.payload.update.accNum == accNum && history.payload.update.amount == amount) {
             var response = history.response;
+            delete response['payload'];
+            delete response['sync'];
+            logger.info('Updated response: ' + JSON.stringify(history.response));
             logger.info('ServerId: '+ serverId + ' Update request already exists in history: ' + JSON.stringify(response));
             return response;
         }
@@ -359,11 +362,12 @@ function update(payload) {
     logger.info('ServerId: '+ serverId + ' Transaction Outcome: ' + outcome + ' Current Bal: ' + currBal);
     
     var response = {
-        'sync' : 1,
         'reqId' : reqId,
         'outcome' : outcome,
         'currBal' : currBal,
-        'accNum' : accNum
+        'accNum' : accNum,
+        'payload' : payload,
+        'sync' : 1
     };
 
     // add the payload and response to historyReq
@@ -374,7 +378,6 @@ function update(payload) {
 
     appendSentReq(payload);
     historyReq[reqId] = history;
-    response['payload'] = payload;
     
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
@@ -478,11 +481,14 @@ var server = http.createServer(
                 }
                 else if(payload.update) {
                     syncRes = update(payload);
+                    logger.info('Update req response: ' + JSON.stringify(syncRes));
                     if(syncRes.sync) {
+                        logger.info('Sending sync request from update');
                         send(syncRes, successor, 'sendSyncReq');                        
                         res['result'] = Outcome.InTransit;
                     }
                     else {
+                        logger.info('Sending response from update');
                         res['result'] = syncRes;
                     }
                 }

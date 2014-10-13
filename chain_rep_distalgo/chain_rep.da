@@ -41,16 +41,29 @@ class Server(process):
         output("ServerId: " + str(serverId) + " " + json.dumps(req))
         output("ServerId: " + str(serverId) + " Received Query request: " + str(req['reqId']) + " from client: " + str(req['clientId']))
         num = req['accNum']
+        reqId = req['reqId']
         res = {}
-        res['reqId'] = req['reqId']
-        res['outcome'] = 'Processed'
-        res['accNum'] = num
-        if num in accDetails:
-            res['currBal'] = accDetails[num]
+        
+        if reqId in history:
+            hist = history['reqId']
+            if hist['payload']['accNum'] == num:
+                res = hist['response']
+                output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
         else:
-            output("Account does not exists. Creating new account")
-            accDetails[num] = 0
-            res['currBal'] = 0
+            res['reqId'] = reqId
+            res['outcome'] = 'Processed'
+            res['accNum'] = num
+            if num in accDetails:
+                res['currBal'] = accDetails[num]
+            else:
+                output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
+                accDetails[num] = 0
+                res['currBal'] = 0
+        
+        hist = {}
+        hist['payload'] = req
+        hist['response'] = res
+        history['reqId'] = hist
         send(('Response',res), to=p)        # send the response back to the client
 
     # callback function to handle the update requests from the clients
@@ -62,32 +75,44 @@ class Server(process):
         amt = req['amount']
         reqId = req['reqId']
         res = {}
-        res['reqId'] = reqId
-        res['accNum'] = num
-        if num in accDetails:
-            bal = accDetails[num]
-            if req['operation'] == 1:
-                accDetails[num] = bal + amt
-                output("ServerId: " + str(serverId) + " Updating the bal: " + str(bal + num))
-                res['outcome'] = 'Processed'
-            elif req['operation'] == 2:
-                if(bal < amt):
-                    output("ServerId: " + str(serverId) + " Not sufficient balance")
-                    res['outcome'] = 'InsufficientBalance'
-                else:
-                    accDetails[num] = bal - amt
-                    res['outcome'] = 'Processed'
+        if reqId in history:
+            hist = history['reqId']
+            if hist['payload']['accNum'] == num:
+                res = hist['response']
+                output("ServerId: " + str(serverId) + " Query request already exists in history: " + json.dumps(res))
         else:
-            output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
-            if req['operation'] == 1:
-                accDetails[num] =  amt
+            res['reqId'] = reqId
+            res['accNum'] = num
+            if num in accDetails:
+                bal = accDetails[num]
+                if req['operation'] == 1:
+                    accDetails[num] = bal + amt
+                    output("ServerId: " + str(serverId) + " Updating the bal: " + str(bal + num))
+                    res['outcome'] = 'Processed'
+                elif req['operation'] == 2:
+                    if(bal < amt):
+                        output("ServerId: " + str(serverId) + " Not sufficient balance")
+                        res['outcome'] = 'InsufficientBalance'
+                    else:
+                        accDetails[num] = bal - amt
+                        res['outcome'] = 'Processed'
             else:
-                accDetails[num] =  0
-            res['outcome'] = 'Processed'
-        res['currBal'] = accDetails[num]
-        res['payload'] = req
-        history[reqId] = req            # add request to the history object
+                output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
+                if req['operation'] == 1:
+                    accDetails[num] =  amt
+                else:
+                    accDetails[num] =  0
+                res['outcome'] = 'Processed'
+            res['currBal'] = accDetails[num]
+            res['payload'] = req
+        
+        hist = {}
+        hist['payload'] = req
+        hist['response'] = res
+        
+        history[reqId] = hist            # add request to the history object
         sentReq[reqId] = req            # add request to the sent object
+        
         send(('Sync', res), to=succ)    # send Sync request
 
     # callback function to handle the Sync request from successor
