@@ -249,7 +249,8 @@ function sync(payload) {
         var response = {
             'reqId' : payload.reqId,
             'outcome' : payload.outcome,
-            'currBal' : payload.currBal
+            'currBal' : payload.currBal,
+            'accNum' : payload.accNum
         };
         send(response, dest, 'sendResponse');
         
@@ -296,7 +297,8 @@ function query(payload) {
     var response = {
         'reqId' : reqId,
         'outcome' : Outcome.Processed,
-        'currBal' : bal
+        'currBal' : bal,
+        'accNum' : accNum
     };
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
@@ -334,6 +336,7 @@ function update(payload) {
         'reqId' : reqId,
         'outcome' : outcome,
         'currBal' : currBal,
+        'accNum' : accNum,
         'payload' : payload
     };
 
@@ -455,8 +458,13 @@ var server = http.createServer(
                 else if (payload.genack){
                     logger.info('Gen request payload: ' + fullBody);
                 }
-                logger.info('Response: ' + JSON.stringify(res)); 
-                response.end(JSON.stringify(res));
+                if(!payload.sync) {
+                    logger.info('Response: ' + JSON.stringify(res)); 
+                    response.end(JSON.stringify(res));
+                }
+                else {
+                    reposnse.end();
+                }
             });
         }
     }

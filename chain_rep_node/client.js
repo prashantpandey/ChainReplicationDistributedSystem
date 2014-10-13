@@ -6,7 +6,8 @@
 
 var http = require('http');
 var config = require('./config.json');
-var reqData = require('./payload.json');
+var reqData = require('./randomPayload.json');
+//var reqData = require('./payload.json');
 var logger = require('./logger.js');
 var Fiber = require('fibers');
 

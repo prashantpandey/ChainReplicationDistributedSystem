@@ -10,14 +10,12 @@ WHITESPACE = re.compile(r'[ \t\n\r]*', FLAGS)
 class ConcatJSONDecoder(json.JSONDecoder):
     def decode(self, s, _w=WHITESPACE.match):
         s_len = len(s)
-
         objs = []
         end = 0
         while end != s_len:
             obj, end = self.raw_decode(s, idx=_w(s, end).end())
             end = _w(s, end).end()
             objs.append(obj)
-        
         return objs
 
 
@@ -46,6 +44,7 @@ class Server(process):
         res = {}
         res['reqId'] = req['reqId']
         res['outcome'] = 'Processed'
+        res['accNum'] = num
         if num in accDetails:
             res['currBal'] = accDetails[num]
         else:
@@ -64,6 +63,7 @@ class Server(process):
         reqId = req['reqId']
         res = {}
         res['reqId'] = reqId
+        res['accNum'] = num
         if num in accDetails:
             bal = accDetails[num]
             if req['operation'] == 1:
@@ -79,7 +79,10 @@ class Server(process):
                     res['outcome'] = 'Processed'
         else:
             output("ServerId: " + str(serverId) + " Account does not exists. Creating new account")
-            accDetails[num] =  amt
+            if req['operation'] == 1:
+                accDetails[num] =  amt
+            else:
+                accDetails[num] =  0
             res['outcome'] = 'Processed'
         res['currBal'] = accDetails[num]
         res['payload'] = req
@@ -191,7 +194,8 @@ def main():
     print('Bootstraping: loading and parsing the config file')
     # load and parse the 'config' and 'payload' files in JSON format
 
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
+    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
