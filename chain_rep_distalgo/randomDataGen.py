@@ -1,5 +1,6 @@
 import sys
 import random
+import json
 from pprint import pprint
 class DataGeneartion:
 
@@ -16,35 +17,31 @@ class DataGeneartion:
         self.wmax = self.pwithdraw * self.nreq
         self.reqId = 0;
 
-    def data_generation(self):
+    def data_generation(self, clientId):
 
         choice_list = [0, 1, 2]
         payloads = []
         data_dict = {}
         for i in range(0, self.nreq):
-            print (i)
             flag = False
             # generate the type of request randomly
             ch = random.choice(choice_list)
-            while(flag == False):
-                if(ch == 0 and self.qreq < self.qmax):
-                    self.qreq +=1
-                    flag = True
-                elif(ch == 1 and self.dreq < self.dmax):
-                    self.dreq +=1
-                    flag = True
-                elif(ch == 2 and self.wreq < self.wmax):
-                    self.wreq +=1
-                    flag = True
+
+            if(ch == 0 and self.qreq < self.qmax):
+                self.qreq +=1
+                flag = True
+            elif(ch == 1 and self.dreq < self.dmax):
+                self.dreq +=1
+                flag = True
+            elif(ch == 2 and self.wreq < self.wmax):
+                self.wreq +=1
+                flag = True
+
             payload = self.gen_request(ch)
             payloads.append(payload)
-        print(payloads)
-        #data_dict["clientId"] = 0
-        #data_dict["payloads"] = payloads
-
-        #pprint(data_dict)
-        #print(data)
-        #return data_dict
+        data_dict["payloads"] = payloads
+        data_dict["clientId"] = clientId
+        return data_dict
 
 
     def gen_request(self, ch):
@@ -70,7 +67,16 @@ def main():
     for arg in sys.argv:
         print (arg)
     """
+    data_list = []
+    final_dict = {}
     datagen = DataGeneartion(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
-    datagen.data_generation()
+    for i in range(0,6):
+        data_dict = {}
+        data_dict = datagen.data_generation(i)
+        data_list.append(data_dict)
+    final_dict["data"] = data_list
+
+    with open('randomPayload.json', 'w') as f:
+        json.dump(final_dict, f, ensure_ascii=False)
 
 main()
