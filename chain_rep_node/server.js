@@ -286,6 +286,16 @@ function query(payload) {
     logger.info('ServerId: '+ serverId + ' Processing the query request: ' + JSON.stringify(payload));
     var reqId = payload.query.reqId
     var accNum = payload.query.accNum;
+
+    if(historyReq[reqId]) {
+        var history = historyReq[reqId];
+        if(history.payload.query.accNum == accNum) {
+            var response = history.response;
+            logger.info('ServerId: '+ serverId + ' Query request already exists in history: ' + JSON.stringify(response));
+            return response;
+        }
+    }
+    
     var bal = getBalance(accNum);
     if(bal == undefined) {
         logger.error('ServerId: '+ serverId + ' Account number not found: ' + accNum);
@@ -300,6 +310,14 @@ function query(payload) {
         'currBal' : bal,
         'accNum' : accNum
     };
+    
+    // add the payload and response to historyReq
+    var history = {
+        'payload' : payload,
+        'response' : response    
+    };
+    historyReq[reqId] = history;
+
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
 }
@@ -318,8 +336,17 @@ function update(payload) {
     var accNum = payload.update.accNum;
     var amount = payload.update.amount;
     var oper = payload.update.operation;
+
+    if(historyReq[reqId]) {
+        var history = historyReq[reqId];
+        if(history.payload.update.accNum == accNum && history.payload.update.amount == amount) {
+            var response = history.response;
+            logger.info('ServerId: '+ serverId + ' Update request already exists in history: ' + JSON.stringify(response));
+            return response;
+        }
+    }
+
     var currBal = getBalance(accNum);
-    
     if(currBal == undefined) {
         logger.error('ServerId: '+ serverId + ' Account number not found: ' + accNum);
         logger.info('ServerId: '+ serverId + ' Creating a new account with the given account number');
@@ -336,12 +363,19 @@ function update(payload) {
         'reqId' : reqId,
         'outcome' : outcome,
         'currBal' : currBal,
-        'accNum' : accNum,
-        'payload' : payload
+        'accNum' : accNum
+    };
+
+    // add the payload and response to historyReq
+    var history = {
+        'payload' : payload,
+        'response' : response    
     };
 
     appendSentReq(payload);
-    historyReq[reqId] = payload;
+    historyReq[reqId] = history;
+    response['payload'] = payload;
+    
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
 }
@@ -444,8 +478,13 @@ var server = http.createServer(
                 }
                 else if(payload.update) {
                     syncRes = update(payload);
-                    send(syncRes, successor, 'sendSyncReq');
-                    res['result'] = Outcome.InTransit;
+                    if(syncRes.sync) {
+                        send(syncRes, successor, 'sendSyncReq');                        
+                        res['result'] = Outcome.InTransit;
+                    }
+                    else {
+                        res['result'] = syncRes;
+                    }
                 }
                 else if (payload.failure) {
                     // TODO: Phase 3
