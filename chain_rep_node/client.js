@@ -186,21 +186,26 @@ Fiber(function() {
         if(data[i].clientId == clientId) {
             var payloads = data[i].payloads;
             var len = data[i].payloads.length;
+            var prevReqId = ''
             for(var j = 0; j < len; j++) {
                 var payload = payloads[j].payload;
                 var reqId = payload.reqId;
                 logger.info('Processing request: ' + reqId);
-                if(reqId > 1) {
-                    var prevReq = reqId - 1;
-                    if(responses[prevReq]) {
+                var nums = reqId.split(".");
+                logger.info(nums[0] + ' ' + nums[1]);
+                if(nums[1] > 1) {
+                    logger.info('Waiting for response: ' + prevReqId);
+                    if(responses[prevReqId]) {
                         performOperation(payload);
+                        prevReqId = reqId;
                         continue;
                     }                    
                     else {
-                        for(;!responses[prevReq];) {
+                        for(;!responses[prevReqId];) {
                             sleep(2000);
                         }
                         performOperation(payload);
+                        prevReqId = reqId;
                         continue;
                     }
                     /*
@@ -223,6 +228,7 @@ Fiber(function() {
                 }
                 else  {
                     performOperation(payload); 
+                    prevReqId = reqId;
                 }
             }
         }

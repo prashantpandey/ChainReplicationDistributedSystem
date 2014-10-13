@@ -355,10 +355,12 @@ function update(payload) {
 function handleAck(payload) {
     logger.info('ServerId: '+ serverId + ' Processing the acknowledgement ' + JSON.stringify(payload));
     var reqId = payload.reqId;
-
-    for(req in sentReq) {
-        if(reqId < req.reqId) {
-            sentReq.remove(req);
+    var nums = reqId.split('.');
+    for(i = 0; i < nums[1]; i++) {
+        key = nums[0] + '.' + i;
+        if(sentReq[key]) {
+            delete sentReq[key]
+            // sentReq.remove(key);
         }
     }
     if(serverType != 0) {
@@ -463,7 +465,7 @@ var server = http.createServer(
                     response.end(JSON.stringify(res));
                 }
                 else {
-                    reposnse.end();
+                    response.end();
                 }
             });
         }

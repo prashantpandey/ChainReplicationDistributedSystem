@@ -5,7 +5,7 @@
             "payloads" : [
                 {
 	        "payload" : {
-		    "reqId" : 1,
+		    "reqId" : "0.1",
             	    "bankId" : 100,
                     "accNum" : 1000,
 		    "amount" : 0,
@@ -16,7 +16,7 @@
                 },
                 {
 	        "payload" : {
-		    "reqId" : 2,
+		    "reqId" : "0.2",
 		    "bankId" : 100,
 		    "accNum" : 1000,
 		    "amount" : 100,
@@ -27,7 +27,7 @@
                 },
                 {
 	        "payload" : {
-		    "reqId" : 3,
+		    "reqId" : "0.3",
 		    "bankId" : 100,
 		    "accNum" : 1000,
 		    "amount" : 10,
@@ -38,7 +38,7 @@
                 },
                 {
 	        "payload" : {
-		    "reqId" : 4,
+		    "reqId" : "0.4",
 		    "bankId" : 100,
 		    "accNum" : 1000,
 		    "amount" : 0,

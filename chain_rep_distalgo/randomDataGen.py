@@ -63,7 +63,7 @@ def main():
     data_list = []
     final_dict = {}
     datagen = DataGeneartion(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
-    for i in range(0,6):
+    for i in range(0,2):
         data_dict = {}
         data_dict = datagen.data_generation(i)
         datagen.reqId = 0

@@ -114,9 +114,12 @@ class Server(process):
     def receive(msg=('Ack', reqId, serverId), from_=p):
         output("ServerId: " + str(serverId) + " " + str(reqId))
         output("ServerId: " + str(serverId) + " Received Ack request: " + str(reqId))
-        for key in range(0, reqId):
+        nums = reqId.split(".")
+        for i in range(0, int(nums[1])):
+            key = nums[0] + '.' + str(i)
             if key in sentReq:
                 del sentReq[key]
+
         
 # Client class for performing operations on server
 class Client(process):
@@ -124,7 +127,8 @@ class Client(process):
     def setup(servers, config, data):
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
-        self.lastRecv = 0
+        self.lastRecv = '0.0'
+        self.numsLR = lastRecv.split(".")
         self.responses = []
 
     # will return the process corresponding to the 
@@ -157,7 +161,10 @@ class Client(process):
                         else:
                             type = 'Update'
                         clk = logical_clock()
-                        await(lastRecv == (reqId - 1))
+                        nums = reqId.split(".")
+                        if int(nums[1]) > 1:
+                            output("ReqId: " + reqId + " LastReqId: " + lastRecv)
+                            await(int(numsLR[1]) == int(nums[1]) - 1)
                         output("ClientId: " + str(clientId) + " Sending request to server: " + str(req['reqId']))
                         idx = findServer(req['operation'], req['bankId'])
                         p = serverProcessList[idx] 
@@ -171,6 +178,8 @@ class Client(process):
         output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
         responses.append(res)           # add the received response to the responses object
         lastRecv = res['reqId']
+        numsLR = lastRecv.split(".")
+        output("last received updated: " + lastRecv)
         output("Responses: " + json.dumps(responses))
 
 

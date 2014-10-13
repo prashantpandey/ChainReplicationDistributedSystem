@@ -46,10 +46,10 @@ class Server(da.DistProcess):
                 _st_label_27 -= 1
 
     def setup(self, clients, config, pred, succ):
-        self.pred = pred
-        self.succ = succ
         self.config = config
+        self.succ = succ
         self.clients = clients
+        self.pred = pred
         self.serverId = config['serverId']
         self.accDetails = {}
         self.history = {}
@@ -131,10 +131,12 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, serverId, reqId, p):
+    def _Server_handler_3(self, reqId, p, serverId):
         self.output(((('ServerId: ' + str(serverId)) + ' ') + str(reqId)))
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
-        for key in range(0, reqId):
+        nums = reqId.split('.')
+        for i in range(0, int(nums[1])):
+            key = ((nums[0] + '.') + str(i))
             if (key in self.sentReq):
                 del self.sentReq[key]
     _Server_handler_3._labels = None
@@ -161,39 +163,43 @@ class Client(da.DistProcess):
                         else:
                             type = 'Update'
                         clk = self.logical_clock()
-                        _st_label_123 = 0
-                        while (_st_label_123 == 0):
-                            _st_label_123 += 1
-                            if (self.lastRecv == (reqId - 1)):
-                                _st_label_123 += 1
+                        nums = reqId.split('.')
+                        if (int(nums[1]) > 1):
+                            self.output(((('ReqId: ' + reqId) + ' LastReqId: ') + self.lastRecv))
+                            _st_label_129 = 0
+                            while (_st_label_129 == 0):
+                                _st_label_129 += 1
+                                if (int(self.numsLR[1]) == (int(nums[1]) - 1)):
+                                    _st_label_129 += 1
+                                else:
+                                    super()._label('_st_label_129', block=True)
+                                    _st_label_129 -= 1
                             else:
-                                super()._label('_st_label_123', block=True)
-                                _st_label_123 -= 1
-                        else:
-                            if (_st_label_123 != 2):
-                                continue
-                        if (_st_label_123 != 2):
-                            break
+                                if (_st_label_129 != 2):
+                                    continue
+                            if (_st_label_129 != 2):
+                                break
                         self.output(((('ClientId: ' + str(self.clientId)) + ' Sending request to server: ') + str(req['reqId'])))
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
                         self._send((type, req), p)
-        _st_label_128 = 0
-        while (_st_label_128 == 0):
-            _st_label_128 += 1
+        _st_label_134 = 0
+        while (_st_label_134 == 0):
+            _st_label_134 += 1
             if False:
-                _st_label_128 += 1
+                _st_label_134 += 1
             else:
-                super()._label('_st_label_128', block=True)
-                _st_label_128 -= 1
+                super()._label('_st_label_134', block=True)
+                _st_label_134 -= 1
 
     def setup(self, servers, config, data):
-        self.servers = servers
-        self.data = data
         self.config = config
+        self.data = data
+        self.servers = servers
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
-        self.lastRecv = 0
+        self.lastRecv = '0.0'
+        self.numsLR = self.lastRecv.split('.')
         self.responses = []
 
     def findServer(self, opr, bankId):
@@ -211,6 +217,8 @@ class Client(da.DistProcess):
         self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
         self.responses.append(res)
         self.lastRecv = res['reqId']
+        self.numsLR = self.lastRecv.split('.')
+        self.output(('last received updated: ' + self.lastRecv))
         self.output(('Responses: ' + json.dumps(self.responses)))
     _Client_handler_4._labels = None
     _Client_handler_4._notlabels = None
