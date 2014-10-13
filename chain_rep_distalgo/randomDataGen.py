@@ -1,3 +1,4 @@
+__author__ = 'kavita'
 import sys
 import random
 import json
@@ -23,39 +24,38 @@ class DataGeneartion:
         payloads = []
         data_dict = {}
         for i in range(0, self.nreq):
-            flag = False
             # generate the type of request randomly
             ch = random.choice(choice_list)
 
             if(ch == 0 and self.qreq < self.qmax):
                 self.qreq +=1
-                flag = True
             elif(ch == 1 and self.dreq < self.dmax):
                 self.dreq +=1
-                flag = True
             elif(ch == 2 and self.wreq < self.wmax):
                 self.wreq +=1
-                flag = True
 
-            payload = self.gen_request(ch)
+            payload = self.gen_request(ch, clientId)
             payloads.append(payload)
         data_dict["payloads"] = payloads
         data_dict["clientId"] = clientId
+        #pprint(data_dict)
         return data_dict
 
 
-    def gen_request(self, ch):
+    def gen_request(self, ch, clientId):
         # generate ReqId in sequence
         payloads = {}
         payload = {}
         bank_set = [100, 200, 300]
         self.reqId +=1
-        payload["reqId"] = self.reqId
+        payload["reqId"] = str(clientId) + "." + str(self.reqId)
         payload["bankId"] = random.choice(bank_set)
         payload["accNum"] = random.randrange(1000, 2000, 100)
         payload["amount"] = random.randrange(0, 10000)
         payload["destBankId"] = 0
         payload["destAccNum"] = 0
+        payload["hostname"] = "localhost"
+        payload["port"] = 8111 + int(clientId)
         payload["operation"] = ch
         payloads["payload"] = payload
         return payloads
@@ -73,10 +73,11 @@ def main():
     for i in range(0,6):
         data_dict = {}
         data_dict = datagen.data_generation(i)
+        datagen.reqId = 0
         data_list.append(data_dict)
     final_dict["data"] = data_list
 
     with open('randomPayload.json', 'w') as f:
-        json.dump(final_dict, f, ensure_ascii=False)
+        json.dump(final_dict, f, indent=4, ensure_ascii=False)
 
 main()
