@@ -3,7 +3,6 @@ import random
 import json
 from pprint import pprint
 class DataGeneartion:
-
     def __init__(self, pquery, pdeposit, pwithdraw, nreq):
         self.pdeposit = pdeposit
         self.pquery = pquery
@@ -18,7 +17,6 @@ class DataGeneartion:
         self.reqId = 0;
 
     def data_generation(self, clientId):
-
         choice_list = [0, 1, 2]
         payloads = []
         data_dict = {}
@@ -62,11 +60,6 @@ class DataGeneartion:
 
 
 def main():
-
-    """
-    for arg in sys.argv:
-        print (arg)
-    """
     data_list = []
     final_dict = {}
     datagen = DataGeneartion(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), int(sys.argv[4]))
@@ -77,6 +70,6 @@ def main():
     final_dict["data"] = data_list
 
     with open('randomPayload.json', 'w') as f:
-        json.dump(final_dict, f, ensure_ascii=False)
+        json.dump(final_dict, f, indent=4, ensure_ascii=False)
 
 main()

@@ -56,13 +56,14 @@ class Server(da.DistProcess):
         self.sentReq = {}
         self.clientProcessList = list(clients)
 
-    def _Server_handler_0(self, p, req):
+    def _Server_handler_0(self, req, p):
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Query request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
         res = {}
         res['reqId'] = req['reqId']
         res['outcome'] = 'Processed'
+        res['accNum'] = num
         if (num in self.accDetails):
             res['currBal'] = self.accDetails[num]
         else:
@@ -73,7 +74,7 @@ class Server(da.DistProcess):
     _Server_handler_0._labels = None
     _Server_handler_0._notlabels = None
 
-    def _Server_handler_1(self, p, req):
+    def _Server_handler_1(self, req, p):
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Update request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         num = req['accNum']
@@ -81,6 +82,7 @@ class Server(da.DistProcess):
         reqId = req['reqId']
         res = {}
         res['reqId'] = reqId
+        res['accNum'] = num
         if (num in self.accDetails):
             bal = self.accDetails[num]
             if (req['operation'] == 1):
@@ -96,7 +98,10 @@ class Server(da.DistProcess):
                     res['outcome'] = 'Processed'
         else:
             self.output((('ServerId: ' + str(self.serverId)) + ' Account does not exists. Creating new account'))
-            self.accDetails[num] = amt
+            if (req['operation'] == 1):
+                self.accDetails[num] = amt
+            else:
+                self.accDetails[num] = 0
             res['outcome'] = 'Processed'
         res['currBal'] = self.accDetails[num]
         res['payload'] = req
@@ -156,36 +161,36 @@ class Client(da.DistProcess):
                         else:
                             type = 'Update'
                         clk = self.logical_clock()
-                        _st_label_119 = 0
-                        while (_st_label_119 == 0):
-                            _st_label_119 += 1
+                        _st_label_123 = 0
+                        while (_st_label_123 == 0):
+                            _st_label_123 += 1
                             if (self.lastRecv == (reqId - 1)):
-                                _st_label_119 += 1
+                                _st_label_123 += 1
                             else:
-                                super()._label('_st_label_119', block=True)
-                                _st_label_119 -= 1
+                                super()._label('_st_label_123', block=True)
+                                _st_label_123 -= 1
                         else:
-                            if (_st_label_119 != 2):
+                            if (_st_label_123 != 2):
                                 continue
-                        if (_st_label_119 != 2):
+                        if (_st_label_123 != 2):
                             break
                         self.output(((('ClientId: ' + str(self.clientId)) + ' Sending request to server: ') + str(req['reqId'])))
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
                         self._send((type, req), p)
-        _st_label_124 = 0
-        while (_st_label_124 == 0):
-            _st_label_124 += 1
+        _st_label_128 = 0
+        while (_st_label_128 == 0):
+            _st_label_128 += 1
             if False:
-                _st_label_124 += 1
+                _st_label_128 += 1
             else:
-                super()._label('_st_label_124', block=True)
-                _st_label_124 -= 1
+                super()._label('_st_label_128', block=True)
+                _st_label_128 -= 1
 
     def setup(self, servers, config, data):
+        self.servers = servers
         self.data = data
         self.config = config
-        self.servers = servers
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
         self.lastRecv = 0
@@ -224,7 +229,7 @@ def countProcesses(config):
 def main():
     da.api.config(clock='Lamport')
     print('Bootstraping: loading and parsing the config file')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
