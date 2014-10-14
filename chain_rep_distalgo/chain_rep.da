@@ -115,7 +115,7 @@ class Server(process):
                 elif req['operation'] == 2:
                     if(bal < amt):
                         output("ServerId: " + str(serverId) + " Not sufficient balance")
-                        res['outcome'] = 'InsufficientBalance'
+                        res['outcome'] = 'InSufficientFunds'
                     else:
                         accDetails[num] = bal - amt
                         res['outcome'] = 'Processed'
@@ -234,7 +234,7 @@ class Client(process):
         #lastRecv = res['reqId']
         #numsLR = lastRecv.split(".")
         # output("last received updated: " + lastRecv)
-        output("Responses: " + json.dumps(responses))
+        output("ClientId: " + str(clientId) + " Responses: " + json.dumps(responses))
 
 
 # count number of client and server processes
@@ -257,10 +257,10 @@ def main():
     print('Bootstraping: loading and parsing the config file')
     # load and parse the 'config' and 'payload' files in JSON format
 
-    # dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
-    # dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/samePayload.json')
-    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
+    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
+    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/samePayload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)

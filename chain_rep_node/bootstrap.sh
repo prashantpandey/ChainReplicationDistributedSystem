@@ -27,9 +27,9 @@ sleep 2s
 # @arg1: clientId
 # @arg2: port
 node ./client.js 0 8111 &
-node ./client.js 1 8112 
-#node ./client.js 2 8113 &
-#node ./client.js 3 8114 &
-#node ./client.js 4 8115 &
-#node ./client.js 5 8116
+node ./client.js 1 8112 & 
+node ./client.js 2 8113 &
+node ./client.js 3 8114 &
+node ./client.js 4 8115 &
+node ./client.js 5 8116
 

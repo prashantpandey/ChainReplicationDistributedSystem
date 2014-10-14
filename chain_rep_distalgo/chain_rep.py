@@ -46,17 +46,17 @@ class Server(da.DistProcess):
                 _st_label_27 -= 1
 
     def setup(self, clients, config, pred, succ):
-        self.config = config
-        self.pred = pred
         self.clients = clients
+        self.pred = pred
         self.succ = succ
+        self.config = config
         self.serverId = config['serverId']
         self.accDetails = {}
         self.history = {}
         self.sentReq = {}
         self.clientProcessList = list(clients)
 
-    def _Server_handler_0(self, req, p):
+    def _Server_handler_0(self, p, req):
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Query request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['accNum']
@@ -127,7 +127,7 @@ class Server(da.DistProcess):
                 elif (req['operation'] == 2):
                     if (bal < amt):
                         self.output((('ServerId: ' + str(self.serverId)) + ' Not sufficient balance'))
-                        res['outcome'] = 'InsufficientBalance'
+                        res['outcome'] = 'InSufficientFunds'
                     else:
                         self.accDetails[num] = (bal - amt)
                         res['outcome'] = 'Processed'
@@ -151,7 +151,7 @@ class Server(da.DistProcess):
     _Server_handler_1._labels = None
     _Server_handler_1._notlabels = None
 
-    def _Server_handler_2(self, p, req):
+    def _Server_handler_2(self, req, p):
         self.output(((('ServerId: ' + str(self.serverId)) + ' Received Sync request: ') + str(req['reqId'])))
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['payload']['accNum']
@@ -171,7 +171,7 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, serverId, reqId, p):
+    def _Server_handler_3(self, reqId, p, serverId):
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
         nums = reqId.split('.')
         for i in range(0, int(nums[1])):
@@ -233,9 +233,9 @@ class Client(da.DistProcess):
                 _st_label_170 -= 1
 
     def setup(self, servers, config, data):
-        self.config = config
-        self.data = data
         self.servers = servers
+        self.data = data
+        self.config = config
         self.clientId = config['clientId']
         self.serverProcessList = list(servers)
         self.lastRecv = '0.0'
@@ -256,7 +256,7 @@ class Client(da.DistProcess):
         self.output(((('ClientId: ' + str(self.clientId)) + ' Received response from server for request: ') + str(res['reqId'])))
         self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
         self.responses[res['reqId']] = res
-        self.output(('Responses: ' + json.dumps(self.responses)))
+        self.output(((('ClientId: ' + str(self.clientId)) + ' Responses: ') + json.dumps(self.responses)))
     _Client_handler_4._labels = None
     _Client_handler_4._notlabels = None
 
@@ -274,7 +274,7 @@ def countProcesses(config):
 def main():
     da.api.config(clock='Lamport')
     print('Bootstraping: loading and parsing the config file')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
