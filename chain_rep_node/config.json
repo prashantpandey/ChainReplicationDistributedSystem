@@ -198,6 +198,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8111,
             "banks" : [
                 {
                     "bankId" : 100,
@@ -218,6 +220,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8112,
             "banks" : [
                 {
                     "bankId" : 100,
@@ -238,6 +242,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8113,
             "banks" : [
                 {
                     "bankId" : 100,
@@ -258,6 +264,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8114,
             "banks" : [
                 {
                     "bankId" : 100,
@@ -278,6 +286,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8115,
             "banks" : [
                 {
                     "bankId" : 100,
@@ -298,6 +308,8 @@
             "numRetries" : 5,
             "resendDelay" : 5,
             "resendFlag" : "true",
+	    "hostname" : "localhost",
+	    "port" : 8116,
             "banks" : [
                 {
                     "bankId" : 100,

@@ -128,7 +128,7 @@ function send(payload, dest, context) {
 
     req.write(JSON.stringify(payload));
     req.on('error', function(e){
-        logger.error('ClientId: ' + clientId  + ' ' + context + ': Problem occured while requesting ' + e)
+        logger.error('ClientId: ' + clientId  + ' ' + context + ' Problem occured while requesting ' + e)
     });
     req.end();
 }

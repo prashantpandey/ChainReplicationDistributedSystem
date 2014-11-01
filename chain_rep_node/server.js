@@ -51,6 +51,7 @@ var predecessor = {};
 var serverId = '';
 var hostname = '';
 var port = '';
+var bankId = '';
 var serverLifeTime = '';
 var serverStartupDelay = '';
 
@@ -97,15 +98,28 @@ function checkRequest(reqId) {
  * Send heart beat signals to master
  */
 function sendHeartBeat() {
+    var data = {
+	'serverId' : serverId,
+	'bankId' : bankId 
+    };
     var options = {
-        hostname : config.master.hostname,
-        port: config.master.port
+	'host' : config.master.hostname,
+	'port' : config.master.port,
+	'path' : '/',
+	'method' : 'POST',
+	'headers' : { 'Content-Type' : 'application/json'
+		    }
     }
-    var req = http.request(options, 
-            function(response) {
-                logger.info('Received ack back from master');
+    var req = http.request(options, function(response) {
+	response.on('end', function() {
+	    logger.info('ServerId: ' + serverId + ' Heart beat acknowledgment from Master.');
+	});
     });
-    req.write(serverId);
+    req.write(JSON.stringify(data));
+    req.on('error', function(e) {
+	logger.info('ServerId: ' + serverId + ' Problem occured while requesting ' + e);
+    });
+    req.end();
 }
 
 // TODO: Phase 3
