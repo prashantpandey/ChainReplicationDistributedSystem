@@ -98,9 +98,10 @@ function checkRequest(reqId) {
  * Send heart beat signals to master
  */
 function sendHeartBeat() {
-    var data = {
+    var payload = {
 	'serverId' : serverId,
-	'bankId' : bankId 
+	'bankId' : bankId,
+        'type' : serverType 
     };
     var options = {
 	'host' : config.master.hostname,
@@ -109,13 +110,13 @@ function sendHeartBeat() {
 	'method' : 'POST',
 	'headers' : { 'Content-Type' : 'application/json'
 		    }
-    }
+    };
     var req = http.request(options, function(response) {
 	response.on('end', function() {
 	    logger.info('ServerId: ' + serverId + ' Heart beat acknowledgment from Master.');
 	});
     });
-    req.write(JSON.stringify(data));
+    req.write(JSON.stringify(payload));
     req.on('error', function(e) {
 	logger.info('ServerId: ' + serverId + ' Problem occured while requesting ' + e);
     });

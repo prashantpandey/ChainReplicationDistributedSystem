@@ -4,14 +4,16 @@
  * The client communicates with server for banking operations.
  */
 
-var http = require('http');
 var config = require('./config.json');
 //var reqData = require('./inconsistentHistoryPayload.json');
 //var reqData = require('./samePayload.json');
 var reqData = require('./randomPayload.json');
 // var reqData = require('./payload.json');
 var logger = require('./logger.js');
+
+/* System includes */
 var Fiber = require('fibers');
+var http = require('http');
 
 var Outcome = {
     Processed: 0,
