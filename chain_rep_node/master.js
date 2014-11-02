@@ -20,6 +20,7 @@ var config = require('./config.json');
 var http = require('http');
 var sys = require('sys');
 var Heap = require('heap');
+var Fiber = require('fibers'); 
 
 /* Data Structures */
 var hostname = '';
@@ -108,21 +109,6 @@ function handleHeartBeat(payload) {
     logger.info('Master: heart beat msg processed');
 }
 
-/**
- * Probe the server heap struct for failure
- * pop the serverTSHeap to find if the last received timestamp
- * is expired 
- */
-function probeServerHeap() {
-    logger.info('Master: probing the server heap for failure');
-    var curTS = new Date().getTime();
-    var server = serverTSHeap.peek();
-    if(curTS - server.timestamp > 5) { // server has failed
-        logger.info('Master: ServerId: ' + server.serverId + ' failed');
-        handleServerFailure(server.serverId, server.bankId, server.type);
-    }
-    // else do nothing 
-}
 
 /**
  * handle server failure 
@@ -351,3 +337,22 @@ port = config.master.port;
 master.listen(port);
 logger.info('Master running at http://127.0.0.1:' + port);
 
+/**
+ * Probe the server heap struct for failure
+ * pop the serverTSHeap to find if the last received timestamp
+ * is expired 
+ * If not sleep for 1 sec and continue
+ *          
+ */
+Fiber(function() {
+    logger.info('Master: probing the server heap for failure');
+    var curTS = new Date().getTime();
+    var server = serverTSHeap.peek();
+    if(curTS - server.timestamp > 5000) { // server has failed
+        logger.info('Master: ServerId: ' + server.serverId + ' failed');
+        server = serverTSHeap.pop();
+        handleServerFailure(server.serverId, server.bankId, server.type);
+    }
+    // else sleep for a sec
+    sleep(1000);
+}).run();

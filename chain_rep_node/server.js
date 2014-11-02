@@ -110,7 +110,7 @@ function sendHeartBeat() {
 	'method' : 'POST',
 	'headers' : { 'Content-Type' : 'application/json'
 		    }
-    };
+    }
     var req = http.request(options, function(response) {
 	response.on('end', function() {
 	    logger.info('ServerId: ' + serverId + ' Heart beat acknowledgment from Master.');
