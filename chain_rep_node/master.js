@@ -109,7 +109,6 @@ function handleHeartBeat(payload) {
     logger.info('Master: heart beat msg processed');
 }
 
-
 /**
  * handle server failure 
  * notify the respective servers
@@ -125,8 +124,11 @@ function handlerServerFailure(serverId, bankId, type) {
         case 0:
             var newHead = updateChain(bankId, serverId, type);
             var payload = {
-                'type' : 'head',
-                'server' : newHead
+                'failure' : {
+                    'type' : 'head',
+                    'server' : newHead,
+                    'bankId' : bankId
+                    }
                 };
             notifyClient(bankId, payload);
             send(payload, newHead, 'notifyHead'); // notify new head 
@@ -134,18 +136,24 @@ function handlerServerFailure(serverId, bankId, type) {
         case 1:
             var newSuccPred = updateChain(bankId, serverId, type);
             new payload = {
-                'type' : 'predecessor',
-                'server' : newSuccPred.successor
+                'failure' : {
+                    'type' : 'predecessor',
+                    'server' : newSuccPred.successor
+                    }
                 };
             notifyServer(newSuccPred.predecessor, payload); // notify pred
+            payload['type'] = 'successor';
             payload['server'] = newSuccPred.predecessor;
             notifyServer(newSuccPred.successor, payload); // notify succ
             break;
         case 2:
             var newTail = updateChain(bankId, serverId, type);
             var payload = {
-                'type' : 'tail',
-                'server' : newTail
+                'failure' : {
+                    'type' : 'tail',
+                    'server' : newTail,
+                    'bankId' : bankId
+                    }
                 };
             notifyClient(bankId, payload);
             send(payload, newHead, 'notifyTail'); // notify new tail 
@@ -342,17 +350,20 @@ logger.info('Master running at http://127.0.0.1:' + port);
  * pop the serverTSHeap to find if the last received timestamp
  * is expired 
  * If not sleep for 1 sec and continue
- *          
+ *
+ * using Fiber to sleep on a thread          
  */
 Fiber(function() {
-    logger.info('Master: probing the server heap for failure');
-    var curTS = new Date().getTime();
-    var server = serverTSHeap.peek();
-    if(curTS - server.timestamp > 5000) { // server has failed
-        logger.info('Master: ServerId: ' + server.serverId + ' failed');
-        server = serverTSHeap.pop();
-        handleServerFailure(server.serverId, server.bankId, server.type);
+    while(true) {
+        logger.info('Master: probing the server heap for failure');
+        var curTS = new Date().getTime();
+        var server = serverTSHeap.peek();
+        if(curTS - server.timestamp > 5000) { // server has failed
+            logger.info('Master: ServerId: ' + server.serverId + ' failed');
+            server = serverTSHeap.pop();
+            handleServerFailure(server.serverId, server.bankId, server.type);
+        }
+        // else sleep for a sec
+        sleep(1000);
     }
-    // else sleep for a sec
-    sleep(1000);
 }).run();

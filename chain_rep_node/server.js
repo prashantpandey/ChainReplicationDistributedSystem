@@ -16,7 +16,7 @@ var config = require('./config.json');
 /* System includes */
 var http = require('http');
 var sys = require('sys');
-var fs = require('fs');
+var Fiber = require('fibers');
 
 /* Data Structures */
 var Outcome = {
@@ -54,6 +54,7 @@ var port = '';
 var bankId = '';
 var serverLifeTime = '';
 var serverStartupDelay = '';
+var heartBeatDelay = config.master.heartBeatDelay;
 
 var sentReq = {};
 var historyReq = {};
@@ -93,35 +94,6 @@ function checkRequest(reqId) {
     */
 }
 
-// TODO: Phase 3
-/**
- * Send heart beat signals to master
- */
-function sendHeartBeat() {
-    var payload = {
-	'serverId' : serverId,
-	'bankId' : bankId,
-        'type' : serverType 
-    };
-    var options = {
-	'host' : config.master.hostname,
-	'port' : config.master.port,
-	'path' : '/',
-	'method' : 'POST',
-	'headers' : { 'Content-Type' : 'application/json'
-		    }
-    }
-    var req = http.request(options, function(response) {
-	response.on('end', function() {
-	    logger.info('ServerId: ' + serverId + ' Heart beat acknowledgment from Master.');
-	});
-    });
-    req.write(JSON.stringify(payload));
-    req.on('error', function(e) {
-	logger.info('ServerId: ' + serverId + ' Problem occured while requesting ' + e);
-    });
-    req.end();
-}
 
 // TODO: Phase 3
 /**
@@ -449,6 +421,28 @@ function handleAck(payload) {
 }
 
 /**
+ * handle the failure use case
+ * update the server type in case of head/tail failure
+ * update the succ/pred in case of internal failure
+ */
+handleChainFailure(payload) {
+    var server = payload.failure.server;
+    var type = payload.failure.type;
+    if(type == 'head') {    // change server type
+        serverType = 0;
+    }
+    else if (type = 'tail') {   // change server type
+        serverType = 2;
+    }
+    else if(type = 'successor') {   // change successor
+       successor = server;
+    }
+    else if(type == 'predecessor') {    // change predecessor
+        predecessor = server;
+    }
+}
+
+/**
  * check if the req has already been processed
  */
 function checkLogs(payload) {
@@ -529,7 +523,6 @@ var server = http.createServer(
                     }
                 }
                 else if (payload.failure) {
-                    // TODO: Phase 3
                     handleChainFailure(payload);
                 }
                 else if(payload.ack) {
@@ -541,7 +534,7 @@ var server = http.createServer(
                 else if (payload.genack){
                     logger.info('Gen request payload: ' + fullBody);
                 }
-                if(!payload.sync) {
+                if(!payload.sync && !payload.failure) {
                     logger.info('Response: ' + JSON.stringify(res)); 
                     response.end(JSON.stringify(res));
                 }
@@ -556,12 +549,23 @@ server.listen(port);
 logger.info('Server running at http://127.0.0.1:' + port);
 
 
-// TODO: Phase 3
-// Handle the heart beat signals to be sent to master node
 /**
- * Setup the timer for regular heart beat signals
+ * Send heart beat signals to master
+ *
+ * using Fiber to sleep on a thread
  */
-// setInterval(sendHeartBeat, 5000);
+Fiber(function() {
+    var payload = {
+	'serverId' : serverId,
+	'bankId' : bankId,
+        'type' : serverType 
+    };
+    while(true) {
+        send(payload, config.master, 'sendHeartBeat');
+        // sleep for delat time
+        sleep(heartBeatDelay);
+    }
+}).run();
 
 
 

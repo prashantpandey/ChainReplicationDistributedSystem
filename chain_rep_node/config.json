@@ -2,7 +2,8 @@
 {
     "master" : {
         "hostname" : "localhost",
-        "port" : 8080
+        "port" : 8080,
+        "heartBeatDelay" : 5000
     },
     "bank" : [
     {

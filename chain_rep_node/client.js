@@ -152,10 +152,23 @@ var server = http.createServer(function(request, response) {
 
         request.on('end', function() {
             var resBody = JSON.parse(str);
-            // logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
-            logger.info('ClientId: ' + clientId  + ' Adding response to db');
-            responses[resBody.reqId] = resBody;
-            logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+            logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
+            
+            // update the bank server map for failure msg from master
+            if(resBody.failure) {
+                var server = resBody.failure.server;
+                if(resBody.failure.type == 'head') {
+                    bankServerMap[resBody.failure.bankId].headServer = server;
+                }
+                else if(resBody.failure.type == 'tail') {
+                    bankServerMap[resBody.failure.bankId].tailServer = server; 
+                }
+            }
+            else {
+                logger.info('ClientId: ' + clientId  + ' Adding response to db');
+                responses[resBody.reqId] = resBody;
+                logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+            }
         });
     }
 
@@ -181,6 +194,8 @@ prepareBankServerMap();
  * to different banks.
  * bal : query requests are sent at the tail server of the bank
  * withdraw/transfer : update requests are sent at the head server of bank
+ *
+ * using Fiber to sleep on a thread
  */
 Fiber(function() { 
     logger.info('Starting to perform query/update operations');
