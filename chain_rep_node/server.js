@@ -456,11 +456,9 @@ function handleChainFailure(payload) {
     else if(type == 'predecessor') {    // change predecessor: this is succ
         predecessor = server;
 	var payload = {
-	    'newSucc' : {
 		'seqNum' : lastSentReq
-	    }
 	};
-	send(payload, predecessor, 'NewPredecessor');
+	return payload;
     }
 }
 
