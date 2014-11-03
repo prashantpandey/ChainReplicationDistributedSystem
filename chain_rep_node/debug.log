@@ -922,3 +922,43 @@
 2014-11-01T18:22:11.029Z - info: Response: {"result":{"genack":1,"reqId":"1.3","outcome":0}}
 2014-11-01T18:22:11.039Z - info: ServerId: 201 Processed the acknowledgement
 2014-11-01T18:22:11.040Z - info: Response: {"result":{"genack":1,"reqId":"2.3","outcome":0}}
+2014-11-03T06:05:12.613Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:05:12.614Z - info: Master: probing the server heap for failure
+2014-11-03T06:05:29.789Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:05:29.790Z - info: Master: probing the server heap for failure
+2014-11-03T06:08:13.031Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:08:13.032Z - info: Master: probing the server heap for failure
+2014-11-03T06:08:57.243Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:08:57.243Z - info: Master: probing the server heap for failure
+2014-11-03T06:10:12.893Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:10:12.895Z - info: Master: probing the server heap for failure
+2014-11-03T06:14:05.191Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:14:05.192Z - info: Master: probing the server heap for failure
+2014-11-03T06:15:54.646Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:15:54.647Z - info: Master: probing the server heap for failure
+2014-11-03T06:16:35.941Z - info: Master running at http://127.0.0.1:8080
+2014-11-03T06:16:35.942Z - info: Master: probing the server heap for failure
+2014-11-03T06:16:36.943Z - info: Master: probing the server heap for failure
+2014-11-03T06:16:37.947Z - info: Master: probing the server heap for failure
+2014-11-03T06:16:38.948Z - info: Master: probing the server heap for failure
+2014-11-03T06:16:39.949Z - info: Master: probing the server heap for failure
+2014-11-03T06:17:01.253Z - info: ClientId: undefined Client server running at http://127.0.0.1:undefined
+2014-11-03T06:17:01.254Z - info: ClientId: undefined Preparing the bank server map
+2014-11-03T06:17:01.254Z - info: Starting to perform query/update operations
+2014-11-03T06:17:20.478Z - info: Retrieved cmd line args: undefined undefined
+2014-11-03T06:18:29.339Z - info: Retrieved cmd line args: 100 101
+2014-11-03T06:18:29.342Z - info: Server running at http://127.0.0.1:8101
+2014-11-03T06:18:29.343Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-03T06:18:29.350Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-03T06:18:34.351Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-03T06:18:34.354Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-03T07:51:55.324Z - info: Retrieved cmd line args: undefined undefined
+2014-11-03T07:52:41.117Z - info: Retrieved cmd line args: 100 101
+2014-11-03T07:52:41.119Z - info: Server running at http://127.0.0.1:8101
+2014-11-03T07:52:41.120Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-03T07:52:41.127Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-03T07:52:46.129Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-03T07:52:46.131Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-03T08:09:27.012Z - info: ClientId: undefined Client server running at http://127.0.0.1:
+2014-11-03T08:09:27.013Z - info: ClientId: undefined Preparing the bank server map
+2014-11-03T08:09:27.014Z - info: Starting to perform query/update operations

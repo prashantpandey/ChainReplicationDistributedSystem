@@ -72,8 +72,8 @@ function prepareBankServerMap() {
 	for(var j = 0; j < config.bank[i].clients; j++) {
 	    var clientId = config.bank[i].clients[j].clientId;
 	    client[j] = {
-		"hostname" : config.client[clientId].hostname;
-		"port" : config.client[clientId].port;
+		"hostname" : config.client[clientId].hostname,
+		"port" : config.client[clientId].port
 	    };     
 	}
         
@@ -137,14 +137,14 @@ function handlerServerFailure(serverId, bankId, type) {
             var newSuccPred = updateChain(bankId, serverId, type);
             new payload = {
                 'failure' : {
-                    'type' : 'predecessor',
+                    'type' : 'successor',
                     'server' : newSuccPred.successor
                     }
                 };
-            notifyServer(newSuccPred.predecessor, payload); // notify pred
-            payload['type'] = 'successor';
-            payload['server'] = newSuccPred.predecessor;
-            notifyServer(newSuccPred.successor, payload); // notify succ
+            notifyServer(newSuccPred.predecessor, payload); // notify predecessor
+            payload.failure['type'] = 'predecessor';
+            payload.failure['server'] = newSuccPred.predecessor;
+            notifyServer(newSuccPred.successor, payload); // notify successor
             break;
         case 2:
             var newTail = updateChain(bankId, serverId, type);
@@ -356,14 +356,14 @@ logger.info('Master running at http://127.0.0.1:' + port);
 Fiber(function() {
     while(true) {
         logger.info('Master: probing the server heap for failure');
-        var curTS = new Date().getTime();
+        var currTS = new Date().getTime();
         var server = serverTSHeap.peek();
-        if(curTS - server.timestamp > 5000) { // server has failed
+        if(server && currTS - server.timestamp > 5000) { // server has failed
             logger.info('Master: ServerId: ' + server.serverId + ' failed');
             server = serverTSHeap.pop();
             handleServerFailure(server.serverId, server.bankId, server.type);
         }
         // else sleep for a sec
-        sleep(1000);
+        util.sleep(1000);
     }
 }).run();

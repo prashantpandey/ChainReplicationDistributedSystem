@@ -59,6 +59,7 @@ var heartBeatDelay = config.master.heartBeatDelay;
 var sentReq = {};
 var historyReq = {};
 var accDetails = {};
+var lastSentReq = '';
 
 /* General functions */
 
@@ -142,6 +143,7 @@ function applyUpdate(payload) {
 function appendSentReq(payload) {
     var reqId = payload.reqId;
     sentReq[reqId] = payload.payload;
+    lastSentReq = reqId;
 }
 
 /**
@@ -309,12 +311,14 @@ function query(payload) {
         'accNum' : accNum
     };
     
-    // add the payload and response to historyReq
-    var history = {
-        'payload' : payload,
-        'response' : response    
-    };
-    historyReq[reqId] = history;
+    /* 
+	add the payload and response to historyReq
+	var history = {
+	    'payload' : payload,
+	    'response' : response    
+	};
+    */
+	historyReq[reqId] = response;
 
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
@@ -378,14 +382,16 @@ function update(payload) {
         'sync' : 1
     };
 
-    // add the payload and response to historyReq
-    var history = {
-        'payload' : payload,
-        'response' : response    
-    };
+    /** 
+	add the payload and response to historyReq
+	var history = {
+	    'payload' : payload,
+	    'response' : response    
+	};
+    */
 
     appendSentReq(payload);
-    historyReq[reqId] = history;
+    historyReq[reqId] = response;
     
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
@@ -425,7 +431,7 @@ function handleAck(payload) {
  * update the server type in case of head/tail failure
  * update the succ/pred in case of internal failure
  */
-handleChainFailure(payload) {
+function handleChainFailure(payload) {
     var server = payload.failure.server;
     var type = payload.failure.type;
     if(type == 'head') {    // change server type
@@ -434,11 +440,39 @@ handleChainFailure(payload) {
     else if (type = 'tail') {   // change server type
         serverType = 2;
     }
-    else if(type = 'successor') {   // change successor
+    else if(type = 'successor') {   // change successor: this is pred
        successor = server;
     }
-    else if(type == 'predecessor') {    // change predecessor
+    else if(type == 'predecessor') {    // change predecessor: this is succ
         predecessor = server;
+	var payload = {
+	    'newSucc' : {
+		'seqNum' : lastSentReq
+	    }
+	};
+	send(payload, predecessor, 'NewPredecessor');
+    }
+}
+
+/**
+ * handle internal server failure and resolve
+ * sentReq anomalies by synchronizing the sentReq
+ */
+function handleNewSucc(payload) {
+    var lastSeqSucc = payload.newSucc.seqNum;
+    for(i = 0; i < sentReq.length; i++) {
+	if(sentReq[i].reqId > lastSeqSucc) {
+	    var reqId = sentReq[i].reqId;
+	    var response = {
+		'reqId' : reqId,
+		'outcome' : historyReq[reqId].outcome,
+		'currBal' : historyReq[reqId].currBal,
+		'accNum' : historyReq[reqId].accNum,
+		'payload' : historyReq[reqId].payload,
+		'sync' : 1
+	    };	
+	    send(reqponse, successor, 'sendSyncReq');   
+	}
     }
 }
 
@@ -460,12 +494,12 @@ function checkLogs(payload) {
             'response' : 'false'
         };
     }
-    logger.info('Check logs request processed');
+    logger.info('ServerId: '+ serverId + ' Check logs request processed');
     return response;
 }
 
 var arg = process.argv.splice(2);
-logger.info('Retrieved cmd line args: ' + arg[0] + ' ' + arg[1]);
+logger.info('ServerId: '+ serverId + ' Retrievev cmd line args: ' + arg[0] + ' ' + arg[1]);
 loadServerConfig(arg[0], arg[1]);
 
 /*
@@ -486,6 +520,7 @@ var server = http.createServer(
         if(request.method == 'POST') {
             var fullBody ='';
             var res = {};
+	    var flag = false;
             
             // if it is a POST request then load the full msg body
             request.on('data', function(chunk) {
@@ -504,10 +539,12 @@ var server = http.createServer(
                 // in the message body
                 
                 if(payload.sync) {
-                    res['result'] = sync(payload); 
+                    res['result'] = sync(payload);
+		    flag = true;
                 }
                 else if(payload.query) {
-                    res = query(payload);   
+                    res = query(payload);
+		    flag = true;
                 }
                 else if(payload.update) {
                     syncRes = update(payload);
@@ -521,12 +558,17 @@ var server = http.createServer(
                         logger.info('Sending response from update');
                         res['result'] = syncRes;
                     }
+		    flag = true;
                 }
                 else if (payload.failure) {
                     handleChainFailure(payload);
                 }
+		else if (payload.newSucc) {	// this is pred
+		    handleNewSucc(payload);
+		}
                 else if(payload.ack) {
                     res['result'] = handleAck(payload);
+		    flag = true;
                 }
                 else if(payload.checkLog) {
                     res = checklogs(payload)
@@ -534,9 +576,10 @@ var server = http.createServer(
                 else if (payload.genack){
                     logger.info('Gen request payload: ' + fullBody);
                 }
-                if(!payload.sync && !payload.failure) {
+                if(flag) {
                     logger.info('Response: ' + JSON.stringify(res)); 
                     response.end(JSON.stringify(res));
+		    flag = false;
                 }
                 else {
                     response.end();
@@ -563,7 +606,7 @@ Fiber(function() {
     while(true) {
         send(payload, config.master, 'sendHeartBeat');
         // sleep for delat time
-        sleep(heartBeatDelay);
+        util.sleep(heartBeatDelay);
     }
 }).run();
 

@@ -10,6 +10,7 @@ var config = require('./config.json');
 var reqData = require('./randomPayload.json');
 // var reqData = require('./payload.json');
 var logger = require('./logger.js');
+var util = require('./util.js');
 
 /* System includes */
 var Fiber = require('fibers');
@@ -33,6 +34,11 @@ var bankServerMap = {};
 var responses = {};
 var clientId = '';
 var port = '';
+var numRetries = '';
+var resendDelay = '';
+var resendFlag = '';
+var currDelay = '';	// will hold the curr dealy for any in-transit req
+var currRetriesCnt = 0;    // will hold the curr retry cnt
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -52,6 +58,20 @@ function prepareBankServerMap() {
         // logger.info('ClientId: ' + clientId  + ' Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
     }
     // logger.info('ClientId: ' + clientId  + ' Added ' + i + ' entries to the bank details');
+}
+
+/**
+ * Will load the config related paramters
+ */
+function loadClientConfig() {
+    for(var i = 0; i < config.client.length; i++) {
+	if(config.client[i].clientId == clientId) {
+	    port = config.client[i].port;
+	    numRetries = config.client[i].numRetries;
+	    resendDelay = config.client[i].resendDelay;
+	    resendFlag = config.client[i].resendFlag;
+	}
+    }
 }
 
 /**
@@ -76,20 +96,8 @@ function performOperation(payload) {
     }
     logger.info('ClientId: ' + clientId  + ' Performing request ' + reqId + ' on bank: ' + bankId);
     logger.info('ClientId: ' + clientId  + ' Destination info: ' + JSON.stringify(dest));
-    send(data, dest, 'client');   
+    send(data, dest, 'client');
 }
-
-/**
- *
- */
-function sleep(ms) {        
-    var fiber = Fiber.current;
-    setTimeout(function() {
-        fiber.run();
-    }, ms);
-    Fiber.yield();
-}
-
 
 /**
  * generic function to send request to destination entity
@@ -139,7 +147,7 @@ function send(payload, dest, context) {
  * Server to receive responses from the tail
  *
  */
-var server = http.createServer(function(request, response) {
+var client = http.createServer(function(request, response) {
     response.writeHead(200, {'Content-Type' : 'text/plain'});
     
     logger.info('ClientId: ' + clientId  + ' Response received from Server');
@@ -163,6 +171,10 @@ var server = http.createServer(function(request, response) {
                 else if(resBody.failure.type == 'tail') {
                     bankServerMap[resBody.failure.bankId].tailServer = server; 
                 }
+		if(resendFlag) {
+		    // TODO: Not Implemented right now. Been dealt via
+		    // resendDelat and num retries
+		}
             }
             else {
                 logger.info('ClientId: ' + clientId  + ' Adding response to db');
@@ -176,8 +188,8 @@ var server = http.createServer(function(request, response) {
 
 var arg = process.argv.splice(2);
 clientId = arg[0];
-port = arg[1];
-server.listen(port);
+loadClientConfig();	// load config parameters
+client.listen(port);
 logger.info('ClientId: ' + clientId  + ' Client server running at http://127.0.0.1:' + port);
 
 // prepare the mapping for the bank
@@ -198,7 +210,7 @@ prepareBankServerMap();
  * using Fiber to sleep on a thread
  */
 Fiber(function() { 
-    logger.info('Starting to perform query/update operations');
+    logger.info('ClientId: ' + clientId  + ' Starting to perform query/update operations');
     var data = reqData.data;
     // logger.info('Data: ' + JSON.stringify(data));
     for( var i = 0; i < data.length; i++) {
@@ -209,19 +221,36 @@ Fiber(function() {
             for(var j = 0; j < len; j++) {
                 var payload = payloads[j].payload;
                 var reqId = payload.reqId;
-                logger.info('Processing request: ' + reqId);
+                logger.info('ClientId: ' + clientId  + ' Processing request: ' + reqId);
                 var nums = reqId.split(".");
                 logger.info(nums[0] + ' ' + nums[1]);
                 if(nums[1] > 1) {
-                    logger.info('Waiting for response: ' + prevReqId);
+                    logger.info('ClientId: ' + clientId  + ' Waiting for response: ' + prevReqId);
                     if(responses[prevReqId]) {
                         performOperation(payload);
+			currDelay = new Date().getTime();
+			currRetriesCnt++;
                         prevReqId = reqId;
                         continue;
                     }                    
                     else {
                         for(;!responses[prevReqId];) {
-                            sleep(2000);
+			    // handling the resend logic
+			    var currTS = new Date().getTime();
+			    if(currTS - currDelay > resendDelay) {
+				logger.info('ClientId: ' + clientId  + 'Request timed out. Resending..' + reqId);
+				if(payload.operation == 0) { // query opr
+				    performOperation(payload);
+				    currDelay = new Date().getTime();
+				    currRetriesCnt++;
+				    prevReqId = reqId;
+				    continue;
+				}
+				else {
+				    
+				}
+			    }
+                            util.sleep(2000);
                         }
                         performOperation(payload);
                         prevReqId = reqId;
@@ -246,7 +275,8 @@ Fiber(function() {
                     */
                 }
                 else  {
-                    performOperation(payload); 
+                    performOperation(payload);
+		    currDelay = new Date().getTime();
                     prevReqId = reqId;
                 }
             }

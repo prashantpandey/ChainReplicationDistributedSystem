@@ -1,6 +1,7 @@
 
 /* System includes */
 var exec = require('child_process').exec
+var Fiber = require('fibers');
 
 /* Config File includes */
 var config = require('./config.json');
@@ -115,3 +116,15 @@ function findSuccPredServer(bankId, serverId, succFlag) {
 }
 
 //parseServerInfo(100, "104");
+
+/**
+ *    
+ */
+exports.sleep = function sleep(ms) {
+    var fiber = Fiber.current;
+    setTimeout(function() {
+	fiber.run();
+    }, ms);
+    Fiber.yield();
+}
+
