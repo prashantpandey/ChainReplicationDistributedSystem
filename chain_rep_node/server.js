@@ -484,14 +484,16 @@ function checkLogs(payload) {
     var response = '';
     if(checkRequest(reqId)) {
         response = {
+            'checkLog' : 1,
             'reqId' : reqId,
-            'response' : 'true'
+            'response' : true
         };
     }
     else {
         response = {
+            'checkLog' : 1,
             'reqId' : reqId,
-            'response' : 'false'
+            'response' : false
         };
     }
     logger.info('ServerId: '+ serverId + ' Check logs request processed');
@@ -571,7 +573,8 @@ var server = http.createServer(
 		    flag = true;
                 }
                 else if(payload.checkLog) {
-                    res = checklogs(payload)
+                    res = checklogs(payload);
+                    flag = true;
                 }
                 else if (payload.genack){
                     logger.info('Gen request payload: ' + fullBody);

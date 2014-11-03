@@ -133,6 +133,9 @@ function send(payload, dest, context) {
                 responses[resBody.reqId] = resBody;
                 logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
             }
+            else if (payload.checkLog) {
+               return payload.response;  
+            }
         });
     });
 
@@ -217,7 +220,7 @@ Fiber(function() {
         if(data[i].clientId == clientId) {
             var payloads = data[i].payloads;
             var len = data[i].payloads.length;
-            var prevReqId = ''
+            var preReq = {};
             for(var j = 0; j < len; j++) {
                 var payload = payloads[j].payload;
                 var reqId = payload.reqId;
@@ -225,35 +228,52 @@ Fiber(function() {
                 var nums = reqId.split(".");
                 logger.info(nums[0] + ' ' + nums[1]);
                 if(nums[1] > 1) {
-                    logger.info('ClientId: ' + clientId  + ' Waiting for response: ' + prevReqId);
-                    if(responses[prevReqId]) {
+                    logger.info('ClientId: ' + clientId  + ' Waiting for response: ' + preReq.reqId);
+                    if(responses[preReq]) {
                         performOperation(payload);
 			currDelay = new Date().getTime();
 			currRetriesCnt++;
-                        prevReqId = reqId;
+                        preReq = payload;
                         continue;
                     }                    
                     else {
-                        for(;!responses[prevReqId];) {
+                        for(;!responses[preReq.reqId];) {
 			    // handling the resend logic
 			    var currTS = new Date().getTime();
 			    if(currTS - currDelay > resendDelay) {
 				logger.info('ClientId: ' + clientId  + 'Request timed out. Resending..' + reqId);
-				if(payload.operation == 0) { // query opr
-				    performOperation(payload);
-				    currDelay = new Date().getTime();
-				    currRetriesCnt++;
-				    prevReqId = reqId;
-				    continue;
-				}
-				else {
-				    
-				}
+                                if(currRetriesCnt <= numRetries) {
+				    if(payload.operation == 0) { // query opr
+				        performOperation(preReq);
+				        currDelay = new Date().getTime();
+				        currRetriesCnt++;
+				        continue;
+				    }
+				    else {
+				        // check to see if the update opr is already performed
+                                        var payload = {
+                                            'checkLog' : 1,
+                                            'reqId' : preReq.reqId 
+                                            };
+                                        var res = send(payload, bankServerMap[preReq.bankId].headServer, 'checkLog');
+                                        if(!res) {
+				            performOperation(preReq);
+				            currDelay = new Date().getTime();
+				            currRetriesCnt++;
+				            continue;
+                                        }
+				    }
+                                }
+                                else {  // number of retries is exceeded
+                                    performOperation(payload);
+                                    preReq = payload;
+                                    continue;
+                                }
 			    }
                             util.sleep(2000);
                         }
                         performOperation(payload);
-                        prevReqId = reqId;
+                        preReq = payload;
                         continue;
                     }
                     /*
@@ -277,7 +297,7 @@ Fiber(function() {
                 else  {
                     performOperation(payload);
 		    currDelay = new Date().getTime();
-                    prevReqId = reqId;
+                    preReq = payload;
                 }
             }
         }

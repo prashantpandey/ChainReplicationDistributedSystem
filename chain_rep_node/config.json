@@ -198,7 +198,7 @@
             "clientId" : 0,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8111,
             "banks" : [
@@ -220,7 +220,7 @@
             "clientId" : 1,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8112,
             "banks" : [
@@ -242,7 +242,7 @@
             "clientId" : 2,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8113,
             "banks" : [
@@ -264,7 +264,7 @@
             "clientId" : 3,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8114,
             "banks" : [
@@ -286,7 +286,7 @@
             "clientId" : 4,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8115,
             "banks" : [
@@ -308,7 +308,7 @@
             "clientId" : 5,
             "numRetries" : 2,
             "resendDelay" : 2000,
-            "resendFlag" : "true",
+            "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8116,
             "banks" : [
