@@ -272,7 +272,7 @@ function send(data, dest, context) {
         response.on('end', function(){
             logger.info(context + ': Acknowledgement received' + str);
 	    var payload = JSON.parse(str);
-	    if(payload.seqNum) {
+	    if(payload.result.seqNum) {
 		return payload.seqNum;
 	    }
         });

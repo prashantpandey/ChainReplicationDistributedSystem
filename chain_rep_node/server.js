@@ -452,6 +452,7 @@ function handleChainFailure(payload) {
     }
     else if(type = 'successor') {   // change successor: this is pred
        successor = server;
+       handleNewSucc(payload.failure.seqNum);
     }
     else if(type == 'predecessor') {    // change predecessor: this is succ
         predecessor = server;
@@ -466,8 +467,7 @@ function handleChainFailure(payload) {
  * handle internal server failure and resolve
  * sentReq anomalies by synchronizing the sentReq
  */
-function handleNewSucc(payload) {
-    var lastSeqSucc = payload.newSucc.seqNum;
+function handleNewSucc(lastSeqSucc) {
     for(i = 0; i < sentReq.length; i++) {
 	if(sentReq[i].reqId > lastSeqSucc) {
 	    var reqId = sentReq[i].reqId;
@@ -581,11 +581,9 @@ var server = http.createServer(
 		    flag = true;
                 }
                 else if (payload.failure) {
-                    handleChainFailure(payload);
+		    res['result'] = handleChainFailure(payload);
+		    flag = true;
                 }
-		else if (payload.newSucc) {	// this is pred
-		    handleNewSucc(payload);
-		}
                 else if(payload.ack) {
                     res['result'] = handleAck(payload);
 		    flag = true;
@@ -601,7 +599,7 @@ var server = http.createServer(
                     logger.info('Response: ' + JSON.stringify(res)); 
                     response.end(JSON.stringify(res));
 		    flag = false;
-                    if(!payload.sync) {  // dont increment if sync request
+                    if(!payload.sync && !payload.failure) {  // dont increment if sync request
                         totalSentCnt++;
                     }
                 }
