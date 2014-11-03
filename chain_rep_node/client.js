@@ -96,7 +96,14 @@ function performOperation(payload) {
     }
     logger.info('ClientId: ' + clientId  + ' Performing request ' + reqId + ' on bank: ' + bankId);
     logger.info('ClientId: ' + clientId  + ' Destination info: ' + JSON.stringify(dest));
-    send(data, dest, 'client');
+    if(payload.simFail == 1) {
+        // msg NOT SENT
+        // this will simulate the failure condition
+        // the packet dropped on the client <--> server channel
+    }
+    else {
+        send(data, dest, 'client');
+    }
 }
 
 /**

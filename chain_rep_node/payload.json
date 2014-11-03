@@ -13,7 +13,8 @@
 		    "destAccNum" : 1001,
 		    "operation" : 0,
                     "port" : 8111,
-                    "hostname" : "localhost"
+                    "hostname" : "localhost",
+                    "simFail" : 0
 	        }
                 },
                 {
@@ -26,7 +27,8 @@
 		    "destAccNum" : 1001,
 		    "operation" : 1,
                     "port" : 8111,
-                    "hostname" : "localhost"
+                    "hostname" : "localhost",
+                    "simFail" : 0
 	        }
                 },
                 {
@@ -39,7 +41,8 @@
 		    "destAccNum" : 1001,
 		    "operation" : 2,
                     "port" : 8111,
-                    "hostname" : "localhost"
+                    "hostname" : "localhost",
+                    "simFail" : 0
 	        }
                 },
                 {
@@ -52,7 +55,8 @@
 		    "destAccNum" : 1001,
 		    "operation" : 0,
                     "port" : 8111,
-                    "hostname" : "localhost"
+                    "hostname" : "localhost",
+                    "simFail" : 0
 	        }
                 }
             ]

@@ -44,7 +44,6 @@ var ServerType = {
     Tail: 2
 }
 
-var totalReqCount = 0;
 var serverType = '';
 var successor = {};
 var predecessor = {};
@@ -52,7 +51,7 @@ var serverId = '';
 var hostname = '';
 var port = '';
 var bankId = '';
-var serverLifeTime = '';
+var serverLifeTime = {};
 var serverStartupDelay = '';
 var heartBeatDelay = config.master.heartBeatDelay;
 
@@ -60,6 +59,8 @@ var sentReq = {};
 var historyReq = {};
 var accDetails = {};
 var lastSentReq = '';
+var totalSentCnt = 0;
+var totalRecvCnt = 0;
 
 /* General functions */
 
@@ -95,17 +96,17 @@ function checkRequest(reqId) {
     */
 }
 
-
-// TODO: Phase 3
 /**
  * Check whether the MaxService limit is reached
  */
 function checkMaxServiceLimit() {
-    if(config.bank[0].servers[0].serverLifeTime != "UNBOUND") {
-        if(totalReqCount >= config.bank[0].servers[0].serverLifeTime) {
-            logger.info('Server request limit reached. Terminating server.');
-            process.exit(0);
-        }
+    if(serverLifeTime.RecvNum && serverLifeTime.RecvNum == totalRecvCnt) {
+        logger.info('ServerId: '+ serverId + ' Servev RECV request limit reached. Terminating server.');
+        process.exit(0);
+    }
+    else if(serverLifeTime.SendNum && serverLifeTime.SendNum == totalSentCnt) {
+        logger.info('ServerId: '+ serverId + ' Servev SEND request limit reached. Terminating server.');
+        process.exit(0);
     }
 }
 
@@ -241,7 +242,15 @@ function sync(payload) {
             'currBal' : payload.currBal,
             'accNum' : payload.accNum
         };
-        send(response, dest, 'sendResponse');
+        if(payload.payload.update.simFail == 2) {
+            // response NOT SENT
+            // this will simulate the failure condition
+            // the packet dropped on the server <--> client channel
+        }
+        else {
+            send(response, dest, 'sendResponse');
+            totalSentCnt++;
+        }
         
         var ack = {
             'ack' : 1,
@@ -253,6 +262,7 @@ function sync(payload) {
     else {
         appendSentReq(payload);
         send(payload, successor, 'sendSyncReq');
+        totalSentCnt++;
     }
     var response = {
         'genack' : 1,
@@ -541,14 +551,24 @@ var server = http.createServer(
                 // in the message body
                 
                 if(payload.sync) {
+                    totalRecvCnt++;
                     res['result'] = sync(payload);
-		    flag = true;
+		    // flag = true;     // ommitting gen ack msg, due to flooding 
                 }
                 else if(payload.query) {
+                    totalRecvCnt++;
                     res = query(payload);
-		    flag = true;
+                    if(payload.payload.update.simFail == 2) {
+                        // response NOT SENT
+                        // this will simulate the failure condition
+                        // the packet dropped on the server <--> client channel
+                    }
+                    else {
+		        flag = true;
+                    }
                 }
                 else if(payload.update) {
+                    totalRecvCnt++;
                     syncRes = update(payload);
                     logger.info('Update req response: ' + JSON.stringify(syncRes));
                     if(syncRes.sync) {
@@ -583,6 +603,9 @@ var server = http.createServer(
                     logger.info('Response: ' + JSON.stringify(res)); 
                     response.end(JSON.stringify(res));
 		    flag = false;
+                    if(!payload.sync) {  // dont increment if sync request
+                        totalSentCnt++;
+                    }
                 }
                 else {
                     response.end();
@@ -607,6 +630,11 @@ Fiber(function() {
         'type' : serverType 
     };
     while(true) {
+        // check for serverLifeTime limit IF NOT UNBOUNDED
+        // before sending the heartbeat signal
+        if (serverLifeTime != 'UNBOUND') {
+           checkMaxServiceLimit(); 
+        }
         send(payload, config.master, 'sendHeartBeat');
         // sleep for delat time
         util.sleep(heartBeatDelay);

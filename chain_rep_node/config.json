@@ -25,7 +25,7 @@
                 "hostname" : "localhost",
                 "port" : 8101,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 0
             },
             {
@@ -33,7 +33,7 @@
                 "hostname" : "localhost",
                 "port" : 8102,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"RecvNum" : 5},
                 "type" : 1
             },
             {
@@ -41,7 +41,7 @@
                 "hostname" : "localhost",
                 "port" : 8103,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"SendNum" : 5},
                 "type" : 1
             },
             {
@@ -49,7 +49,7 @@
                 "hostname" : "localhost",
                 "port" : 8104,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2
             } 
         ],
@@ -87,7 +87,7 @@
                 "hostname" : "localhost",
                 "port" : 8201,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 0
             },
             {
@@ -95,7 +95,7 @@
                 "hostname" : "localhost",
                 "port" : 8202,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1
             },
             {
@@ -103,7 +103,7 @@
                 "hostname" : "localhost",
                 "port" : 8203,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1
             },
             {
@@ -111,7 +111,7 @@
                 "hostname" : "localhost",
                 "port" : 8204,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2
             } 
         ],
@@ -149,7 +149,7 @@
                 "hostname" : "localhost",
                 "port" : 8301,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 0
             },
             {
@@ -157,7 +157,7 @@
                 "hostname" : "localhost",
                 "port" : 8302,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1
             },
             {
@@ -165,7 +165,7 @@
                 "hostname" : "localhost",
                 "port" : 8303,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1
             },
             {
@@ -173,7 +173,7 @@
                 "hostname" : "localhost",
                 "port" : 8304,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2 
             } 
         ],
