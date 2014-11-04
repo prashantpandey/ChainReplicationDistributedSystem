@@ -142,14 +142,15 @@ function handleServerFailure(serverId, bankId, type) {
             var newSuccPred = updateChain(bankId, serverId, type);
             new payload = {
                 'failure' : {
-                    'type' : 'successor',
-                    'server' : newSuccPred.successor
+                    'type' : 'predecessor',
+                    'server' : newSuccPred.predecessor
                     }
                 };
-            notifyServer(newSuccPred.predecessor, payload); // notify predecessor
-            payload.failure['type'] = 'predecessor';
-            payload.failure['server'] = newSuccPred.predecessor;
-            notifyServer(newSuccPred.successor, payload); // notify successor
+	    var seqNum = send(payload, newSuccPred.successor, 'InformSuccessor'); // notify successor
+            payload.failure['type'] = 'successor';
+            payload.failure['server'] = newSuccPred.successor;
+	    payload.failure['seqNum'] = seqNum;
+            send(payload, newSuccPred.successor, 'InformPredecessor'); // notify successor
             break;
         case 2:
             var newTail = updateChain(bankId, serverId, type);
@@ -275,6 +276,11 @@ function send(data, dest, context) {
         });
         response.on('end', function(){
             logger.info('Master: ' + context + ': Acknowledgement received' + str);
+            logger.info(context + ': Acknowledgement received' + str);
+	    var payload = JSON.parse(str);
+	    if(payload.result.seqNum) {
+		return payload.seqNum;
+	    }
         });
     });
 

@@ -1,4 +1,7 @@
+import time
+import threading
 import sys
+import heapq
 import json
 import pickle
 import re
@@ -272,6 +275,9 @@ def main():
     servers = new(Server, num = count['total_servers'])
     clients = new(Client, num = count['total_clients'])
 
+    # create the master process
+    master = new(Master, num = 1)
+
     # create a list of clients config objects
     clientMap = []
     for c in config:
@@ -289,6 +295,16 @@ def main():
                 conf['serverId'] = s['serverId']
                 serverMap.append(conf) 
 
+    # create list of clients attached to bank
+    # used by master to communicate about the failure of head/tail
+    bankClientInfo = {}
+    for c in config:
+	for bank in c['bank']:
+	    cliList = []
+	    for cli in bank['clients']:
+		cliList.append(cli['clientId'])
+	    bankClientInfo[bank] = cliList		  
+     
     # setup servers/clients
     print('Bootstraping: Setting up client/server processes')
     i = 0
@@ -310,7 +326,174 @@ def main():
         setup({process}, (servers, config, data))
 
     print('Bootstraping: Starting client/server processes')
-    # Start the server and client processes
+    # Start the server and client processes as well as the master
     start(servers)
     start(clients)
+    start(master)
 
+class GetTupleByTs(tuple):
+     "tuple that sorts only on TS element"
+     def __lt__(self, other):
+         return self[2]<other[2]
+
+# Master class for failure detection and chain extension
+class Master(process):
+
+    # setup function for the master process
+    def setup():
+	bankServerTupleList = []
+	bankServerTsHeap = []
+	pass
+
+    # Make a bank server timestamp list where tuples are of the form (bankId, serverId, timestamp)
+    # Make a heap of this list so as to check for server failures in O(1) time.
+    # If a server entry is already there in the heap, just update the new timestamp when 
+    # a heartbeat comes.
+    # Else add a new entry for that server in the Server Timestamp list and the heap.
+    def receive(msg=('HeartBeat', bankId, serverId), from_=p):
+
+	flag = 0;
+	output("Got a heartbeat message from server:" + str(serverId))
+	#update the DS for the timestamp corresponding to that bank
+
+	for x in bankServerTupleList:
+	    if (serverId in x):
+		bankServerTupleList.remove(x)
+		bankServerTupleList.append((bankId, serverId, int(time.time())))
+		flag = 1
+		break;
+	if flag == 0:
+	    bankServerTupleList.append((bankId, serverId, int(time.time())))
+
+        
+	bankServerTsHeap = [GetTupleByTs(x) for x in bankServerTupleList] 
+	output(bankServerTsHeap)
+	heapq.heapify(bankServerTsHeap)
+	output(heapq.heappop(bankServerTsHeap))
+
+	return 0;
+
+    # Checks the last timestamp(ts) using heappop() on bankServerTsHeap
+    # If the ts > 5 seconds, then the server has failed.
+    # Call the notify method accordingly.
+    # This function executes every 1sec and probes the bankServerTsHeap to 
+    # detect server failures.
+    def probeServerForFailureCheck():
+	# every 1 sec, master probes the heap structure to check if heartbeat has been 
+	# received from servers or not.
+	threading.Timer(1.0, printit).start()
+	output("Detecting server failures if any!!");
+	findFailure = 1
+	while(findFailure) {
+	    serverTsTuple = heapq.heappop(bankServerTsHeap)
+	    if(int(time.time()) - serverTsTuple[2] > 5):
+		output("Server with id" + serverTsTuple[1] + "has crashed!!!")
+		handleServerFailure(bankId, serverId):
+	   else
+		findFailure = 0
+	}
+
+    # Handle the server failure by notifying the clients about the head/tail failures
+    # and by notifying predecessor and successor about the internal server failure.     
+    def handleServerFailure(bankId, serverId):
+	# handle the failure of servers depending upon their type
+	output("Handling server failure for server Id" + serverId)
+	# TODO:: Find the server type
+
+	for item in serverMap:
+	    if (item['serverId'] == serverId && item['bankId'] == bankId):
+		serverType = item['type']
+
+	switch(serverType) {
+	    case 0: 
+		    # Head has failed. Notify the client about the new head server
+		    newHead = updateChain(bankId, serverId, serverType)
+
+		    payload['failure']['type'] = 0
+		    payload['failure']['server'] = newHead
+		    payload['failure']['bankId'] = bankId
+		    
+		    notifyClient(bankId, payload);
+		    # notify the server with id newHead that it is the new head server
+		    send(('notifyHead', payload), to=newHead)     
+		    break
+
+	    case 1:
+		    
+		    # Internal node has failed. Notify the predecessor and successor about it
+		    newSuccPred = updateChain(bankId, serverId, serverType) 
+		    
+		    payload['failure']['type'] = 1
+		    payload['failure']['server'] = newSuccPred
+		    payload['failure']['bankId'] = bankId
+
+		    # TODO:: How to notify the successor of its predecessor.
+		    
+		    # Notify the successor about its new predecessor and return the last seq
+		    seqNum = notifyServer(bankId, payload, newSuccPred, -1)
+		    
+		    # Notify the predecessor and send the seq retrieved from successor, so that the
+		    prdecessor can send remaining messages with > seqNumto the new successor
+		    notifyServer(bankId, payload, newSuccPred, seqNum)
+		    break
+							    
+	    case 2:
+		    
+		    # Tail has failed. Notify the client about the new tail server
+		    newTail = updateChain(bankId, serverId)
+		    
+		    payload['failure']['type'] = 2
+		    payload['failure']['server'] = newTail
+		    payload['failure']['bankId'] = bankId
+		    
+		    notifyClient(bankId, payload, serverType);
+		    
+		    # notify the server with id newTail that it is the new tail server
+		    send(('notifyTail', payload), to=newTail)     
+		    break;
+	}
+
+    # notify client of Head/Tail server failure of a bank
+    def notifyClient(bankId, serverId):
+	# Retrieving all the clients of the bank whose server has failed
+	clientList = bankClientInfo[bankId]
+	send(('notifyClient', payload), to=clientList)
+
+    def notifyServer(bankId, payload, serverId, seqNum):
+	if seqNum == -1:
+	    # has been called by a successor should return back its last seen SeqNum
+	    # to master
+	    # TODO:: retrieve the last seqNum from the sentReq
+	    send(('notifySucc', payload), to=serverId)
+	    # TODO:: wait for the successor to reply with seqNum
+	    return seqNum
+	
+	elif seqNum >=1:
+	    # has been called by prdecessor.
+	    # send all the requests with sequence number greater than seqNum to successor.
+	    send(('notifyPred', payload, seqNum), to=serverId)
+	    
+	pass
+
+    # Update the chain in case of server failures, the data structures containing this mapping
+    # are modified
+    def updateChain(bankId, serverId, type):
+	
+	output("Updating the chain after server failure!!")
+	switch(serverType) {
+	
+	    case 0: # Head Failure
+		    for item in serverMap:
+			if item['bankId'] == bankId && item["type"] == type:
+			    item['serverId'] = serverId
+
+		    # TODO:: Remove from the bankClientList
+		    # also for anyserver type it would be same I think 		    
+	    case 1:
+	    case 2:
+		    # Tail Failure
+		    for item in serverMap:
+			if item['bankId'] == bankId && item["type"] == type:
+			    item['serverId'] = serverId
+	
+	}
