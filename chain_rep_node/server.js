@@ -193,7 +193,7 @@ function performUpdate(accNum, amount, oper) {
  * @context: context info (who's invoking the function)
  */
 function send(data, dest, context) {
-    logger.info(serverId + ' ' + JSON.stringify(dest) + ' ' + context);
+    logger.info("ServerId: " + serverId + ' ' + JSON.stringify(dest) + ' ' + context);
     var options =
     {
         'host': dest.hostname,
@@ -209,13 +209,13 @@ function send(data, dest, context) {
             str += data;
         });
         response.on('end', function(){
-            logger.info(context + ': Acknowledgement received' + str);
+            logger.info("ServerId: " + serverId + ' ' + context + ': Acknowledgement received' + str);
         });
     });
 
     req.write(JSON.stringify(data));
     req.on('error', function(e){
-        logger.error(context + ': Problem occured while requesting' + e)
+        logger.error("ServerId: " + serverId + ' ' + context + ': Problem occured while requesting' + e)
     });
     req.end();
 }
@@ -321,14 +321,13 @@ function query(payload) {
         'accNum' : accNum
     };
     
-    /* 
-	add the payload and response to historyReq
-	var history = {
-	    'payload' : payload,
-	    'response' : response    
-	};
-    */
-	historyReq[reqId] = response;
+    //  add the payload and response to historyReq
+    var history = {
+        'payload' : payload,
+	'response' : response    
+    };
+
+    historyReq[reqId] = response;
 
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
@@ -350,12 +349,12 @@ function update(payload) {
     var oper = payload.update.operation;
 
     if(historyReq[reqId]) {
-        var history = historyReq[reqId];
-        if(history.payload.update.accNum == accNum && history.payload.update.amount == amount && history.payload.update.operation == oper) {
+        var payload = historyReq[reqId].payload;
+        if(payload.update.accNum == accNum && payload.update.amount == amount && payload.update.operation == oper) {
             var response = history.response;
             delete response['payload'];
             delete response['sync'];
-            logger.info('Updated response: ' + JSON.stringify(history.response));
+            logger.info('ServerId: '+ serverId + ' Updated response: ' + JSON.stringify(history.response));
             logger.info('ServerId: '+ serverId + ' Update request already exists in history: ' + JSON.stringify(response));
             return response;
         }
@@ -391,14 +390,12 @@ function update(payload) {
         'payload' : payload,
         'sync' : 1
     };
-
-    /** 
-	add the payload and response to historyReq
-	var history = {
-	    'payload' : payload,
-	    'response' : response    
-	};
-    */
+ 
+    // add the payload and response to historyReq
+    var history = {
+        'payload' : payload,
+        'response' : response    
+    };
 
     appendSentReq(payload);
     historyReq[reqId] = response;
@@ -490,28 +487,26 @@ function handleNewSucc(payload) {
  * check if the req has already been processed
  */
 function checkLogs(payload) {
+    logger.info('ServerId: '+ serverId + ' Processing check Logs request');
     var reqId = payload.reqId;
-    var response = '';
-    if(checkRequest(reqId)) {
-        response = {
-            'checkLog' : 1,
-            'reqId' : reqId,
-            'response' : true
-        };
+    var response = checkRequest(reqId);
+    if(response) {
+        delete response['payload'];
+        response['checkLog'] = 1;
     }
     else {
         response = {
-            'checkLog' : 1,
+            'checkLog' : 0,
             'reqId' : reqId,
-            'response' : false
         };
     }
     logger.info('ServerId: '+ serverId + ' Check logs request processed');
+    logger.info(JSON.stringify(response));
     return response;
 }
 
 var arg = process.argv.splice(2);
-logger.info('ServerId: '+ serverId + ' Retrievev cmd line args: ' + arg[0] + ' ' + arg[1]);
+logger.info('ServerId: '+ arg[1] + ' Retrieve cmd line args: ' + arg[0] + ' ' + arg[1]);
 loadServerConfig(arg[0], arg[1]);
 
 /*
@@ -528,7 +523,7 @@ var server = http.createServer(
         // 4. acknowledgement
         // 5. checkLogs
         
-        logger.info('ServerId: '+ serverId + ' Request received');
+        // logger.info('ServerId: '+ serverId + ' Request received');
         if(request.method == 'POST') {
             var fullBody ='';
             var res = {};
@@ -546,7 +541,7 @@ var server = http.createServer(
                 // parse the msg body to JSON once it is fully received
                 var payload = JSON.parse(fullBody);
 
-                logger.info(payload);
+                // logger.info(payload);
                 // sequester the request based upon the element present
                 // in the message body
                 
@@ -558,10 +553,11 @@ var server = http.createServer(
                 else if(payload.query) {
                     totalRecvCnt++;
                     res = query(payload);
-                    if(payload.payload.update.simFail == 2) {
+                    if(payload.query.simFail == 2) {
                         // response NOT SENT
                         // this will simulate the failure condition
-                        // the packet dropped on the server <--> client channel
+                        // the packet dropped on the server <--> client channel 
+                        logger.info();
                     }
                     else {
 		        flag = true;
@@ -570,14 +566,14 @@ var server = http.createServer(
                 else if(payload.update) {
                     totalRecvCnt++;
                     syncRes = update(payload);
-                    logger.info('Update req response: ' + JSON.stringify(syncRes));
+                    logger.info('ServerId: '+ serverId + ' Update req response: ' + JSON.stringify(syncRes));
                     if(syncRes.sync) {
-                        logger.info('Sending sync request from update');
+                        logger.info('ServerId: '+ serverId + ' Sending sync request from update');
                         send(syncRes, successor, 'sendSyncReq');                        
                         res['result'] = Outcome.InTransit;
                     }
                     else {
-                        logger.info('Sending response from update');
+                        logger.info('ServerId: '+ serverId + ' Sending response from update');
                         res['result'] = syncRes;
                     }
 		    flag = true;
@@ -593,14 +589,14 @@ var server = http.createServer(
 		    flag = true;
                 }
                 else if(payload.checkLog) {
-                    res = checklogs(payload);
+                    res = checkLogs(payload);
                     flag = true;
                 }
                 else if (payload.genack){
-                    logger.info('Gen request payload: ' + fullBody);
+                    logger.info('ServerId: '+ serverId + ' Gen request payload: ' + fullBody);
                 }
                 if(flag) {
-                    logger.info('Response: ' + JSON.stringify(res)); 
+                    logger.info('ServerId: '+ serverId + ' Response: ' + JSON.stringify(res)); 
                     response.end(JSON.stringify(res));
 		    flag = false;
                     if(!payload.sync) {  // dont increment if sync request
@@ -625,6 +621,7 @@ logger.info('Server running at http://127.0.0.1:' + port);
  */
 Fiber(function() {
     var payload = {
+        'heartBeat' : 1,
 	'serverId' : serverId,
 	'bankId' : bankId,
         'type' : serverType 
@@ -637,7 +634,7 @@ Fiber(function() {
         }
         send(payload, config.master, 'sendHeartBeat');
         // sleep for delat time
-        util.sleep(heartBeatDelay);
+        util.sleep(heartBeatDelay/2);
     }
 }).run();
 

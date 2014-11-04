@@ -25,6 +25,7 @@ var Fiber = require('fibers');
 /* Data Structures */
 var hostname = '';
 var port = '';
+var heartBeatDelay = '';
 
 var bankServerMap = {};
 var bankServerList = {};
@@ -100,12 +101,16 @@ function handleHeartBeat(payload) {
     serverTSMap[payload.serverId] = {
         'serverId' : payload.serverId,
 	'bankId' : payload.bankId,
+        'type' : payload.type,
 	'timestamp' : new Date().getTime()
     };
-    if(obj)
-        serverTSHeap.update(obj);
-    else 
+    if(obj) {
+        serverTSHeap.updateItem(obj);
+    }
+    else {
+        obj = serverTSMap[payload.serverId];
         serverTSHeap.push(obj);
+    }
     logger.info('Master: heart beat msg processed');
 }
 
@@ -118,7 +123,7 @@ function handleHeartBeat(payload) {
  * @bankId: bankId to which the server belongs
  * @type_: type of the failed server
  */
-function handlerServerFailure(serverId, bankId, type) {
+function handleServerFailure(serverId, bankId, type) {
     logger.info('Master: Handling the server failure for ServerId: ' + serverId);
     switch(type) {
         case 0:
@@ -269,13 +274,13 @@ function send(data, dest, context) {
             str += data;
         });
         response.on('end', function(){
-            logger.info(context + ': Acknowledgement received' + str);
+            logger.info('Master: ' + context + ': Acknowledgement received' + str);
         });
     });
 
     req.write(JSON.stringify(data));
     req.on('error', function(e){
-        logger.error(context + ': Problem occured while requesting' + e)
+        logger.error('Master: ' + context + ': Problem occured while requesting' + e)
     });
     req.end();
 }
@@ -317,17 +322,17 @@ var master = http.createServer(
 		// parse the msg body to JSON once it is full received
                 var payload = JSON.parse(fullBody);
 
-                logger.info(data);
+                // logger.info(data);
 		// sequester the request based upon the element present
 		// in the msg body
 		
-		if(payload.heartbeat) {
-		    receiveHeartBeat(payload);
+		if(payload.heartBeat) {
+		    handleHeartBeat(payload);
 		}
 		else if(payload.extendChain) {
 		}
 		else {
-		    logger.info('Unknown Request Type')
+		    logger.info('Master: Unknown Request Type')
 		    res['result'] = "";
 		}
 		
@@ -342,6 +347,7 @@ var master = http.createServer(
 // read the port name from the config file
 hostname = config.master.hostname;
 port = config.master.port;
+heartBeatDelay = config.master.heartBeatDelay;
 master.listen(port);
 logger.info('Master running at http://127.0.0.1:' + port);
 
@@ -358,10 +364,10 @@ Fiber(function() {
         logger.info('Master: probing the server heap for failure');
         var currTS = new Date().getTime();
         var server = serverTSHeap.peek();
-        if(server && currTS - server.timestamp > 5000) { // server has failed
+        if(server && ((currTS - server.timestamp) > 5000)) { // server has failed
             logger.info('Master: ServerId: ' + server.serverId + ' failed');
-            server = serverTSHeap.pop();
-            handleServerFailure(server.serverId, server.bankId, server.type);
+            // server = serverTSHeap.pop();
+            // handleServerFailure(server.serverId, server.bankId, server.type);
         }
         // else sleep for a sec
         util.sleep(1000);

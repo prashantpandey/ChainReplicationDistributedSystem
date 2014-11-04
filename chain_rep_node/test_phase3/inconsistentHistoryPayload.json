@@ -1,0 +1,92 @@
+{
+    "data": [
+        {
+            "payloads": [
+                {
+                    "payload": {
+                        "bankId": 200,
+                        "port": 8111,
+                        "amount": 68500,
+                        "destAccNum": 0,
+                        "accNum": 1400,
+                        "operation": 1,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "0.1"
+                    }
+                },
+                {
+                    "payload": {
+                        "bankId": 200,
+                        "port": 8111,
+                        "amount": 685,
+                        "destAccNum": 0,
+                        "accNum": 1400,
+                        "operation": 2,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "0.1"
+                    }
+                },
+                {
+                    "payload": {
+                        "bankId": 200,
+                        "port": 8111,
+                        "amount": 685,
+                        "destAccNum": 0,
+                        "accNum": 1400,
+                        "operation": 2,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "0.2"
+                    }
+                }
+            ],
+            "clientId": 0
+        },
+        {
+            "payloads": [
+                {
+                    "payload": {
+                        "bankId": 300,
+                        "port": 8112,
+                        "amount": 60,
+                        "destAccNum": 0,
+                        "accNum": 1300,
+                        "operation": 1,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "1.1"
+                    }
+                },
+                {
+                    "payload": {
+                        "bankId": 300,
+                        "port": 8112,
+                        "amount": 6002,
+                        "destAccNum": 0,
+                        "accNum": 1900,
+                        "operation": 1,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "1.1"
+                    }
+                },
+                {
+                    "payload": {
+                        "bankId": 300,
+                        "port": 8112,
+                        "amount": 9744,
+                        "destAccNum": 0,
+                        "accNum": 1800,
+                        "operation": 1,
+                        "hostname": "localhost",
+                        "destBankId": 0,
+                        "reqId": "1.2"
+                    }
+                }
+            ],
+            "clientId": 1
+        }
+    ]
+}

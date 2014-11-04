@@ -1,980 +1,193 @@
-2014-11-01T18:22:05.255Z - info: Retrieved cmd line args: 300 301
-2014-11-01T18:22:05.257Z - info: Retrieved cmd line args: 300 302
-2014-11-01T18:22:05.260Z - info: Retrieved cmd line args: 200 202
-2014-11-01T18:22:05.265Z - info: Server running at http://127.0.0.1:8301
-2014-11-01T18:22:05.266Z - info: Server running at http://127.0.0.1:8302
-2014-11-01T18:22:05.268Z - info: Retrieved cmd line args: 300 304
-2014-11-01T18:22:05.268Z - info: Server running at http://127.0.0.1:8202
-2014-11-01T18:22:05.267Z - info: Retrieved cmd line args: 200 204
-2014-11-01T18:22:05.267Z - info: Retrieved cmd line args: 100 104
-2014-11-01T18:22:05.260Z - info: Retrieved cmd line args: 100 101
-2014-11-01T18:22:05.267Z - info: Retrieved cmd line args: 200 201
-2014-11-01T18:22:05.267Z - info: Retrieved cmd line args: 100 103
-2014-11-01T18:22:05.271Z - info: Retrieved cmd line args: 200 203
-2014-11-01T18:22:05.274Z - info: Retrieved cmd line args: 300 303
-2014-11-01T18:22:05.274Z - info: Retrieved cmd line args: 100 102
-2014-11-01T18:22:05.274Z - info: Server running at http://127.0.0.1:8304
-2014-11-01T18:22:05.274Z - info: Server running at http://127.0.0.1:8204
-2014-11-01T18:22:05.274Z - info: Server running at http://127.0.0.1:8104
-2014-11-01T18:22:05.268Z - info: Server running at http://127.0.0.1:8101
-2014-11-01T18:22:05.274Z - info: Server running at http://127.0.0.1:8201
-2014-11-01T18:22:05.274Z - info: Server running at http://127.0.0.1:8103
-2014-11-01T18:22:05.277Z - info: Server running at http://127.0.0.1:8203
-2014-11-01T18:22:05.279Z - info: Server running at http://127.0.0.1:8303
-2014-11-01T18:22:05.280Z - info: Server running at http://127.0.0.1:8102
-2014-11-01T18:22:06.988Z - info: ClientId: 5 Client server running at http://127.0.0.1:8116
-2014-11-01T18:22:06.988Z - info: ClientId: 0 Client server running at http://127.0.0.1:8111
-2014-11-01T18:22:06.988Z - info: ClientId: 4 Client server running at http://127.0.0.1:8115
-2014-11-01T18:22:06.989Z - info: ClientId: 5 Preparing the bank server map
-2014-11-01T18:22:06.988Z - info: ClientId: 3 Client server running at http://127.0.0.1:8114
-2014-11-01T18:22:06.989Z - info: ClientId: 0 Preparing the bank server map
-2014-11-01T18:22:06.989Z - info: ClientId: 4 Preparing the bank server map
-2014-11-01T18:22:07.008Z - info: ServerId: 101 Request received
-2014-11-01T18:22:07.008Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.008Z - info: ServerId: 201 Request received
-2014-11-01T18:22:06.990Z - info: Starting to perform query/update operations
-2014-11-01T18:22:06.989Z - info: ClientId: 3 Preparing the bank server map
-2014-11-01T18:22:06.990Z - info: Starting to perform query/update operations
-2014-11-01T18:22:06.995Z - info: ClientId: 1 Client server running at http://127.0.0.1:8112
-2014-11-01T18:22:06.995Z - info: ClientId: 2 Client server running at http://127.0.0.1:8113
-2014-11-01T18:22:06.990Z - info: Starting to perform query/update operations
-2014-11-01T18:22:07.011Z - info:  destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8116, reqId=5.1, bankId=100, amount=6031, destBankId=0
-2014-11-01T18:22:07.021Z - info: ServerId: 104 Request received
-2014-11-01T18:22:07.012Z - info:  destAccNum=0, operation=2, accNum=1500, hostname=localhost, port=8111, reqId=0.1, bankId=200, amount=644, destBankId=0
-2014-11-01T18:22:07.012Z - info: ServerId: 201 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}}
-2014-11-01T18:22:06.990Z - info: Processing request: 5.1
-2014-11-01T18:22:06.990Z - info: Starting to perform query/update operations
-2014-11-01T18:22:07.029Z - info: ServerId: 202 Request received
-2014-11-01T18:22:07.029Z - info: ServerId: 102 Request received
-2014-11-01T18:22:06.990Z - info: Processing request: 0.1
-2014-11-01T18:22:07.011Z - info:  destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8114, reqId=3.1, bankId=300, amount=198, destBankId=0
-2014-11-01T18:22:06.997Z - info: ClientId: 1 Preparing the bank server map
-2014-11-01T18:22:06.997Z - info: ClientId: 2 Preparing the bank server map
-2014-11-01T18:22:06.990Z - info: Processing request: 4.1
-2014-11-01T18:22:07.038Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.011Z - info: ServerId: 101 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}}
-2014-11-01T18:22:07.025Z - info:  destAccNum=0, operation=0, accNum=1500, hostname=localhost, port=8113, reqId=2.1, bankId=100, amount=8710, destBankId=0
-2014-11-01T18:22:07.012Z - error: ServerId: 201 Account number not found: 1500
-2014-11-01T18:22:06.990Z - info: 5 1
-2014-11-01T18:22:07.046Z - info: ServerId: 203 Request received
-2014-11-01T18:22:06.990Z - info: Processing request: 3.1
-2014-11-01T18:22:07.048Z - info: ServerId: 103 Request received
-2014-11-01T18:22:07.032Z - info:  reqId=0.1, outcome=2, currBal=0, accNum=1500, destAccNum=0, operation=2, accNum=1500, hostname=localhost, port=8111, reqId=0.1, bankId=200, amount=644, destBankId=0, sync=1
-2014-11-01T18:22:07.034Z - info:  reqId=5.1, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8116, reqId=5.1, bankId=100, amount=6031, destBankId=0, sync=1
-2014-11-01T18:22:06.991Z - info: 0 1
-2014-11-01T18:22:07.011Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}}
-2014-11-01T18:22:06.998Z - info: Starting to perform query/update operations
-2014-11-01T18:22:07.062Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.062Z - info: ServerId: 204 Request received
-2014-11-01T18:22:06.998Z - info: Starting to perform query/update operations
-2014-11-01T18:22:06.990Z - info: 4 1
-2014-11-01T18:22:07.041Z - info:  reqId=3.1, outcome=0, currBal=198, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8114, reqId=3.1, bankId=300, amount=198, destBankId=0, sync=1
-2014-11-01T18:22:07.012Z - error: ServerId: 101 Account number not found: 1700
-2014-11-01T18:22:07.026Z - info: ServerId: 104 Processing the query request: {"query":{"destAccNum":0,"operation":0,"accNum":1500,"hostname":"localhost","port":8113,"reqId":"2.1","bankId":100,"amount":8710,"destBankId":0}}
-2014-11-01T18:22:07.012Z - info: ServerId: 201 Creating a new account with the given account number
-2014-11-01T18:22:06.991Z - info: ClientId: 5 Performing request 5.1 on bank: 100
-2014-11-01T18:22:06.990Z - info: 3 1
-2014-11-01T18:22:07.049Z - info:  reqId=0.1, outcome=2, currBal=0, accNum=1500, destAccNum=0, operation=2, accNum=1500, hostname=localhost, port=8111, reqId=0.1, bankId=200, amount=644, destBankId=0, sync=1
-2014-11-01T18:22:07.051Z - info:  reqId=5.1, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8116, reqId=5.1, bankId=100, amount=6031, destBankId=0, sync=1
-2014-11-01T18:22:07.087Z - info: ServerId: 304 Request received
-2014-11-01T18:22:07.033Z - info: ServerId: 202 Processing sync request: {"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.035Z - info: ServerId: 102 Processing sync request: {"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}},"sync":1}
-2014-11-01T18:22:06.991Z - info: ClientId: 0 Performing request 0.1 on bank: 200
-2014-11-01T18:22:07.012Z - error: ServerId: 301 Account number not found: 1200
-2014-11-01T18:22:06.998Z - info: Processing request: 1.1
-2014-11-01T18:22:07.065Z - info:  reqId=3.1, outcome=0, currBal=198, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8114, reqId=3.1, bankId=300, amount=198, destBankId=0, sync=1
-2014-11-01T18:22:07.065Z - info:  reqId=0.1, outcome=2, currBal=0, accNum=1500, destAccNum=0, operation=2, accNum=1500, hostname=localhost, port=8111, reqId=0.1, bankId=200, amount=644, destBankId=0, sync=1
-2014-11-01T18:22:06.998Z - info: Processing request: 2.1
-2014-11-01T18:22:06.991Z - info: ClientId: 4 Performing request 4.1 on bank: 300
-2014-11-01T18:22:07.042Z - info: ServerId: 302 Processing sync request: {"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.012Z - info: ServerId: 101 Creating a new account with the given account number
-2014-11-01T18:22:07.027Z - error: ServerId: 104 Account number not found: 1500
-2014-11-01T18:22:07.013Z - info: ServerId: 201 Account info: {"1500":0}
-2014-11-01T18:22:06.991Z - info: ClientId: 5 Destination info: {"hostname":"localhost","port":8101}
-2014-11-01T18:22:06.991Z - info: ClientId: 3 Performing request 3.1 on bank: 300
-2014-11-01T18:22:07.050Z - info: ServerId: 203 Processing sync request: {"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.051Z - info: ServerId: 103 Processing sync request: {"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.090Z - info:  reqId=3.1, outcome=0, currBal=198, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8114, reqId=3.1, bankId=300, amount=198, destBankId=0, sync=1
-2014-11-01T18:22:07.033Z - info: 202 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.035Z - info: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:06.991Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8201}
-2014-11-01T18:22:07.012Z - info: ServerId: 301 Creating a new account with the given account number
-2014-11-01T18:22:06.998Z - info: 1 1
-2014-11-01T18:22:07.065Z - info: ServerId: 303 Processing sync request: {"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.066Z - info: ServerId: 204 Processing sync request: {"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}},"sync":1}
-2014-11-01T18:22:06.998Z - info: 2 1
-2014-11-01T18:22:06.991Z - info: ClientId: 4 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:07.043Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.013Z - info: ServerId: 101 Account info: {"1700":0}
-2014-11-01T18:22:07.027Z - info: ServerId: 104 Creating a new account with the given account number
-2014-11-01T18:22:07.013Z - info: ServerId: 201 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:06.991Z - info: ClientId: 5 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}}
-2014-11-01T18:22:06.991Z - info: ClientId: 3 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:07.050Z - info: 203 {"serverId":204,"hostname":"localhost","port":8204,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:07.052Z - info: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:07.090Z - info: ServerId: 304 Processing sync request: {"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.038Z - info: ServerId: 202 Sync request processed
-2014-11-01T18:22:07.040Z - info: ServerId: 102 Sync request processed
-2014-11-01T18:22:06.991Z - info: ClientId: 0 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}}
-2014-11-01T18:22:07.012Z - info: ServerId: 301 Account info: {"1200":0}
-2014-11-01T18:22:06.999Z - info: ClientId: 1 Performing request 1.1 on bank: 300
-2014-11-01T18:22:07.066Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:07.066Z - info: 204 {"hostname":"localhost","port":8111} sendResponse
-2014-11-01T18:22:06.999Z - info: ClientId: 2 Performing request 2.1 on bank: 100
-2014-11-01T18:22:06.991Z - info: ClientId: 4 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}}
-2014-11-01T18:22:07.047Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:07.013Z - info: ServerId: 101 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:07.027Z - info: ServerId: 104 Query request processed: {"reqId":"2.1","outcome":0,"currBal":0,"accNum":1500}
-2014-11-01T18:22:07.013Z - info: ServerId: 201 Processed the update request
-2014-11-01T18:22:06.997Z - info: Processing request: 5.2
-2014-11-01T18:22:06.991Z - info: ClientId: 3 payload: {"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}}
-2014-11-01T18:22:07.054Z - info: ServerId: 203 Sync request processed
-2014-11-01T18:22:07.056Z - info: ServerId: 103 Sync request processed
-2014-11-01T18:22:07.091Z - info: 304 {"hostname":"localhost","port":8114} sendResponse
-2014-11-01T18:22:07.039Z - info: ServerId: 202 acc details: {"1500":0}
-2014-11-01T18:22:07.040Z - info: ServerId: 102 acc details: {"1700":0}
-2014-11-01T18:22:06.997Z - info: Processing request: 0.2
-2014-11-01T18:22:07.013Z - info: ServerId: 301 Transaction Outcome: 0 Current Bal: 198
-2014-11-01T18:22:06.999Z - info: ClientId: 1 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:07.070Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:07.071Z - info: 204 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:06.999Z - info: ClientId: 2 Destination info: {"hostname":"localhost","port":8104}
-2014-11-01T18:22:06.997Z - info: Processing request: 4.2
-2014-11-01T18:22:07.048Z - info: ServerId: 302 acc details: {"1200":198}
-2014-11-01T18:22:07.013Z - info: ServerId: 101 Processed the update request
-2014-11-01T18:22:07.028Z - info: Response: {"reqId":"2.1","outcome":0,"currBal":0,"accNum":1500}
-2014-11-01T18:22:07.014Z - info: Update req response: {"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1500,"hostname":"localhost","port":8111,"reqId":"0.1","bankId":200,"amount":644,"destBankId":0}},"sync":1}
-2014-11-01T18:22:06.997Z - info: 5 2
-2014-11-01T18:22:06.997Z - info: Processing request: 3.2
-2014-11-01T18:22:07.055Z - info: ServerId: 203 acc details: {"1500":0}
-2014-11-01T18:22:07.057Z - info: ServerId: 103 acc details: {"1700":0}
-2014-11-01T18:22:07.095Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:07.057Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.059Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:06.997Z - info: 0 2
-2014-11-01T18:22:07.013Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:06.999Z - info: ClientId: 1 payload: {"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}}
-2014-11-01T18:22:07.071Z - info: ServerId: 303 acc details: {"1200":198}
-2014-11-01T18:22:07.073Z - info: ServerId: 204 Sync request processed
-2014-11-01T18:22:06.999Z - info: ClientId: 2 payload: {"query":{"destAccNum":0,"operation":0,"accNum":1500,"hostname":"localhost","port":8113,"reqId":"2.1","bankId":100,"amount":8710,"destBankId":0}}
-2014-11-01T18:22:06.997Z - info: 4 2
-2014-11-01T18:22:07.050Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.013Z - info: Update req response: {"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.061Z - info: ServerId: 104 Request received
-2014-11-01T18:22:07.014Z - info: Sending sync request from update
-2014-11-01T18:22:06.997Z - info: Waiting for response: 5.1
-2014-11-01T18:22:06.997Z - info: 3 2
-2014-11-01T18:22:07.076Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.069Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.096Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:07.084Z - info: ServerId: 202 Request received
-2014-11-01T18:22:07.076Z - info: ServerId: 102 Request received
-2014-11-01T18:22:06.997Z - info: Waiting for response: 0.1
-2014-11-01T18:22:07.013Z - info: Update req response: {"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8114,"reqId":"3.1","bankId":300,"amount":198,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.007Z - info: Processing request: 1.2
-2014-11-01T18:22:07.072Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.074Z - info: ServerId: 204 acc details: {"1500":0}
-2014-11-01T18:22:07.008Z - info: Processing request: 2.2
-2014-11-01T18:22:06.997Z - info: Waiting for response: 4.1
-2014-11-01T18:22:07.050Z - info:  reqId=4.1, outcome=2, currBal=0, accNum=1900, destAccNum=0, operation=2, accNum=1900, hostname=localhost, port=8115, reqId=4.1, bankId=300, amount=6950, destBankId=0, sync=1
-2014-11-01T18:22:07.013Z - info: Sending sync request from update
-2014-11-01T18:22:07.061Z - info:  reqId=5.1, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8116, reqId=5.1, bankId=100, amount=6031, destBankId=0, sync=1
-2014-11-01T18:22:07.014Z - info: 201 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.074Z - info: ClientId: 5 Response received from Server
-2014-11-01T18:22:06.997Z - info: Waiting for response: 3.1
-2014-11-01T18:22:07.080Z - info: ServerId: 203 Request received
-2014-11-01T18:22:07.072Z - info: ServerId: 103 Request received
-2014-11-01T18:22:07.097Z - info: ServerId: 304 acc details: {"1200":198}
-2014-11-01T18:22:07.084Z - info:  ack=1, reqId=0.1, serverId=204
-2014-11-01T18:22:07.077Z - info:  ack=1, reqId=5.1, serverId=104
-2014-11-01T18:22:07.081Z - info: ClientId: 0 Response received from Server
-2014-11-01T18:22:07.013Z - info: Sending sync request from update
-2014-11-01T18:22:07.008Z - info: 1 2
-2014-11-01T18:22:07.073Z - info:  reqId=4.1, outcome=2, currBal=0, accNum=1900, destAccNum=0, operation=2, accNum=1900, hostname=localhost, port=8115, reqId=4.1, bankId=300, amount=6950, destBankId=0, sync=1
-2014-11-01T18:22:07.084Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.008Z - info: 2 2
-2014-11-01T18:22:07.112Z - info: ClientId: 4 Response received from Server
-2014-11-01T18:22:07.050Z - info: ServerId: 302 Processing sync request: {"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.014Z - info: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.062Z - info: ServerId: 104 Processing sync request: {"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.1","bankId":100,"amount":6031,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.019Z - info: Response: {"result":3}
-2014-11-01T18:22:07.075Z - info: ClientId: 5 Adding response to db
-2014-11-01T18:22:07.112Z - info: ClientId: 3 Response received from Server
-2014-11-01T18:22:07.080Z - info:  ack=1, reqId=0.1, serverId=204
-2014-11-01T18:22:07.073Z - info:  ack=1, reqId=5.1, serverId=104
-2014-11-01T18:22:07.100Z - info: ServerId: 304 Request received
-2014-11-01T18:22:07.085Z - info: ServerId: 202 Processing the acknowledgement {"ack":1,"reqId":"0.1","serverId":"204"}
-2014-11-01T18:22:07.077Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"5.1","serverId":"104"}
-2014-11-01T18:22:07.082Z - info: ClientId: 0 Adding response to db
-2014-11-01T18:22:07.014Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.008Z - info: Waiting for response: 1.1
-2014-11-01T18:22:07.073Z - info: ServerId: 303 Processing sync request: {"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.008Z - info: Waiting for response: 2.1
-2014-11-01T18:22:07.113Z - info: ClientId: 4 Adding response to db
-2014-11-01T18:22:07.051Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.018Z - info: Response: {"result":3}
-2014-11-01T18:22:07.062Z - info: 104 {"hostname":"localhost","port":8116} sendResponse
-2014-11-01T18:22:07.041Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.076Z - info: ClientId: 5 Responses: {"5.1":{"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700}}
-2014-11-01T18:22:07.112Z - info: ClientId: 3 Adding response to db
-2014-11-01T18:22:07.080Z - info: ServerId: 203 Processing the acknowledgement {"ack":1,"reqId":"0.1","serverId":"204"}
-2014-11-01T18:22:07.073Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"5.1","serverId":"104"}
-2014-11-01T18:22:07.100Z - info:  reqId=4.1, outcome=2, currBal=0, accNum=1900, destAccNum=0, operation=2, accNum=1900, hostname=localhost, port=8115, reqId=4.1, bankId=300, amount=6950, destBankId=0, sync=1
-2014-11-01T18:22:07.085Z - info: 202 {"serverId":201,"hostname":"localhost","port":8201,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:07.077Z - info: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:07.082Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500}}
-2014-11-01T18:22:07.018Z - info: Response: {"result":3}
-2014-11-01T18:22:07.114Z - info: ClientId: 1 Response received from Server
-2014-11-01T18:22:07.073Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:07.033Z - info: ClientId: 2 Adding response to db
-2014-11-01T18:22:07.113Z - info: ClientId: 4 Responses: {"4.1":{"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900}}
-2014-11-01T18:22:07.051Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:07.043Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.066Z - info: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:07.088Z - info: ServerId: 201 Request received
-2014-11-01T18:22:07.113Z - info: ClientId: 3 Responses: {"3.1":{"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200}}
-2014-11-01T18:22:07.081Z - info: 203 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:07.073Z - info: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:07.100Z - info: ServerId: 304 Processing sync request: {"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.086Z - info: ServerId: 202 Processed the acknowledgement
-2014-11-01T18:22:07.078Z - info: ServerId: 102 Processed the acknowledgement
-2014-11-01T18:22:07.020Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.115Z - info: ClientId: 1 Adding response to db
-2014-11-01T18:22:07.074Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:07.033Z - info: ClientId: 2 Responses: {"2.1":{"reqId":"2.1","outcome":0,"currBal":0,"accNum":1500}}
-2014-11-01T18:22:07.052Z - info: ServerId: 302 acc details: {"1200":198,"1900":0}
-2014-11-01T18:22:07.081Z - info: ServerId: 101 Request received
-2014-11-01T18:22:07.067Z - info: ServerId: 104 Sync request processed
-2014-11-01T18:22:07.089Z - info:  ack=1, reqId=0.1, serverId=204
-2014-11-01T18:22:07.082Z - info: ServerId: 203 Processed the acknowledgement
-2014-11-01T18:22:07.074Z - info: ServerId: 103 Processed the acknowledgement
-2014-11-01T18:22:07.101Z - info: 304 {"hostname":"localhost","port":8115} sendResponse
-2014-11-01T18:22:07.086Z - info: Response: {"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.079Z - info: Response: {"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.020Z - info:  destAccNum=0, operation=2, accNum=1900, hostname=localhost, port=8115, reqId=4.1, bankId=300, amount=6950, destBankId=0
-2014-11-01T18:22:07.115Z - info: ClientId: 1 Responses: {"1.1":{"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200}}
-2014-11-01T18:22:07.074Z - info: ServerId: 303 acc details: {"1200":198,"1900":0}
-2014-11-01T18:22:07.057Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.081Z - info:  ack=1, reqId=5.1, serverId=104
-2014-11-01T18:22:07.067Z - info: ServerId: 104 acc details: {"1700":0}
-2014-11-01T18:22:07.089Z - info: ServerId: 201 Processing the acknowledgement {"ack":1,"reqId":"0.1","serverId":"204"}
-2014-11-01T18:22:07.082Z - info: Response: {"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.074Z - info: Response: {"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.101Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:07.093Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.086Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.020Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}}
-2014-11-01T18:22:07.079Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.057Z - info:  reqId=1.1, outcome=0, currBal=9039, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8112, reqId=1.1, bankId=300, amount=8841, destBankId=0, sync=1
-2014-11-01T18:22:07.081Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"5.1","serverId":"104"}
-2014-11-01T18:22:07.076Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.089Z - info: ServerId: 201 Processed the acknowledgement
-2014-11-01T18:22:07.089Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.079Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.103Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:07.021Z - error: ServerId: 301 Account number not found: 1900
-2014-11-01T18:22:07.081Z - info:  reqId=1.1, outcome=0, currBal=9039, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8112, reqId=1.1, bankId=300, amount=8841, destBankId=0, sync=1
-2014-11-01T18:22:07.057Z - info: ServerId: 302 Processing sync request: {"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.082Z - info: ServerId: 101 Processed the acknowledgement
-2014-11-01T18:22:07.091Z - info: Response: {"result":{"genack":1,"reqId":"0.1","outcome":0}}
-2014-11-01T18:22:07.103Z - info: ServerId: 304 acc details: {"1200":198,"1900":0}
-2014-11-01T18:22:07.021Z - info: ServerId: 301 Creating a new account with the given account number
-2014-11-01T18:22:07.081Z - info: ServerId: 303 Processing sync request: {"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.057Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.084Z - info: Response: {"result":{"genack":1,"reqId":"5.1","outcome":0}}
-2014-11-01T18:22:07.107Z - info: ServerId: 304 Request received
-2014-11-01T18:22:07.021Z - info: ServerId: 301 Account info: {"1200":198,"1900":0}
-2014-11-01T18:22:07.082Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:07.058Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:07.107Z - info:  reqId=1.1, outcome=0, currBal=9039, accNum=1200, destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8112, reqId=1.1, bankId=300, amount=8841, destBankId=0, sync=1
-2014-11-01T18:22:07.021Z - info: ServerId: 301 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:07.082Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:07.058Z - info: ServerId: 302 acc details: {"1200":9039,"1900":0}
-2014-11-01T18:22:07.108Z - info: ServerId: 304 Processing sync request: {"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.021Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:07.082Z - info: ServerId: 303 acc details: {"1200":9039,"1900":0}
-2014-11-01T18:22:07.072Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.108Z - info: 304 {"hostname":"localhost","port":8112} sendResponse
-2014-11-01T18:22:07.024Z - info: Update req response: {"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1900,"hostname":"localhost","port":8115,"reqId":"4.1","bankId":300,"amount":6950,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.099Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.075Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.108Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:07.024Z - info: Sending sync request from update
-2014-11-01T18:22:07.104Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.083Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.109Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:07.025Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.110Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.118Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.109Z - info: ServerId: 304 acc details: {"1200":9039,"1900":0}
-2014-11-01T18:22:07.026Z - info: Response: {"result":3}
-2014-11-01T18:22:07.110Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.119Z - info:  ack=1, reqId=3.1, serverId=304
-2014-11-01T18:22:07.114Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.031Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.111Z - info:  ack=1, reqId=3.1, serverId=304
-2014-11-01T18:22:07.119Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"3.1","serverId":"304"}
-2014-11-01T18:22:07.116Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.031Z - info:  destAccNum=0, operation=1, accNum=1200, hostname=localhost, port=8112, reqId=1.1, bankId=300, amount=8841, destBankId=0
-2014-11-01T18:22:07.111Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"3.1","serverId":"304"}
-2014-11-01T18:22:07.119Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:07.118Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:07.032Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}}
-2014-11-01T18:22:07.112Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:07.119Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:07.032Z - info: ServerId: 301 Account info: {"1200":198,"1900":0}
-2014-11-01T18:22:07.112Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:07.120Z - info: Response: {"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.032Z - info: ServerId: 301 Transaction Outcome: 0 Current Bal: 9039
-2014-11-01T18:22:07.112Z - info: Response: {"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.120Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.033Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:07.113Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.120Z - info:  ack=1, reqId=4.1, serverId=304
-2014-11-01T18:22:07.033Z - info: Update req response: {"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1200,"hostname":"localhost","port":8112,"reqId":"1.1","bankId":300,"amount":8841,"destBankId":0}},"sync":1}
-2014-11-01T18:22:07.113Z - info:  ack=1, reqId=4.1, serverId=304
-2014-11-01T18:22:07.120Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"4.1","serverId":"304"}
-2014-11-01T18:22:07.033Z - info: Sending sync request from update
-2014-11-01T18:22:07.113Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"4.1","serverId":"304"}
-2014-11-01T18:22:07.121Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:07.033Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:07.113Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:07.121Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:07.034Z - info: Response: {"result":3}
-2014-11-01T18:22:07.114Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:07.121Z - info: Response: {"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.049Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.114Z - info: Response: {"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.122Z - info: ServerId: 302 Request received
-2014-11-01T18:22:07.052Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.115Z - info: ServerId: 303 Request received
-2014-11-01T18:22:07.122Z - info:  ack=1, reqId=1.1, serverId=304
-2014-11-01T18:22:07.059Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:07.116Z - info:  ack=1, reqId=1.1, serverId=304
-2014-11-01T18:22:07.123Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"1.1","serverId":"304"}
-2014-11-01T18:22:07.124Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.116Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"1.1","serverId":"304"}
-2014-11-01T18:22:07.123Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:07.125Z - info:  ack=1, reqId=3.1, serverId=304
-2014-11-01T18:22:07.116Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:07.123Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:07.125Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"3.1","serverId":"304"}
-2014-11-01T18:22:07.117Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:07.123Z - info: Response: {"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:07.125Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:07.117Z - info: Response: {"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:07.126Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.125Z - info: Response: {"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.120Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"3.1","outcome":0}}
-2014-11-01T18:22:07.127Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.126Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.122Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.129Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:07.126Z - info:  ack=1, reqId=4.1, serverId=304
-2014-11-01T18:22:07.124Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:07.127Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"4.1","serverId":"304"}
-2014-11-01T18:22:07.127Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:07.127Z - info: Response: {"result":{"genack":1,"reqId":"4.1","outcome":0}}
-2014-11-01T18:22:07.128Z - info: ServerId: 301 Request received
-2014-11-01T18:22:07.128Z - info:  ack=1, reqId=1.1, serverId=304
-2014-11-01T18:22:07.128Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"1.1","serverId":"304"}
-2014-11-01T18:22:07.128Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:07.128Z - info: Response: {"result":{"genack":1,"reqId":"1.1","outcome":0}}
-2014-11-01T18:22:08.997Z - info: ClientId: 4 Performing request 4.2 on bank: 100
-2014-11-01T18:22:08.998Z - info: ClientId: 5 Performing request 5.2 on bank: 300
-2014-11-01T18:22:08.998Z - info: ClientId: 3 Performing request 3.2 on bank: 200
-2014-11-01T18:22:09.005Z - info: ServerId: 202 Request received
-2014-11-01T18:22:08.998Z - info: ClientId: 0 Performing request 0.2 on bank: 300
-2014-11-01T18:22:08.998Z - info: ClientId: 4 Destination info: {"hostname":"localhost","port":8104}
-2014-11-01T18:22:09.000Z - info: ServerId: 104 Request received
-2014-11-01T18:22:09.001Z - info: ServerId: 201 Request received
-2014-11-01T18:22:09.002Z - info: ServerId: 304 Request received
-2014-11-01T18:22:09.002Z - info: ServerId: 301 Request received
-2014-11-01T18:22:08.998Z - info: ClientId: 5 Destination info: {"hostname":"localhost","port":8304}
-2014-11-01T18:22:08.998Z - info: ClientId: 3 Destination info: {"hostname":"localhost","port":8201}
-2014-11-01T18:22:09.005Z - info:  reqId=3.2, outcome=2, currBal=0, accNum=1300, destAccNum=0, operation=2, accNum=1300, hostname=localhost, port=8114, reqId=3.2, bankId=200, amount=7726, destBankId=0, sync=1
-2014-11-01T18:22:09.008Z - info: ServerId: 203 Request received
-2014-11-01T18:22:09.008Z - info: ServerId: 302 Request received
-2014-11-01T18:22:09.008Z - info: ClientId: 1 Performing request 1.2 on bank: 100
-2014-11-01T18:22:09.009Z - info: ClientId: 2 Performing request 2.2 on bank: 300
-2014-11-01T18:22:08.999Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:09.011Z - info: ServerId: 204 Request received
-2014-11-01T18:22:09.012Z - info: ServerId: 101 Request received
-2014-11-01T18:22:09.012Z - info: ServerId: 303 Request received
-2014-11-01T18:22:08.998Z - info: ClientId: 4 payload: {"query":{"destAccNum":0,"operation":0,"accNum":1400,"hostname":"localhost","port":8115,"reqId":"4.2","bankId":100,"amount":8539,"destBankId":0}}
-2014-11-01T18:22:09.001Z - info:  destAccNum=0, operation=0, accNum=1400, hostname=localhost, port=8115, reqId=4.2, bankId=100, amount=8539, destBankId=0
-2014-11-01T18:22:09.001Z - info:  destAccNum=0, operation=2, accNum=1300, hostname=localhost, port=8114, reqId=3.2, bankId=200, amount=7726, destBankId=0
-2014-11-01T18:22:09.017Z - info: ServerId: 102 Request received
-2014-11-01T18:22:09.002Z - info:  destAccNum=0, operation=0, accNum=1400, hostname=localhost, port=8116, reqId=5.2, bankId=300, amount=3067, destBankId=0
-2014-11-01T18:22:09.021Z - info: ServerId: 103 Request received
-2014-11-01T18:22:09.003Z - info:  destAccNum=0, operation=2, accNum=1200, hostname=localhost, port=8111, reqId=0.2, bankId=300, amount=6071, destBankId=0
-2014-11-01T18:22:08.998Z - info: ClientId: 5 payload: {"query":{"destAccNum":0,"operation":0,"accNum":1400,"hostname":"localhost","port":8116,"reqId":"5.2","bankId":300,"amount":3067,"destBankId":0}}
-2014-11-01T18:22:09.006Z - info: ServerId: 202 Processing sync request: {"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}},"sync":1}
-2014-11-01T18:22:08.998Z - info: ClientId: 3 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}}
-2014-11-01T18:22:09.008Z - info:  reqId=3.2, outcome=2, currBal=0, accNum=1300, destAccNum=0, operation=2, accNum=1300, hostname=localhost, port=8114, reqId=3.2, bankId=200, amount=7726, destBankId=0, sync=1
-2014-11-01T18:22:09.008Z - info:  reqId=0.2, outcome=0, currBal=2968, accNum=1200, destAccNum=0, operation=2, accNum=1200, hostname=localhost, port=8111, reqId=0.2, bankId=300, amount=6071, destBankId=0, sync=1
-2014-11-01T18:22:09.009Z - info: ClientId: 1 Destination info: {"hostname":"localhost","port":8101}
-2014-11-01T18:22:09.009Z - info: ClientId: 2 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:08.999Z - info: ClientId: 0 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}}
-2014-11-01T18:22:09.011Z - info:  reqId=3.2, outcome=2, currBal=0, accNum=1300, destAccNum=0, operation=2, accNum=1300, hostname=localhost, port=8114, reqId=3.2, bankId=200, amount=7726, destBankId=0, sync=1
-2014-11-01T18:22:09.012Z - info:  destAccNum=0, operation=1, accNum=1600, hostname=localhost, port=8112, reqId=1.2, bankId=100, amount=6954, destBankId=0
-2014-11-01T18:22:09.012Z - info:  reqId=0.2, outcome=0, currBal=2968, accNum=1200, destAccNum=0, operation=2, accNum=1200, hostname=localhost, port=8111, reqId=0.2, bankId=300, amount=6071, destBankId=0, sync=1
-2014-11-01T18:22:08.999Z - info: Processing request: 4.3
-2014-11-01T18:22:09.001Z - info: ServerId: 104 Processing the query request: {"query":{"destAccNum":0,"operation":0,"accNum":1400,"hostname":"localhost","port":8115,"reqId":"4.2","bankId":100,"amount":8539,"destBankId":0}}
-2014-11-01T18:22:09.001Z - info: ServerId: 201 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}}
-2014-11-01T18:22:09.018Z - info:  reqId=1.2, outcome=0, currBal=6954, accNum=1600, destAccNum=0, operation=1, accNum=1600, hostname=localhost, port=8112, reqId=1.2, bankId=100, amount=6954, destBankId=0, sync=1
-2014-11-01T18:22:09.003Z - info: ServerId: 304 Processing the query request: {"query":{"destAccNum":0,"operation":0,"accNum":1400,"hostname":"localhost","port":8116,"reqId":"5.2","bankId":300,"amount":3067,"destBankId":0}}
-2014-11-01T18:22:09.021Z - info:  reqId=1.2, outcome=0, currBal=6954, accNum=1600, destAccNum=0, operation=1, accNum=1600, hostname=localhost, port=8112, reqId=1.2, bankId=100, amount=6954, destBankId=0, sync=1
-2014-11-01T18:22:09.003Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}}
-2014-11-01T18:22:09.000Z - info: Processing request: 5.3
-2014-11-01T18:22:09.006Z - info: 202 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:08.999Z - info: Processing request: 3.3
-2014-11-01T18:22:09.008Z - info: ServerId: 203 Processing sync request: {"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.009Z - info: ServerId: 302 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.009Z - info: ClientId: 1 payload: {"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}}
-2014-11-01T18:22:09.009Z - info: ClientId: 2 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}}
-2014-11-01T18:22:09.000Z - info: Processing request: 0.3
-2014-11-01T18:22:09.014Z - info: ServerId: 204 Processing sync request: {"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.013Z - info: ServerId: 101 Processing the update request {"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}}
-2014-11-01T18:22:09.012Z - info: ServerId: 303 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}},"sync":1}
-2014-11-01T18:22:08.999Z - info: 4 3
-2014-11-01T18:22:09.002Z - error: ServerId: 104 Account number not found: 1400
-2014-11-01T18:22:09.002Z - error: ServerId: 201 Account number not found: 1300
-2014-11-01T18:22:09.018Z - info: ServerId: 102 Processing sync request: {"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.003Z - error: ServerId: 304 Account number not found: 1400
-2014-11-01T18:22:09.022Z - info: ServerId: 103 Processing sync request: {"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.003Z - info: ServerId: 301 Account info: {"1200":9039,"1900":0}
-2014-11-01T18:22:09.000Z - info: 5 3
-2014-11-01T18:22:09.006Z - info: ServerId: 202 Sync request processed
-2014-11-01T18:22:08.999Z - info: 3 3
-2014-11-01T18:22:09.009Z - info: 203 {"serverId":204,"hostname":"localhost","port":8204,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:09.009Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.010Z - info: Processing request: 1.3
-2014-11-01T18:22:09.010Z - info: Processing request: 2.3
-2014-11-01T18:22:09.001Z - info: 0 3
-2014-11-01T18:22:09.014Z - info: 204 {"hostname":"localhost","port":8114} sendResponse
-2014-11-01T18:22:09.013Z - error: ServerId: 101 Account number not found: 1600
-2014-11-01T18:22:09.013Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:08.999Z - info: Waiting for response: 4.2
-2014-11-01T18:22:09.002Z - info: ServerId: 104 Creating a new account with the given account number
-2014-11-01T18:22:09.002Z - info: ServerId: 201 Creating a new account with the given account number
-2014-11-01T18:22:09.018Z - info: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.003Z - info: ServerId: 304 Creating a new account with the given account number
-2014-11-01T18:22:09.022Z - info: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:09.003Z - info: ServerId: 301 Transaction Outcome: 0 Current Bal: 2968
-2014-11-01T18:22:09.007Z - info: ServerId: 202 acc details: {"1300":0,"1500":0}
-2014-11-01T18:22:08.999Z - info: Waiting for response: 3.2
-2014-11-01T18:22:09.009Z - info: ServerId: 203 Sync request processed
-2014-11-01T18:22:09.000Z - info: Waiting for response: 5.2
-2014-11-01T18:22:09.010Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:09.010Z - info: 1 3
-2014-11-01T18:22:09.010Z - info: 2 3
-2014-11-01T18:22:09.001Z - info: Waiting for response: 0.2
-2014-11-01T18:22:09.014Z - info: 204 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:09.013Z - info: ServerId: 101 Creating a new account with the given account number
-2014-11-01T18:22:09.015Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:09.002Z - info: ServerId: 104 Query request processed: {"reqId":"4.2","outcome":0,"currBal":0,"accNum":1400}
-2014-11-01T18:22:09.002Z - info: ServerId: 201 Account info: {"1300":0,"1500":0}
-2014-11-01T18:22:09.019Z - info: ServerId: 102 Sync request processed
-2014-11-01T18:22:09.004Z - info: ClientId: 4 Adding response to db
-2014-11-01T18:22:09.004Z - info: ServerId: 304 Query request processed: {"reqId":"5.2","outcome":0,"currBal":0,"accNum":1400}
-2014-11-01T18:22:09.023Z - info: ServerId: 103 Sync request processed
-2014-11-01T18:22:09.003Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:09.010Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.017Z - info: ClientId: 3 Response received from Server
-2014-11-01T18:22:09.009Z - info: ServerId: 203 acc details: {"1300":0,"1500":0}
-2014-11-01T18:22:09.005Z - info: ClientId: 5 Adding response to db
-2014-11-01T18:22:09.010Z - info: ServerId: 302 acc details: {"1200":2968,"1900":0}
-2014-11-01T18:22:09.010Z - info: Waiting for response: 1.2
-2014-11-01T18:22:09.010Z - info: Waiting for response: 2.2
-2014-11-01T18:22:09.020Z - info: ClientId: 0 Response received from Server
-2014-11-01T18:22:09.015Z - info: ServerId: 204 Sync request processed
-2014-11-01T18:22:09.013Z - info: ServerId: 101 Account info: {"1600":0,"1700":0}
-2014-11-01T18:22:09.015Z - info: ServerId: 303 acc details: {"1200":2968,"1900":0}
-2014-11-01T18:22:09.002Z - info: Response: {"reqId":"4.2","outcome":0,"currBal":0,"accNum":1400}
-2014-11-01T18:22:09.002Z - info: ServerId: 201 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:09.019Z - info: ServerId: 102 acc details: {"1600":6954,"1700":0}
-2014-11-01T18:22:09.004Z - info: ClientId: 4 Responses: {"4.1":{"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900},"4.2":{"reqId":"4.2","outcome":0,"currBal":0,"accNum":1400}}
-2014-11-01T18:22:09.004Z - info: Response: {"reqId":"5.2","outcome":0,"currBal":0,"accNum":1400}
-2014-11-01T18:22:09.023Z - info: ServerId: 103 acc details: {"1600":6954,"1700":0}
-2014-11-01T18:22:09.004Z - info: Update req response: {"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.018Z - info: ServerId: 202 Request received
-2014-11-01T18:22:09.028Z - info: ClientId: 3 Adding response to db
-2014-11-01T18:22:09.015Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.005Z - info: ClientId: 5 Responses: {"5.1":{"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700},"5.2":{"reqId":"5.2","outcome":0,"currBal":0,"accNum":1400}}
-2014-11-01T18:22:09.016Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.027Z - info: ClientId: 1 Response received from Server
-2014-11-01T18:22:09.034Z - info: ClientId: 2 Response received from Server
-2014-11-01T18:22:09.030Z - info: ClientId: 0 Adding response to db
-2014-11-01T18:22:09.015Z - info: ServerId: 204 acc details: {"1300":0,"1500":0}
-2014-11-01T18:22:09.013Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 6954
-2014-11-01T18:22:09.018Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.024Z - info: ServerId: 104 Request received
-2014-11-01T18:22:09.002Z - info: ServerId: 201 Processed the update request
-2014-11-01T18:22:09.024Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.016Z - info: ServerId: 304 Request received
-2014-11-01T18:22:09.026Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.006Z - info: Sending sync request from update
-2014-11-01T18:22:09.018Z - info:  ack=1, reqId=3.2, serverId=204
-2014-11-01T18:22:09.029Z - info: ClientId: 3 Responses: {"3.1":{"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200},"3.2":{"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300}}
-2014-11-01T18:22:09.016Z - info: ServerId: 203 Request received
-2014-11-01T18:22:09.019Z - info: ServerId: 302 Request received
-2014-11-01T18:22:09.037Z - info: ClientId: 1 Adding response to db
-2014-11-01T18:22:09.035Z - info: ClientId: 2 Adding response to db
-2014-11-01T18:22:09.030Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500},"0.2":{"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200}}
-2014-11-01T18:22:09.018Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.014Z - info: ServerId: 101 Processed the update request
-2014-11-01T18:22:09.019Z - info: ServerId: 303 Request received
-2014-11-01T18:22:09.024Z - info:  reqId=1.2, outcome=0, currBal=6954, accNum=1600, destAccNum=0, operation=1, accNum=1600, hostname=localhost, port=8112, reqId=1.2, bankId=100, amount=6954, destBankId=0, sync=1
-2014-11-01T18:22:09.002Z - info: Update req response: {"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.2","bankId":200,"amount":7726,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.030Z - info: ServerId: 102 Request received
-2014-11-01T18:22:09.017Z - info:  reqId=0.2, outcome=0, currBal=2968, accNum=1200, destAccNum=0, operation=2, accNum=1200, hostname=localhost, port=8111, reqId=0.2, bankId=300, amount=6071, destBankId=0, sync=1
-2014-11-01T18:22:09.027Z - info: ServerId: 103 Request received
-2014-11-01T18:22:09.007Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.019Z - info: ServerId: 202 Processing the acknowledgement {"ack":1,"reqId":"3.2","serverId":"204"}
-2014-11-01T18:22:09.016Z - info:  ack=1, reqId=3.2, serverId=204
-2014-11-01T18:22:09.019Z - info:  reqId=2.2, outcome=2, currBal=0, accNum=1400, destAccNum=0, operation=2, accNum=1400, hostname=localhost, port=8113, reqId=2.2, bankId=300, amount=5794, destBankId=0, sync=1
-2014-11-01T18:22:09.037Z - info: ClientId: 1 Responses: {"1.1":{"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200},"1.2":{"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600}}
-2014-11-01T18:22:09.014Z - info: Update req response: {"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.035Z - info: ClientId: 2 Responses: {"2.1":{"reqId":"2.1","outcome":0,"currBal":0,"accNum":1500},"2.2":{"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400}}
-2014-11-01T18:22:09.020Z - info:  ack=1, reqId=0.2, serverId=304
-2014-11-01T18:22:09.024Z - info: ServerId: 104 Processing sync request: {"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1600,"hostname":"localhost","port":8112,"reqId":"1.2","bankId":100,"amount":6954,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.003Z - info: Sending sync request from update
-2014-11-01T18:22:09.030Z - info:  ack=1, reqId=1.2, serverId=104
-2014-11-01T18:22:09.017Z - info: ServerId: 304 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1200,"hostname":"localhost","port":8111,"reqId":"0.2","bankId":300,"amount":6071,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.027Z - info:  ack=1, reqId=1.2, serverId=104
-2014-11-01T18:22:09.007Z - info: Response: {"result":3}
-2014-11-01T18:22:09.019Z - info: 202 {"serverId":201,"hostname":"localhost","port":8201,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:09.016Z - info: ServerId: 203 Processing the acknowledgement {"ack":1,"reqId":"3.2","serverId":"204"}
-2014-11-01T18:22:09.019Z - info: ServerId: 302 Processing sync request: {"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.014Z - info: Sending sync request from update
-2014-11-01T18:22:09.020Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"304"}
-2014-11-01T18:22:09.025Z - info: 104 {"hostname":"localhost","port":8112} sendResponse
-2014-11-01T18:22:09.003Z - info: 201 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.030Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"1.2","serverId":"104"}
-2014-11-01T18:22:09.017Z - info: 304 {"hostname":"localhost","port":8111} sendResponse
-2014-11-01T18:22:09.027Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"1.2","serverId":"104"}
-2014-11-01T18:22:09.011Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.019Z - info: ServerId: 202 Processed the acknowledgement
-2014-11-01T18:22:09.017Z - info: 203 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:09.020Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.014Z - info: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.020Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:09.025Z - info: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:09.004Z - info: Response: {"result":3}
-2014-11-01T18:22:09.030Z - info: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:09.017Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:09.028Z - info: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:09.012Z - info: ServerId: 301 Request received
-2014-11-01T18:22:09.019Z - info: Response: {"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.017Z - info: ServerId: 203 Processed the acknowledgement
-2014-11-01T18:22:09.020Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:09.016Z - info: Response: {"result":3}
-2014-11-01T18:22:09.020Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:09.025Z - info: ServerId: 104 Sync request processed
-2014-11-01T18:22:09.007Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.030Z - info: ServerId: 102 Processed the acknowledgement
-2014-11-01T18:22:09.018Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:09.028Z - info: ServerId: 103 Processed the acknowledgement
-2014-11-01T18:22:09.014Z - info:  destAccNum=0, operation=2, accNum=1400, hostname=localhost, port=8113, reqId=2.2, bankId=300, amount=5794, destBankId=0
-2014-11-01T18:22:09.023Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.017Z - info: Response: {"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.021Z - info: ServerId: 302 acc details: {"1200":2968,"1400":0,"1900":0}
-2014-11-01T18:22:09.020Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.021Z - info: Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.025Z - info: ServerId: 104 acc details: {"1600":6954,"1700":0}
-2014-11-01T18:22:09.021Z - info: ServerId: 201 Request received
-2014-11-01T18:22:09.031Z - info: Response: {"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.018Z - info: ServerId: 304 acc details: {"1200":2968,"1900":0}
-2014-11-01T18:22:09.028Z - info: Response: {"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.016Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}}
-2014-11-01T18:22:09.020Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.026Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.032Z - info: ServerId: 101 Request received
-2014-11-01T18:22:09.021Z - info: ServerId: 303 Request received
-2014-11-01T18:22:09.029Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.021Z - info:  ack=1, reqId=3.2, serverId=204
-2014-11-01T18:22:09.033Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.021Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.031Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.016Z - error: ServerId: 301 Account number not found: 1400
-2014-11-01T18:22:09.029Z - info: ServerId: 302 Request received
-2014-11-01T18:22:09.032Z - info:  ack=1, reqId=1.2, serverId=104
-2014-11-01T18:22:09.024Z - info:  reqId=2.2, outcome=2, currBal=0, accNum=1400, destAccNum=0, operation=2, accNum=1400, hostname=localhost, port=8113, reqId=2.2, bankId=300, amount=5794, destBankId=0, sync=1
-2014-11-01T18:22:09.022Z - info: ServerId: 201 Processing the acknowledgement {"ack":1,"reqId":"3.2","serverId":"204"}
-2014-11-01T18:22:09.027Z - info: ServerId: 304 Request received
-2014-11-01T18:22:09.016Z - info: ServerId: 301 Creating a new account with the given account number
-2014-11-01T18:22:09.030Z - info:  ack=1, reqId=0.2, serverId=304
-2014-11-01T18:22:09.032Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"1.2","serverId":"104"}
-2014-11-01T18:22:09.025Z - info: ServerId: 303 Processing sync request: {"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.022Z - info: ServerId: 201 Processed the acknowledgement
-2014-11-01T18:22:09.028Z - info:  reqId=2.2, outcome=2, currBal=0, accNum=1400, destAccNum=0, operation=2, accNum=1400, hostname=localhost, port=8113, reqId=2.2, bankId=300, amount=5794, destBankId=0, sync=1
-2014-11-01T18:22:09.016Z - info: ServerId: 301 Account info: {"1200":2968,"1400":0,"1900":0}
-2014-11-01T18:22:09.030Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"304"}
-2014-11-01T18:22:09.032Z - info: ServerId: 101 Processed the acknowledgement
-2014-11-01T18:22:09.025Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:09.022Z - info: Response: {"result":{"genack":1,"reqId":"3.2","outcome":0}}
-2014-11-01T18:22:09.028Z - info: ServerId: 304 Processing sync request: {"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.017Z - info: ServerId: 301 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:09.030Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:09.033Z - info: Response: {"result":{"genack":1,"reqId":"1.2","outcome":0}}
-2014-11-01T18:22:09.026Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:09.028Z - info: 304 {"hostname":"localhost","port":8113} sendResponse
-2014-11-01T18:22:09.017Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:09.031Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:09.026Z - info: ServerId: 303 acc details: {"1200":2968,"1400":0,"1900":0}
-2014-11-01T18:22:09.030Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:09.017Z - info: Update req response: {"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1400,"hostname":"localhost","port":8113,"reqId":"2.2","bankId":300,"amount":5794,"destBankId":0}},"sync":1}
-2014-11-01T18:22:09.031Z - info: Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.031Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.030Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:09.017Z - info: Sending sync request from update
-2014-11-01T18:22:09.034Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.032Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.031Z - info: ServerId: 304 acc details: {"1200":2968,"1400":0,"1900":0}
-2014-11-01T18:22:09.017Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:09.039Z - info: ServerId: 302 Request received
-2014-11-01T18:22:09.040Z - info:  ack=1, reqId=2.2, serverId=304
-2014-11-01T18:22:09.034Z - info: ServerId: 303 Request received
-2014-11-01T18:22:09.036Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:09.018Z - info: Response: {"result":3}
-2014-11-01T18:22:09.041Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"2.2","serverId":"304"}
-2014-11-01T18:22:09.035Z - info:  ack=1, reqId=2.2, serverId=304
-2014-11-01T18:22:09.021Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:09.041Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:09.035Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"2.2","serverId":"304"}
-2014-11-01T18:22:09.032Z - info: ServerId: 301 Request received
-2014-11-01T18:22:09.041Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:09.035Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:09.033Z - info:  ack=1, reqId=0.2, serverId=304
-2014-11-01T18:22:09.041Z - info: Response: {"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:09.035Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:09.033Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"304"}
-2014-11-01T18:22:09.045Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:09.036Z - info: Response: {"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:09.033Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:09.042Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:09.033Z - info: Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
-2014-11-01T18:22:09.044Z - info: ServerId: 301 Request received
-2014-11-01T18:22:09.044Z - info:  ack=1, reqId=2.2, serverId=304
-2014-11-01T18:22:09.045Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"2.2","serverId":"304"}
-2014-11-01T18:22:09.045Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:09.045Z - info: Response: {"result":{"genack":1,"reqId":"2.2","outcome":0}}
-2014-11-01T18:22:11.001Z - info: ClientId: 4 Performing request 4.3 on bank: 200
-2014-11-01T18:22:11.002Z - info: ClientId: 0 Performing request 0.3 on bank: 300
-2014-11-01T18:22:11.003Z - info: ClientId: 3 Performing request 3.3 on bank: 300
-2014-11-01T18:22:11.003Z - info: ServerId: 201 Request received
-2014-11-01T18:22:11.003Z - info: ClientId: 5 Performing request 5.3 on bank: 300
-2014-11-01T18:22:11.004Z - info: ServerId: 301 Request received
-2014-11-01T18:22:11.001Z - info: ClientId: 4 Destination info: {"hostname":"localhost","port":8201}
-2014-11-01T18:22:11.005Z - info: ServerId: 304 Request received
-2014-11-01T18:22:11.002Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:11.006Z - info: ServerId: 202 Request received
-2014-11-01T18:22:11.007Z - info: ServerId: 302 Request received
-2014-11-01T18:22:11.003Z - info: ClientId: 3 Destination info: {"hostname":"localhost","port":8304}
-2014-11-01T18:22:11.009Z - info: ServerId: 203 Request received
-2014-11-01T18:22:11.010Z - info: ServerId: 303 Request received
-2014-11-01T18:22:11.003Z - info:  destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8115, reqId=4.3, bankId=200, amount=6823, destBankId=0
-2014-11-01T18:22:11.011Z - info: ClientId: 1 Performing request 1.3 on bank: 300
-2014-11-01T18:22:11.012Z - info: ServerId: 204 Request received
-2014-11-01T18:22:11.012Z - info: ClientId: 2 Performing request 2.3 on bank: 200
-2014-11-01T18:22:11.003Z - info: ClientId: 5 Destination info: {"hostname":"localhost","port":8304}
-2014-11-01T18:22:11.004Z - info:  destAccNum=0, operation=2, accNum=1800, hostname=localhost, port=8111, reqId=0.3, bankId=300, amount=3336, destBankId=0
-2014-11-01T18:22:11.001Z - info: ClientId: 4 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}}
-2014-11-01T18:22:11.005Z - info:  destAccNum=0, operation=0, accNum=1300, hostname=localhost, port=8114, reqId=3.3, bankId=300, amount=8226, destBankId=0
-2014-11-01T18:22:11.002Z - info: ClientId: 0 payload: {"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}}
-2014-11-01T18:22:11.007Z - info:  reqId=4.3, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8115, reqId=4.3, bankId=200, amount=6823, destBankId=0, sync=1
-2014-11-01T18:22:11.008Z - info:  reqId=0.3, outcome=2, currBal=0, accNum=1800, destAccNum=0, operation=2, accNum=1800, hostname=localhost, port=8111, reqId=0.3, bankId=300, amount=3336, destBankId=0, sync=1
-2014-11-01T18:22:11.003Z - info: ClientId: 3 payload: {"query":{"destAccNum":0,"operation":0,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.3","bankId":300,"amount":8226,"destBankId":0}}
-2014-11-01T18:22:11.009Z - info:  reqId=4.3, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8115, reqId=4.3, bankId=200, amount=6823, destBankId=0, sync=1
-2014-11-01T18:22:11.010Z - info:  reqId=0.3, outcome=2, currBal=0, accNum=1800, destAccNum=0, operation=2, accNum=1800, hostname=localhost, port=8111, reqId=0.3, bankId=300, amount=3336, destBankId=0, sync=1
-2014-11-01T18:22:11.003Z - info: ServerId: 201 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}}
-2014-11-01T18:22:11.011Z - info: ClientId: 1 Destination info: {"hostname":"localhost","port":8301}
-2014-11-01T18:22:11.012Z - info:  reqId=4.3, outcome=2, currBal=0, accNum=1700, destAccNum=0, operation=2, accNum=1700, hostname=localhost, port=8115, reqId=4.3, bankId=200, amount=6823, destBankId=0, sync=1
-2014-11-01T18:22:11.013Z - info: ClientId: 2 Destination info: {"hostname":"localhost","port":8201}
-2014-11-01T18:22:11.004Z - info: ClientId: 5 payload: {"query":{"destAccNum":0,"operation":0,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.3","bankId":300,"amount":4118,"destBankId":0}}
-2014-11-01T18:22:11.005Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}}
-2014-11-01T18:22:11.016Z - info: ClientId: 4 Response received from Server
-2014-11-01T18:22:11.005Z - info: ServerId: 304 Processing the query request: {"query":{"destAccNum":0,"operation":0,"accNum":1300,"hostname":"localhost","port":8114,"reqId":"3.3","bankId":300,"amount":8226,"destBankId":0}}
-2014-11-01T18:22:11.019Z - info: ClientId: 0 Response received from Server
-2014-11-01T18:22:11.007Z - info: ServerId: 202 Processing sync request: {"reqId":"4.3","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.008Z - info: ServerId: 302 Processing sync request: {"reqId":"0.3","outcome":2,"currBal":0,"accNum":1800,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.007Z - info: ClientId: 3 Adding response to db
-2014-11-01T18:22:11.010Z - info: ServerId: 203 Processing sync request: {"reqId":"4.3","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.010Z - info: ServerId: 303 Processing sync request: {"reqId":"0.3","outcome":2,"currBal":0,"accNum":1800,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.004Z - error: ServerId: 201 Account number not found: 1700
-2014-11-01T18:22:11.011Z - info: ClientId: 1 payload: {"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}}
-2014-11-01T18:22:11.013Z - info: ServerId: 204 Processing sync request: {"reqId":"4.3","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.013Z - info: ClientId: 2 payload: {"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}}
-2014-11-01T18:22:11.011Z - info: ClientId: 5 Adding response to db
-2014-11-01T18:22:11.005Z - error: ServerId: 301 Account number not found: 1800
-2014-11-01T18:22:11.016Z - info: ClientId: 4 Adding response to db
-2014-11-01T18:22:11.005Z - error: ServerId: 304 Account number not found: 1300
-2014-11-01T18:22:11.019Z - info: ClientId: 0 Adding response to db
-2014-11-01T18:22:11.008Z - info: 202 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.008Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.007Z - info: ClientId: 3 Responses: {"3.1":{"reqId":"3.1","outcome":0,"currBal":198,"accNum":1200},"3.2":{"reqId":"3.2","outcome":2,"currBal":0,"accNum":1300},"3.3":{"reqId":"3.3","outcome":0,"currBal":0,"accNum":1300}}
-2014-11-01T18:22:11.010Z - info: 203 {"serverId":204,"hostname":"localhost","port":8204,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:11.010Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:11.004Z - info: ServerId: 201 Creating a new account with the given account number
-2014-11-01T18:22:11.025Z - info: ClientId: 1 Response received from Server
-2014-11-01T18:22:11.013Z - info: 204 {"hostname":"localhost","port":8115} sendResponse
-2014-11-01T18:22:11.035Z - info: ClientId: 2 Response received from Server
-2014-11-01T18:22:11.011Z - info: ClientId: 5 Responses: {"5.1":{"reqId":"5.1","outcome":2,"currBal":0,"accNum":1700},"5.2":{"reqId":"5.2","outcome":0,"currBal":0,"accNum":1400},"5.3":{"reqId":"5.3","outcome":0,"currBal":0,"accNum":1700}}
-2014-11-01T18:22:11.005Z - info: ServerId: 301 Creating a new account with the given account number
-2014-11-01T18:22:11.017Z - info: ClientId: 4 Responses: {"4.1":{"reqId":"4.1","outcome":2,"currBal":0,"accNum":1900},"4.2":{"reqId":"4.2","outcome":0,"currBal":0,"accNum":1400},"4.3":{"reqId":"4.3","outcome":2,"currBal":0,"accNum":1700}}
-2014-11-01T18:22:11.006Z - info: ServerId: 304 Creating a new account with the given account number
-2014-11-01T18:22:11.019Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":2,"currBal":0,"accNum":1500},"0.2":{"reqId":"0.2","outcome":0,"currBal":2968,"accNum":1200},"0.3":{"reqId":"0.3","outcome":2,"currBal":0,"accNum":1800}}
-2014-11-01T18:22:11.008Z - info: ServerId: 202 Sync request processed
-2014-11-01T18:22:11.008Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:11.010Z - info: ServerId: 203 Sync request processed
-2014-11-01T18:22:11.011Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:11.004Z - info: ServerId: 201 Account info: {"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.026Z - info: ClientId: 1 Adding response to db
-2014-11-01T18:22:11.013Z - info: 204 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:11.036Z - info: ClientId: 2 Adding response to db
-2014-11-01T18:22:11.005Z - info: ServerId: 301 Account info: {"1200":2968,"1400":0,"1800":0,"1900":0}
-2014-11-01T18:22:11.006Z - info: ServerId: 304 Query request processed: {"reqId":"3.3","outcome":0,"currBal":0,"accNum":1300}
-2014-11-01T18:22:11.008Z - info: ServerId: 202 acc details: {"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.009Z - info: ServerId: 302 acc details: {"1200":2968,"1400":0,"1800":0,"1900":0}
-2014-11-01T18:22:11.010Z - info: ServerId: 203 acc details: {"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.011Z - info: ServerId: 303 acc details: {"1200":2968,"1400":0,"1800":0,"1900":0}
-2014-11-01T18:22:11.004Z - info: ServerId: 201 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:11.026Z - info: ClientId: 1 Responses: {"1.1":{"reqId":"1.1","outcome":0,"currBal":9039,"accNum":1200},"1.2":{"reqId":"1.2","outcome":0,"currBal":6954,"accNum":1600},"1.3":{"reqId":"1.3","outcome":0,"currBal":5605,"accNum":1400}}
-2014-11-01T18:22:11.013Z - info: ServerId: 204 Sync request processed
-2014-11-01T18:22:11.036Z - info: ClientId: 2 Responses: {"2.1":{"reqId":"2.1","outcome":0,"currBal":0,"accNum":1500},"2.2":{"reqId":"2.2","outcome":2,"currBal":0,"accNum":1400},"2.3":{"reqId":"2.3","outcome":0,"currBal":2838,"accNum":1100}}
-2014-11-01T18:22:11.005Z - info: ServerId: 301 Transaction Outcome: 2 Current Bal: 0
-2014-11-01T18:22:11.006Z - info: Response: {"reqId":"3.3","outcome":0,"currBal":0,"accNum":1300}
-2014-11-01T18:22:11.011Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.011Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.014Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.017Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.004Z - info: ServerId: 201 Processed the update request
-2014-11-01T18:22:11.013Z - info: ServerId: 204 acc details: {"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.005Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:11.006Z - info: ServerId: 304 Request received
-2014-11-01T18:22:11.018Z - info: ServerId: 202 Request received
-2014-11-01T18:22:11.017Z - info: ServerId: 302 Request received
-2014-11-01T18:22:11.015Z - info: ServerId: 203 Request received
-2014-11-01T18:22:11.018Z - info: ServerId: 303 Request received
-2014-11-01T18:22:11.004Z - info: Update req response: {"reqId":"4.3","outcome":2,"currBal":0,"accNum":1700,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1700,"hostname":"localhost","port":8115,"reqId":"4.3","bankId":200,"amount":6823,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.018Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.006Z - info: Update req response: {"reqId":"0.3","outcome":2,"currBal":0,"accNum":1800,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.009Z - info:  destAccNum=0, operation=0, accNum=1700, hostname=localhost, port=8116, reqId=5.3, bankId=300, amount=4118, destBankId=0
-2014-11-01T18:22:11.018Z - info:  ack=1, reqId=4.3, serverId=204
-2014-11-01T18:22:11.018Z - info:  reqId=1.3, outcome=0, currBal=5605, accNum=1400, destAccNum=0, operation=1, accNum=1400, hostname=localhost, port=8112, reqId=1.3, bankId=300, amount=5605, destBankId=0, sync=1
-2014-11-01T18:22:11.015Z - info:  ack=1, reqId=4.3, serverId=204
-2014-11-01T18:22:11.018Z - info:  ack=1, reqId=0.3, serverId=304
-2014-11-01T18:22:11.005Z - info: Sending sync request from update
-2014-11-01T18:22:11.031Z - info: ServerId: 204 Request received
-2014-11-01T18:22:11.006Z - info: Sending sync request from update
-2014-11-01T18:22:11.009Z - info: ServerId: 304 Processing the query request: {"query":{"destAccNum":0,"operation":0,"accNum":1700,"hostname":"localhost","port":8116,"reqId":"5.3","bankId":300,"amount":4118,"destBankId":0}}
-2014-11-01T18:22:11.018Z - info: ServerId: 202 Processing the acknowledgement {"ack":1,"reqId":"4.3","serverId":"204"}
-2014-11-01T18:22:11.018Z - info: ServerId: 302 Processing sync request: {"reqId":"1.3","outcome":0,"currBal":5605,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.015Z - info: ServerId: 203 Processing the acknowledgement {"ack":1,"reqId":"4.3","serverId":"204"}
-2014-11-01T18:22:11.018Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"304"}
-2014-11-01T18:22:11.005Z - info: 201 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.032Z - info:  reqId=2.3, outcome=0, currBal=2838, accNum=1100, destAccNum=0, operation=1, accNum=1100, hostname=localhost, port=8113, reqId=2.3, bankId=200, amount=2838, destBankId=0, sync=1
-2014-11-01T18:22:11.006Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.010Z - error: ServerId: 304 Account number not found: 1700
-2014-11-01T18:22:11.018Z - info: 202 {"serverId":201,"hostname":"localhost","port":8201,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:11.018Z - info: 302 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.015Z - info: 203 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:11.019Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:11.005Z - info: Response: {"result":3}
-2014-11-01T18:22:11.032Z - info: ServerId: 204 Processing sync request: {"reqId":"2.3","outcome":0,"currBal":2838,"accNum":1100,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.006Z - info: Response: {"result":3}
-2014-11-01T18:22:11.010Z - info: ServerId: 304 Creating a new account with the given account number
-2014-11-01T18:22:11.019Z - info: ServerId: 202 Processed the acknowledgement
-2014-11-01T18:22:11.019Z - info: ServerId: 302 Sync request processed
-2014-11-01T18:22:11.017Z - info: ServerId: 203 Processed the acknowledgement
-2014-11-01T18:22:11.019Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:11.009Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.032Z - info: 204 {"hostname":"localhost","port":8113} sendResponse
-2014-11-01T18:22:11.009Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.010Z - info: ServerId: 304 Query request processed: {"reqId":"5.3","outcome":0,"currBal":0,"accNum":1700}
-2014-11-01T18:22:11.019Z - info: Response: {"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.019Z - info: ServerId: 302 acc details: {"1200":2968,"1400":5605,"1800":0,"1900":0}
-2014-11-01T18:22:11.017Z - info: Response: {"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.019Z - info: Response: {"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.015Z - info: ServerId: 201 Request received
-2014-11-01T18:22:11.032Z - info: 204 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:11.013Z - info: ServerId: 301 Request received
-2014-11-01T18:22:11.010Z - info: Response: {"reqId":"5.3","outcome":0,"currBal":0,"accNum":1700}
-2014-11-01T18:22:11.024Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.020Z - info: ServerId: 302 Request received
-2014-11-01T18:22:11.020Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.020Z - info: ServerId: 303 Request received
-2014-11-01T18:22:11.015Z - info:  destAccNum=0, operation=1, accNum=1100, hostname=localhost, port=8113, reqId=2.3, bankId=200, amount=2838, destBankId=0
-2014-11-01T18:22:11.033Z - info: ServerId: 204 Sync request processed
-2014-11-01T18:22:11.013Z - info:  destAccNum=0, operation=1, accNum=1400, hostname=localhost, port=8112, reqId=1.3, bankId=300, amount=5605, destBankId=0
-2014-11-01T18:22:11.012Z - info: ServerId: 304 Request received
-2014-11-01T18:22:11.025Z - info: ServerId: 202 Request received
-2014-11-01T18:22:11.020Z - info:  ack=1, reqId=0.3, serverId=304
-2014-11-01T18:22:11.028Z - info: ServerId: 203 Request received
-2014-11-01T18:22:11.020Z - info:  reqId=1.3, outcome=0, currBal=5605, accNum=1400, destAccNum=0, operation=1, accNum=1400, hostname=localhost, port=8112, reqId=1.3, bankId=300, amount=5605, destBankId=0, sync=1
-2014-11-01T18:22:11.016Z - info: ServerId: 201 Processing the update request {"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}}
-2014-11-01T18:22:11.033Z - info: ServerId: 204 acc details: {"1100":2838,"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.013Z - info: ServerId: 301 Processing the update request {"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}}
-2014-11-01T18:22:11.013Z - info:  reqId=0.3, outcome=2, currBal=0, accNum=1800, destAccNum=0, operation=2, accNum=1800, hostname=localhost, port=8111, reqId=0.3, bankId=300, amount=3336, destBankId=0, sync=1
-2014-11-01T18:22:11.025Z - info:  reqId=2.3, outcome=0, currBal=2838, accNum=1100, destAccNum=0, operation=1, accNum=1100, hostname=localhost, port=8113, reqId=2.3, bankId=200, amount=2838, destBankId=0, sync=1
-2014-11-01T18:22:11.020Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"304"}
-2014-11-01T18:22:11.028Z - info:  reqId=2.3, outcome=0, currBal=2838, accNum=1100, destAccNum=0, operation=1, accNum=1100, hostname=localhost, port=8113, reqId=2.3, bankId=200, amount=2838, destBankId=0, sync=1
-2014-11-01T18:22:11.020Z - info: ServerId: 303 Processing sync request: {"reqId":"1.3","outcome":0,"currBal":5605,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.016Z - error: ServerId: 201 Account number not found: 1100
-2014-11-01T18:22:11.036Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-01T18:22:11.014Z - info: ServerId: 301 Account info: {"1200":2968,"1400":0,"1800":0,"1900":0}
-2014-11-01T18:22:11.014Z - info: ServerId: 304 Processing sync request: {"reqId":"0.3","outcome":2,"currBal":0,"accNum":1800,"payload":{"update":{"destAccNum":0,"operation":2,"accNum":1800,"hostname":"localhost","port":8111,"reqId":"0.3","bankId":300,"amount":3336,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.025Z - info: ServerId: 202 Processing sync request: {"reqId":"2.3","outcome":0,"currBal":2838,"accNum":1100,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.020Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:11.029Z - info: ServerId: 203 Processing sync request: {"reqId":"2.3","outcome":0,"currBal":2838,"accNum":1100,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.021Z - info: 303 {"serverId":304,"hostname":"localhost","port":8304,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:11.016Z - info: ServerId: 201 Creating a new account with the given account number
-2014-11-01T18:22:11.014Z - info: ServerId: 301 Transaction Outcome: 0 Current Bal: 5605
-2014-11-01T18:22:11.016Z - info: 304 {"hostname":"localhost","port":8111} sendResponse
-2014-11-01T18:22:11.025Z - info: 202 {"serverId":203,"hostname":"localhost","port":8203,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.021Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:11.029Z - info: 203 {"serverId":204,"hostname":"localhost","port":8204,"startupDelay":5,"serverLifeTime":"UNBOUND","type":2} sendSyncReq
-2014-11-01T18:22:11.021Z - info: ServerId: 303 Sync request processed
-2014-11-01T18:22:11.016Z - info: ServerId: 201 Account info: {"1100":0,"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.015Z - info: ServerId: 301 Processed the update request
-2014-11-01T18:22:11.016Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:11.027Z - info: ServerId: 202 Sync request processed
-2014-11-01T18:22:11.021Z - info: Response: {"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.030Z - info: ServerId: 203 Sync request processed
-2014-11-01T18:22:11.021Z - info: ServerId: 303 acc details: {"1200":2968,"1400":5605,"1800":0,"1900":0}
-2014-11-01T18:22:11.016Z - info: ServerId: 201 Transaction Outcome: 0 Current Bal: 2838
-2014-11-01T18:22:11.015Z - info: Update req response: {"reqId":"1.3","outcome":0,"currBal":5605,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.016Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:11.027Z - info: ServerId: 202 acc details: {"1100":2838,"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.022Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.030Z - info: ServerId: 203 acc details: {"1100":2838,"1300":0,"1500":0,"1700":0}
-2014-11-01T18:22:11.022Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.017Z - info: ServerId: 201 Processed the update request
-2014-11-01T18:22:11.016Z - info: Sending sync request from update
-2014-11-01T18:22:11.017Z - info: ServerId: 304 acc details: {"1200":2968,"1400":0,"1800":0,"1900":0}
-2014-11-01T18:22:11.031Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.024Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.033Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.024Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.017Z - info: Update req response: {"reqId":"2.3","outcome":0,"currBal":2838,"accNum":1100,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1100,"hostname":"localhost","port":8113,"reqId":"2.3","bankId":200,"amount":2838,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.016Z - info: 301 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.021Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.036Z - info: ServerId: 202 Request received
-2014-11-01T18:22:11.026Z - info: ServerId: 302 Request received
-2014-11-01T18:22:11.034Z - info: ServerId: 203 Request received
-2014-11-01T18:22:11.025Z - info: ServerId: 303 Request received
-2014-11-01T18:22:11.017Z - info: Sending sync request from update
-2014-11-01T18:22:11.016Z - info: Response: {"result":3}
-2014-11-01T18:22:11.022Z - info: ServerId: 304 Request received
-2014-11-01T18:22:11.036Z - info:  ack=1, reqId=2.3, serverId=204
-2014-11-01T18:22:11.027Z - info:  ack=1, reqId=1.3, serverId=304
-2014-11-01T18:22:11.035Z - info:  ack=1, reqId=2.3, serverId=204
-2014-11-01T18:22:11.025Z - info:  ack=1, reqId=1.3, serverId=304
-2014-11-01T18:22:11.017Z - info: 201 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendSyncReq
-2014-11-01T18:22:11.019Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.022Z - info:  reqId=1.3, outcome=0, currBal=5605, accNum=1400, destAccNum=0, operation=1, accNum=1400, hostname=localhost, port=8112, reqId=1.3, bankId=300, amount=5605, destBankId=0, sync=1
-2014-11-01T18:22:11.037Z - info: ServerId: 202 Processing the acknowledgement {"ack":1,"reqId":"2.3","serverId":"204"}
-2014-11-01T18:22:11.027Z - info: ServerId: 302 Processing the acknowledgement {"ack":1,"reqId":"1.3","serverId":"304"}
-2014-11-01T18:22:11.035Z - info: ServerId: 203 Processing the acknowledgement {"ack":1,"reqId":"2.3","serverId":"204"}
-2014-11-01T18:22:11.025Z - info: ServerId: 303 Processing the acknowledgement {"ack":1,"reqId":"1.3","serverId":"304"}
-2014-11-01T18:22:11.020Z - info: Response: {"result":3}
-2014-11-01T18:22:11.023Z - info: ServerId: 301 Request received
-2014-11-01T18:22:11.022Z - info: ServerId: 304 Processing sync request: {"reqId":"1.3","outcome":0,"currBal":5605,"accNum":1400,"payload":{"update":{"destAccNum":0,"operation":1,"accNum":1400,"hostname":"localhost","port":8112,"reqId":"1.3","bankId":300,"amount":5605,"destBankId":0}},"sync":1}
-2014-11-01T18:22:11.037Z - info: 202 {"serverId":201,"hostname":"localhost","port":8201,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:11.027Z - info: 302 {"serverId":301,"hostname":"localhost","port":8301,"startupDelay":5,"serverLifeTime":"UNBOUND","type":0} ack
-2014-11-01T18:22:11.035Z - info: 203 {"serverId":202,"hostname":"localhost","port":8202,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:11.025Z - info: 303 {"serverId":302,"hostname":"localhost","port":8302,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} ack
-2014-11-01T18:22:11.021Z - info: ServerId: 201 Request received
-2014-11-01T18:22:11.024Z - info:  ack=1, reqId=0.3, serverId=304
-2014-11-01T18:22:11.022Z - info: 304 {"hostname":"localhost","port":8112} sendResponse
-2014-11-01T18:22:11.037Z - info: ServerId: 202 Processed the acknowledgement
-2014-11-01T18:22:11.027Z - info: ServerId: 302 Processed the acknowledgement
-2014-11-01T18:22:11.035Z - info: ServerId: 203 Processed the acknowledgement
-2014-11-01T18:22:11.026Z - info: ServerId: 303 Processed the acknowledgement
-2014-11-01T18:22:11.021Z - info:  ack=1, reqId=4.3, serverId=204
-2014-11-01T18:22:11.024Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"304"}
-2014-11-01T18:22:11.023Z - info: 304 {"serverId":303,"hostname":"localhost","port":8303,"startupDelay":5,"serverLifeTime":"UNBOUND","type":1} sendAck
-2014-11-01T18:22:11.037Z - info: Response: {"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-01T18:22:11.027Z - info: Response: {"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.035Z - info: Response: {"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-01T18:22:11.026Z - info: Response: {"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.022Z - info: ServerId: 201 Processing the acknowledgement {"ack":1,"reqId":"4.3","serverId":"204"}
-2014-11-01T18:22:11.024Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:11.023Z - info: ServerId: 304 Sync request processed
-2014-11-01T18:22:11.040Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-01T18:22:11.029Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.038Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-01T18:22:11.028Z - info: ack: Acknowledgement received{"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.023Z - info: ServerId: 201 Processed the acknowledgement
-2014-11-01T18:22:11.024Z - info: Response: {"result":{"genack":1,"reqId":"0.3","outcome":0}}
-2014-11-01T18:22:11.023Z - info: ServerId: 304 acc details: {"1200":2968,"1400":5605,"1800":0,"1900":0}
-2014-11-01T18:22:11.023Z - info: Response: {"result":{"genack":1,"reqId":"4.3","outcome":0}}
-2014-11-01T18:22:11.028Z - info: ServerId: 301 Request received
-2014-11-01T18:22:11.026Z - info: sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.027Z - info: sendSyncReq: Acknowledgement received
-2014-11-01T18:22:11.028Z - info:  ack=1, reqId=1.3, serverId=304
-2014-11-01T18:22:11.038Z - info: ServerId: 201 Request received
-2014-11-01T18:22:11.029Z - info: ServerId: 301 Processing the acknowledgement {"ack":1,"reqId":"1.3","serverId":"304"}
-2014-11-01T18:22:11.038Z - info:  ack=1, reqId=2.3, serverId=204
-2014-11-01T18:22:11.029Z - info: ServerId: 301 Processed the acknowledgement
-2014-11-01T18:22:11.039Z - info: ServerId: 201 Processing the acknowledgement {"ack":1,"reqId":"2.3","serverId":"204"}
-2014-11-01T18:22:11.029Z - info: Response: {"result":{"genack":1,"reqId":"1.3","outcome":0}}
-2014-11-01T18:22:11.039Z - info: ServerId: 201 Processed the acknowledgement
-2014-11-01T18:22:11.040Z - info: Response: {"result":{"genack":1,"reqId":"2.3","outcome":0}}
-2014-11-03T06:05:12.613Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:05:12.614Z - info: Master: probing the server heap for failure
-2014-11-03T06:05:29.789Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:05:29.790Z - info: Master: probing the server heap for failure
-2014-11-03T06:08:13.031Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:08:13.032Z - info: Master: probing the server heap for failure
-2014-11-03T06:08:57.243Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:08:57.243Z - info: Master: probing the server heap for failure
-2014-11-03T06:10:12.893Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:10:12.895Z - info: Master: probing the server heap for failure
-2014-11-03T06:14:05.191Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:14:05.192Z - info: Master: probing the server heap for failure
-2014-11-03T06:15:54.646Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:15:54.647Z - info: Master: probing the server heap for failure
-2014-11-03T06:16:35.941Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T06:16:35.942Z - info: Master: probing the server heap for failure
-2014-11-03T06:16:36.943Z - info: Master: probing the server heap for failure
-2014-11-03T06:16:37.947Z - info: Master: probing the server heap for failure
-2014-11-03T06:16:38.948Z - info: Master: probing the server heap for failure
-2014-11-03T06:16:39.949Z - info: Master: probing the server heap for failure
-2014-11-03T06:17:01.253Z - info: ClientId: undefined Client server running at http://127.0.0.1:undefined
-2014-11-03T06:17:01.254Z - info: ClientId: undefined Preparing the bank server map
-2014-11-03T06:17:01.254Z - info: Starting to perform query/update operations
-2014-11-03T06:17:20.478Z - info: Retrieved cmd line args: undefined undefined
-2014-11-03T06:18:29.339Z - info: Retrieved cmd line args: 100 101
-2014-11-03T06:18:29.342Z - info: Server running at http://127.0.0.1:8101
-2014-11-03T06:18:29.343Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T06:18:29.350Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T06:18:34.351Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T06:18:34.354Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T07:51:55.324Z - info: Retrieved cmd line args: undefined undefined
-2014-11-03T07:52:41.117Z - info: Retrieved cmd line args: 100 101
-2014-11-03T07:52:41.119Z - info: Server running at http://127.0.0.1:8101
-2014-11-03T07:52:41.120Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T07:52:41.127Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T07:52:46.129Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T07:52:46.131Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T08:09:27.012Z - info: ClientId: undefined Client server running at http://127.0.0.1:
-2014-11-03T08:09:27.013Z - info: ClientId: undefined Preparing the bank server map
-2014-11-03T08:09:27.014Z - info: Starting to perform query/update operations
-2014-11-03T10:21:38.131Z - info: ClientId: undefined Client server running at http://127.0.0.1:
-2014-11-03T10:21:38.132Z - info: ClientId: undefined Preparing the bank server map
-2014-11-03T10:21:38.133Z - info: ClientId: undefined Starting to perform query/update operations
-2014-11-03T10:21:45.213Z - info: Master running at http://127.0.0.1:8080
-2014-11-03T10:21:45.214Z - info: Master: probing the server heap for failure
-2014-11-03T10:21:46.218Z - info: Master: probing the server heap for failure
-2014-11-03T10:21:47.219Z - info: Master: probing the server heap for failure
-2014-11-03T10:21:48.220Z - info: Master: probing the server heap for failure
-2014-11-03T10:21:54.545Z - info: ServerId:  Retrievev cmd line args: 100 101
-2014-11-03T10:21:54.550Z - info: Server running at http://127.0.0.1:8101
-2014-11-03T10:21:54.550Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T10:21:54.563Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T10:21:59.557Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T10:21:59.560Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-03T10:22:04.563Z - info: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-03T10:22:04.564Z - error: sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-04T18:46:25.459Z - info: Master running at http://127.0.0.1:8080
+2014-11-04T18:46:25.461Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:26.428Z - info: ServerId: 101 Retrieve cmd line args: 100 101
+2014-11-04T18:46:26.428Z - info: ServerId: 103 Retrieve cmd line args: 100 103
+2014-11-04T18:46:26.428Z - info: ServerId: 102 Retrieve cmd line args: 100 102
+2014-11-04T18:46:26.429Z - info: ServerId: 104 Retrieve cmd line args: 100 104
+2014-11-04T18:46:26.433Z - info: Server running at http://127.0.0.1:8101
+2014-11-04T18:46:26.433Z - info: Server running at http://127.0.0.1:8103
+2014-11-04T18:46:26.433Z - info: Server running at http://127.0.0.1:8102
+2014-11-04T18:46:26.433Z - info: Server running at http://127.0.0.1:8104
+2014-11-04T18:46:26.452Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-04T18:46:26.433Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:26.433Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:26.433Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:26.434Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:26.453Z - info: Master: heart beat msg processed
+2014-11-04T18:46:26.457Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:26.459Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:26.460Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:26.460Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:26.455Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-04T18:46:26.455Z - info: Master: heart beat msg processed
+2014-11-04T18:46:26.456Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-04T18:46:26.456Z - info: Master: heart beat msg processed
+2014-11-04T18:46:26.457Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-04T18:46:26.457Z - info: Master: heart beat msg processed
+2014-11-04T18:46:26.461Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:27.463Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:28.428Z - info: ClientId: 0 Client server running at http://127.0.0.1:8111
+2014-11-04T18:46:28.429Z - info: ClientId: 0 Preparing the bank server map
+2014-11-04T18:46:28.430Z - info: ClientId: 0 Starting to perform query/update operations
+2014-11-04T18:46:28.430Z - info: ClientId: 0 Processing request: 0.1
+2014-11-04T18:46:28.430Z - info: ClientId: 0 Performing request 0.1 on bank: 100
+2014-11-04T18:46:28.430Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
+2014-11-04T18:46:28.431Z - info: ClientId: 0 payload: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-04T18:46:28.436Z - info: ClientId: 0 Processing request: 0.2
+2014-11-04T18:46:28.436Z - info: ClientId: 0 Waiting for response: 0.1
+2014-11-04T18:46:28.446Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-04T18:46:28.446Z - error: ServerId: 104 Account number not found: 1000
+2014-11-04T18:46:28.454Z - info: ServerId: 104 Creating a new account with the given account number
+2014-11-04T18:46:28.454Z - info: ServerId: 104 Query request processed: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
+2014-11-04T18:46:28.455Z - info: ServerId: 104 Response: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
+2014-11-04T18:46:28.459Z - info: ClientId: 0 Adding response to db
+2014-11-04T18:46:28.464Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:28.459Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}}
+2014-11-04T18:46:29.439Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:29.440Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:29.440Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:29.440Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:29.442Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-04T18:46:29.443Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:29.442Z - info: Master: heart beat msg processed
+2014-11-04T18:46:29.452Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:29.452Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:29.453Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:29.443Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-04T18:46:29.443Z - info: Master: heart beat msg processed
+2014-11-04T18:46:29.443Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-04T18:46:29.444Z - info: Master: heart beat msg processed
+2014-11-04T18:46:29.444Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-04T18:46:29.444Z - info: Master: heart beat msg processed
+2014-11-04T18:46:29.464Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:30.437Z - info: ClientId: 0 Performing request 0.2 on bank: 100
+2014-11-04T18:46:30.438Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-04T18:46:30.438Z - info: ClientId: 0 payload: {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-04T18:46:30.447Z - info: ClientId: 0 Processing request: 0.3
+2014-11-04T18:46:30.447Z - info: ClientId: 0 Waiting for response: 0.2
+2014-11-04T18:46:30.453Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-04T18:46:30.453Z - error: ServerId: 101 Account number not found: 1000
+2014-11-04T18:46:30.453Z - info: ServerId: 101 Creating a new account with the given account number
+2014-11-04T18:46:30.454Z - info: ServerId: 101 Account info: {"1000":0}
+2014-11-04T18:46:30.454Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 100
+2014-11-04T18:46:30.454Z - info: ServerId: 101 Processed the update request
+2014-11-04T18:46:30.454Z - info: ServerId: 101 Update req response: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-04T18:46:30.454Z - info: ServerId: 101 Sending sync request from update
+2014-11-04T18:46:30.454Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
+2014-11-04T18:46:30.455Z - info: ServerId: 101 Response: {"result":3}
+2014-11-04T18:46:30.461Z - info: ServerId: 102 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-04T18:46:30.463Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
+2014-11-04T18:46:30.461Z - info: ServerId: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
+2014-11-04T18:46:30.465Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:30.468Z - info: ServerId: 103 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-04T18:46:30.462Z - info: ServerId: 102 Sync request processed
+2014-11-04T18:46:30.471Z - info: ServerId: 104 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-04T18:46:30.468Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
+2014-11-04T18:46:30.462Z - info: ServerId: 102 acc details: {"1000":100}
+2014-11-04T18:46:30.476Z - info: ClientId: 0 Response received from Server
+2014-11-04T18:46:30.472Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
+2014-11-04T18:46:30.469Z - info: ServerId: 103 Sync request processed
+2014-11-04T18:46:30.481Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-04T18:46:30.470Z - info: ServerId: 102 sendSyncReq: Acknowledgement received
+2014-11-04T18:46:30.477Z - info: ClientId: 0 Received data: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}
+2014-11-04T18:46:30.472Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
+2014-11-04T18:46:30.469Z - info: ServerId: 103 acc details: {"1000":100}
+2014-11-04T18:46:30.481Z - info: ServerId: 101 Processed the acknowledgement
+2014-11-04T18:46:30.478Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-04T18:46:30.477Z - info: ClientId: 0 Adding response to db
+2014-11-04T18:46:30.473Z - info: ServerId: 104 Sync request processed
+2014-11-04T18:46:30.473Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
+2014-11-04T18:46:30.481Z - info: ServerId: 101 Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:30.478Z - info: ServerId: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":0} ack
+2014-11-04T18:46:30.477Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}}
+2014-11-04T18:46:30.473Z - info: ServerId: 104 acc details: {"1000":100}
+2014-11-04T18:46:30.475Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-04T18:46:30.479Z - info: ServerId: 102 Processed the acknowledgement
+2014-11-04T18:46:30.477Z - info: ServerId: 104 sendAck: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:30.475Z - info: ServerId: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} ack
+2014-11-04T18:46:30.479Z - info: ServerId: 102 Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:30.476Z - info: ServerId: 103 Processed the acknowledgement
+2014-11-04T18:46:30.482Z - info: ServerId: 102 ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:30.476Z - info: ServerId: 103 Response: {"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:30.479Z - info: ServerId: 103 ack: Acknowledgement received{"result":{"genack":1,"reqId":"0.2","outcome":0}}
+2014-11-04T18:46:31.466Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:31.466Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:32.442Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:32.443Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:32.443Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:32.443Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:32.444Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-04T18:46:32.444Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:32.445Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:32.449Z - info: ClientId: 0 Performing request 0.3 on bank: 100
+2014-11-04T18:46:32.446Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:32.447Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:32.444Z - info: Master: heart beat msg processed
+2014-11-04T18:46:32.449Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-04T18:46:32.445Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-04T18:46:32.449Z - info: ClientId: 0 Processing request: 0.4
+2014-11-04T18:46:32.445Z - info: Master: heart beat msg processed
+2014-11-04T18:46:32.450Z - info: ClientId: 0 Waiting for response: 0.3
+2014-11-04T18:46:32.445Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-04T18:46:32.445Z - info: Master: heart beat msg processed
+2014-11-04T18:46:32.446Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-04T18:46:32.446Z - info: Master: heart beat msg processed
+2014-11-04T18:46:32.466Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:32.466Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:33.467Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:33.467Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:34.452Z - info: ClientId: 0 Request timed out. Resending request: 0.3
+2014-11-04T18:46:34.452Z - info: ClientId: 0 Performing request 0.3 on bank: 100
+2014-11-04T18:46:34.452Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-04T18:46:34.468Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:34.469Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:35.446Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:35.446Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:35.446Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:35.446Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:35.447Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-04T18:46:35.447Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:35.448Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:35.448Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:35.450Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:35.447Z - info: Master: heart beat msg processed
+2014-11-04T18:46:35.447Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-04T18:46:35.447Z - info: Master: heart beat msg processed
+2014-11-04T18:46:35.448Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-04T18:46:35.448Z - info: Master: heart beat msg processed
+2014-11-04T18:46:35.449Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-04T18:46:35.449Z - info: Master: heart beat msg processed
+2014-11-04T18:46:35.469Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:35.469Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:36.455Z - info: ClientId: 0 Request timed out. Resending request: 0.3
+2014-11-04T18:46:36.455Z - info: ClientId: 0 Performing request 0.3 on bank: 100
+2014-11-04T18:46:36.455Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-04T18:46:36.470Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:36.470Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:37.471Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:37.471Z - info: Master: ServerId: 101 failed
+2014-11-04T18:46:38.449Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:38.449Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:38.449Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:38.450Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":6000} sendHeartBeat
+2014-11-04T18:46:38.450Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-04T18:46:38.451Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:38.454Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:38.457Z - info: ClientId: 0 Request timed out. Resending request: 0.3
+2014-11-04T18:46:38.455Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:38.456Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-04T18:46:38.450Z - info: Master: heart beat msg processed
+2014-11-04T18:46:38.457Z - info: ClientId: 0 Number of retries exceeded the limit. Aborting request: 0.3
+2014-11-04T18:46:38.459Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":2}}
+2014-11-04T18:46:38.451Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-04T18:46:38.458Z - info: ClientId: 0 Performing request 0.4 on bank: 100
+2014-11-04T18:46:38.460Z - info: ServerId: 104 Query request processed: {"reqId":"0.4","outcome":0,"currBal":100,"accNum":1000}
+2014-11-04T18:46:38.451Z - info: Master: heart beat msg processed
+2014-11-04T18:46:38.458Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
+2014-11-04T18:46:38.455Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-04T18:46:38.458Z - info: ClientId: 0 payload: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":2}}
+2014-11-04T18:46:38.455Z - info: Master: heart beat msg processed
+2014-11-04T18:46:38.456Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-04T18:46:38.456Z - info: Master: heart beat msg processed
+2014-11-04T18:46:38.471Z - info: Master: probing the server heap for failure
+2014-11-04T18:46:38.471Z - info: Master: ServerId: 101 failed

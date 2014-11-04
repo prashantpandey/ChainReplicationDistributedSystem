@@ -7,8 +7,8 @@
 var config = require('./config.json');
 //var reqData = require('./inconsistentHistoryPayload.json');
 //var reqData = require('./samePayload.json');
-var reqData = require('./randomPayload.json');
-// var reqData = require('./payload.json');
+// var reqData = require('./randomPayload.json');
+var reqData = require('./payload.json');
 var logger = require('./logger.js');
 var util = require('./util.js');
 
@@ -39,6 +39,7 @@ var resendDelay = '';
 var resendFlag = '';
 var currDelay = '';	// will hold the curr dealy for any in-transit req
 var currRetriesCnt = 0;    // will hold the curr retry cnt
+var checkLogFlag = -1;
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -100,6 +101,7 @@ function performOperation(payload) {
         // msg NOT SENT
         // this will simulate the failure condition
         // the packet dropped on the client <--> server channel
+        logger.info('ClientId: ' + clientId  + ' Simulating msg failure between Client-Server');
     }
     else {
         send(data, dest, 'client');
@@ -133,15 +135,22 @@ function send(payload, dest, context) {
             str += payload;
         });
         response.on('end', function() {
+            logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
             var resBody = JSON.parse(str);
-            // logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
             if(payload.query) {
                 logger.info('ClientId: ' + clientId  + ' Adding response to db');
                 responses[resBody.reqId] = resBody;
                 logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
             }
             else if (payload.checkLog) {
-               return payload.response;  
+                logger.info('ClientId: ' + clientId  + ' Check Logs response received');
+                logger.info('Client: ' + clientId + " " + JSON.stringify(resBody));
+                checkLogFlag = resBody.checkLog;
+                if(resBody.checkLog == 1) {
+                    logger.info('ClientId: ' + clientId  + ' Adding response to db');
+                    responses[resBody.reqId] = resBody;
+                    logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+                }
             }
         });
     });
@@ -233,13 +242,13 @@ Fiber(function() {
                 var reqId = payload.reqId;
                 logger.info('ClientId: ' + clientId  + ' Processing request: ' + reqId);
                 var nums = reqId.split(".");
-                logger.info(nums[0] + ' ' + nums[1]);
+                // logger.info(nums[0] + ' ' + nums[1]);
                 if(nums[1] > 1) {
                     logger.info('ClientId: ' + clientId  + ' Waiting for response: ' + preReq.reqId);
-                    if(responses[preReq]) {
+                    if(responses[preReq.reqId]) {
                         performOperation(payload);
 			currDelay = new Date().getTime();
-			currRetriesCnt++;
+			currRetriesCnt = 1;
                         preReq = payload;
                         continue;
                     }                    
@@ -248,38 +257,50 @@ Fiber(function() {
 			    // handling the resend logic
 			    var currTS = new Date().getTime();
 			    if(currTS - currDelay > resendDelay) {
-				logger.info('ClientId: ' + clientId  + 'Request timed out. Resending..' + reqId);
+				logger.info('ClientId: ' + clientId  + ' Request timed out. Resending request: ' + preReq.reqId);
                                 if(currRetriesCnt <= numRetries) {
-				    if(payload.operation == 0) { // query opr
+				    // if(preReq.operation == 0) { // query opr
 				        performOperation(preReq);
 				        currDelay = new Date().getTime();
 				        currRetriesCnt++;
 				        continue;
-				    }
+				    // }
+                                    /*
 				    else {
+				        logger.info('ClientId: ' + clientId  + ' Checking with Tail whether operation already performed: ' + preReq.reqId);
 				        // check to see if the update opr is already performed
                                         var payload = {
                                             'checkLog' : 1,
                                             'reqId' : preReq.reqId 
                                             };
-                                        var res = send(payload, bankServerMap[preReq.bankId].headServer, 'checkLog');
-                                        if(!res) {
+                                        send(payload, bankServerMap[preReq.bankId].tailServer, 'checkLog');
+                                        for(;checkLogFlag == -1;) {
+                                            util.sleep(1000);
+                                        }
+                                        if(checkLogFlag == 0) {
+                                            logger.info('ClientId: ' + clientId  + 'Request not performed at the tail');
 				            performOperation(preReq);
 				            currDelay = new Date().getTime();
 				            currRetriesCnt++;
 				            continue;
                                         }
+                                        else if (checkLogFlag == 1) {
+                                            continue;
+                                        }
 				    }
+                                    */
                                 }
                                 else {  // number of retries is exceeded
-                                    performOperation(payload);
+				    logger.info('ClientId: ' + clientId  + ' Number of retries exceeded the limit. Aborting request: ' + preReq.reqId);
                                     preReq = payload;
-                                    continue;
+                                    break;
                                 }
 			    }
                             util.sleep(2000);
                         }
                         performOperation(payload);
+			currDelay = new Date().getTime();
+			currRetriesCnt = 1;
                         preReq = payload;
                         continue;
                     }
@@ -304,6 +325,7 @@ Fiber(function() {
                 else  {
                     performOperation(payload);
 		    currDelay = new Date().getTime();
+		    currRetriesCnt = 1;
                     preReq = payload;
                 }
             }

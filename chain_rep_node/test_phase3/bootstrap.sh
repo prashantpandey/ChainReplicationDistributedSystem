@@ -4,9 +4,7 @@
 rm *.log &
 
 # start master
-node ./master.js &
-
-sleep 1s
+node ./master.js 
 
 # start the servers [group by banks]
 # @arg1: bankId
@@ -22,5 +20,5 @@ sleep 2s
 # start the clients [no grouping]
 # @arg1: clientId
 # @arg2: port
-node ./client.js 0
+node ./client.js 0 8111
 
