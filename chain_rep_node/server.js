@@ -246,6 +246,7 @@ function sync(payload) {
             // response NOT SENT
             // this will simulate the failure condition
             // the packet dropped on the server <--> client channel
+            logger.info('ServerId: '+ serverId + ' Simulating msg failure between Server-Client');
         }
         else {
             send(response, dest, 'sendResponse');
@@ -288,6 +289,7 @@ function query(payload) {
 
     if(historyReq[reqId]) {
         var history = historyReq[reqId];
+	logger.info('ServerId: '+ serverId + ' history: ' + history);
         if(history.payload.query.accNum == accNum) {
             var response = history.response;
             logger.info('ServerId: '+ serverId + ' Query request already exists in history: ' + JSON.stringify(response));
@@ -327,7 +329,7 @@ function query(payload) {
 	'response' : response    
     };
 
-    historyReq[reqId] = response;
+    historyReq[reqId] = history;
 
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
@@ -350,6 +352,7 @@ function update(payload) {
 
     if(historyReq[reqId]) {
         var payload = historyReq[reqId].payload;
+	logger.info('ServerId: '+ serverId + ' history: ' + history);
         if(payload.update.accNum == accNum && payload.update.amount == amount && payload.update.operation == oper) {
             var response = history.response;
             delete response['payload'];
@@ -398,7 +401,7 @@ function update(payload) {
     };
 
     appendSentReq(payload);
-    historyReq[reqId] = response;
+    historyReq[reqId] = history;
     
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
@@ -487,10 +490,11 @@ function handleNewSucc(lastSeqSucc) {
 function checkLogs(payload) {
     logger.info('ServerId: '+ serverId + ' Processing check Logs request');
     var reqId = payload.reqId;
-    var response = checkRequest(reqId);
-    if(response) {
-        delete response['payload'];
-        response['checkLog'] = 1;
+    var history = checkRequest(reqId);
+    var response = {};
+    if(history) {
+	var response = history['response'];
+	response['checkLog'] = 1;
     }
     else {
         response = {
@@ -555,7 +559,7 @@ var server = http.createServer(
                         // response NOT SENT
                         // this will simulate the failure condition
                         // the packet dropped on the server <--> client channel 
-                        logger.info();
+                        logger.info('ServerId: '+ serverId + ' Simulating msg failure between Server-Client');
                     }
                     else {
 		        flag = true;
@@ -573,8 +577,8 @@ var server = http.createServer(
                     else {
                         logger.info('ServerId: '+ serverId + ' Sending response from update');
                         res['result'] = syncRes;
+			flag = true;
                     }
-		    flag = true;
                 }
                 else if (payload.failure) {
 		    res['result'] = handleChainFailure(payload);

@@ -19,7 +19,8 @@ var http = require('http');
 var Outcome = {
     Processed: 0,
     InconsistentWithHistory: 1,
-    InsufficientFunds: 2
+    InsufficientFunds: 2,
+    InTransit: 3
 };
 
 var Operation = {
@@ -136,22 +137,32 @@ function send(payload, dest, context) {
         });
         response.on('end', function() {
             logger.info('ClientId: ' + clientId  + ' Received data: ' + str);
-            var resBody = JSON.parse(str);
-            if(payload.query) {
-                logger.info('ClientId: ' + clientId  + ' Adding response to db');
-                responses[resBody.reqId] = resBody;
-                logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
-            }
-            else if (payload.checkLog) {
-                logger.info('ClientId: ' + clientId  + ' Check Logs response received');
-                logger.info('Client: ' + clientId + " " + JSON.stringify(resBody));
-                checkLogFlag = resBody.checkLog;
-                if(resBody.checkLog == 1) {
-                    logger.info('ClientId: ' + clientId  + ' Adding response to db');
-                    responses[resBody.reqId] = resBody;
-                    logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
-                }
-            }
+            if(str) {
+		var resBody = JSON.parse(str);
+		if(payload.query) {
+		    logger.info('ClientId: ' + clientId  + ' Adding response to db');
+		    responses[resBody.reqId] = resBody;
+		    logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+		}
+		if(payload.update) {
+		    if(resBody.outcome != Outcome.InTransit) {
+			logger.info('ClientId: ' + clientId  + ' Adding response to db');
+			responses[resBody.reqId] = resBody;
+			logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+			checkLogFlag = 1;
+		    }
+		}
+		else if (payload.checkLog) {
+		    logger.info('ClientId: ' + clientId  + ' Check Logs response received');
+		    logger.info('Client: ' + clientId + " " + JSON.stringify(resBody));
+		    checkLogFlag = resBody.checkLog;
+		    if(resBody.checkLog == 1) {
+			logger.info('ClientId: ' + clientId  + ' Adding response to db');
+			responses[resBody.reqId] = resBody;
+			logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+		    }
+		}
+	    }
         });
     });
 
@@ -220,6 +231,59 @@ prepareBankServerMap();
  */
 // task();
 
+function tryResending(preReq) {
+    for(;!responses[preReq.reqId];) {
+	// handling the resend logic
+	var currTS = new Date().getTime();
+	if(currTS - currDelay > resendDelay) {
+	    logger.info('ClientId: ' + clientId  + ' Request timed out. Resending request: ' + preReq.reqId);
+	    if(currRetriesCnt < numRetries) {
+		/*
+		if(preReq.operation == 0) { // query opr
+		    performOperation(preReq);
+		    currDelay = new Date().getTime();
+		    currRetriesCnt++;
+		    continue;
+		}
+		else {
+		*/
+		    logger.info('ClientId: ' + clientId  + ' Checking with Tail whether operation already performed: ' + preReq.reqId);
+		    // check to see if the update opr is already performed
+		    var data = {
+			'checkLog' : 1,
+			'reqId' : preReq.reqId 
+		    };
+		    send(data, bankServerMap[preReq.bankId].tailServer, 'checkLog');
+                             
+		    for(;checkLogFlag == -1;) {
+			util.sleep(1000);
+		    }
+                                        
+		    if(checkLogFlag == 0) {
+			logger.info('ClientId: ' + clientId  + ' Request not performed at the tail: ' + preReq.reqId);
+			logger.info('ClientId: ' + clientId  + ' Performing request again: ' + preReq.reqId);
+			checkLogFlag = -1;
+			performOperation(preReq);
+			currDelay = new Date().getTime();
+			currRetriesCnt++;
+			continue;
+		    }
+		    else if (checkLogFlag == 1) {
+			checkLogFlag = -1;
+			continue;
+		    }
+		//}
+
+	    }
+	    else {  // number of retries is exceeded
+		logger.info('ClientId: ' + clientId  + ' Number of retries ' + currRetriesCnt + ' exceeded the limit ' + numRetries + ' Aborting request: ' + preReq.reqId);
+		break;
+	    }
+	}
+	util.sleep(2000);
+    }
+}
+
 /**
  * function by which client requests for bal, withdraw or transfer 
  * to different banks.
@@ -253,32 +317,35 @@ Fiber(function() {
                         continue;
                     }                    
                     else {
+			/*
                         for(;!responses[preReq.reqId];) {
 			    // handling the resend logic
 			    var currTS = new Date().getTime();
 			    if(currTS - currDelay > resendDelay) {
 				logger.info('ClientId: ' + clientId  + ' Request timed out. Resending request: ' + preReq.reqId);
                                 if(currRetriesCnt <= numRetries) {
-				    // if(preReq.operation == 0) { // query opr
+				    if(preReq.operation == 0) { // query opr
 				        performOperation(preReq);
 				        currDelay = new Date().getTime();
 				        currRetriesCnt++;
 				        continue;
-				    // }
-                                    /*
+				    }
 				    else {
 				        logger.info('ClientId: ' + clientId  + ' Checking with Tail whether operation already performed: ' + preReq.reqId);
 				        // check to see if the update opr is already performed
-                                        var payload = {
+                                        var data = {
                                             'checkLog' : 1,
                                             'reqId' : preReq.reqId 
                                             };
-                                        send(payload, bankServerMap[preReq.bankId].tailServer, 'checkLog');
-                                        for(;checkLogFlag == -1;) {
+                                        send(data, bankServerMap[preReq.bankId].tailServer, 'checkLog');
+                                        
+					for(;checkLogFlag == -1;) {
                                             util.sleep(1000);
                                         }
-                                        if(checkLogFlag == 0) {
-                                            logger.info('ClientId: ' + clientId  + 'Request not performed at the tail');
+                                        
+					if(checkLogFlag == 0) {
+                                            logger.info('ClientId: ' + clientId  + ' Request not performed at the tail: ' + preReq.reqId);
+					    logger.info('ClientId: ' + clientId  + ' Performing request again: ' + preReq.reqId);
 				            performOperation(preReq);
 				            currDelay = new Date().getTime();
 				            currRetriesCnt++;
@@ -288,20 +355,22 @@ Fiber(function() {
                                             continue;
                                         }
 				    }
-                                    */
                                 }
                                 else {  // number of retries is exceeded
-				    logger.info('ClientId: ' + clientId  + ' Number of retries exceeded the limit. Aborting request: ' + preReq.reqId);
-                                    preReq = payload;
+				    logger.info('ClientId: ' + clientId  + ' Number of retries ' + currRetriesCnt + ' exceeded the limit ' + numRetries + ' Aborting request: ' + preReq.reqId);
                                     break;
                                 }
 			    }
                             util.sleep(2000);
-                        }
+			}
+			*/
+			tryResending(preReq);
+
                         performOperation(payload);
 			currDelay = new Date().getTime();
 			currRetriesCnt = 1;
                         preReq = payload;
+			logger.info('curr: ' + j + ' len: ' + len);
                         continue;
                     }
                     /*
@@ -329,6 +398,7 @@ Fiber(function() {
                     preReq = payload;
                 }
             }
+	    tryResending(preReq);	// perform the rend logic for the last request
         }
     }
 }).run();
