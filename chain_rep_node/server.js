@@ -101,11 +101,11 @@ function checkRequest(reqId) {
  */
 function checkMaxServiceLimit() {
     if(serverLifeTime.RecvNum && serverLifeTime.RecvNum == totalRecvCnt) {
-        logger.info('ServerId: '+ serverId + ' Servev RECV request limit reached. Terminating server.');
+        logger.info('ServerId: '+ serverId + ' RECV request limit reached. Terminating server.');
         process.exit(0);
     }
     else if(serverLifeTime.SendNum && serverLifeTime.SendNum == totalSentCnt) {
-        logger.info('ServerId: '+ serverId + ' Servev SEND request limit reached. Terminating server.');
+        logger.info('ServerId: '+ serverId + ' SEND request limit reached. Terminating server.');
         process.exit(0);
     }
 }
@@ -351,9 +351,9 @@ function update(payload) {
     var oper = payload.update.operation;
 
     if(historyReq[reqId]) {
-        var payload = historyReq[reqId].payload;
-	logger.info('ServerId: '+ serverId + ' history: ' + history);
-        if(payload.update.accNum == accNum && payload.update.amount == amount && payload.update.operation == oper) {
+        var history = historyReq[reqId];
+	logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(history));
+        if(history.payload.update.accNum == accNum && history.payload.update.amount == amount && history.payload.update.operation == oper) {
             var response = history.response;
             delete response['payload'];
             delete response['sync'];
@@ -402,7 +402,7 @@ function update(payload) {
 
     appendSentReq(payload);
     historyReq[reqId] = history;
-    
+
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
 }
@@ -442,23 +442,28 @@ function handleAck(payload) {
  * update the succ/pred in case of internal failure
  */
 function handleChainFailure(payload) {
+    logger.info('ServerId: '+ serverId + ' handling the server failure');
     var server = payload.failure.server;
     var type = payload.failure.type;
     if(type == 'head') {    // change server type
         serverType = 0;
+	logger.info('ServerId: '+ serverId + ' updated the server type to HEAD');
     }
-    else if (type = 'tail') {   // change server type
+    else if (type == 'tail') {   // change server type
         serverType = 2;
+	logger.info('ServerId: '+ serverId + ' updated the server type to TAIL');
     }
-    else if(type = 'successor') {   // change successor: this is pred
-       successor = server;
-       handleNewSucc(payload.failure.seqNum);
+    else if(type == 'successor') {   // change successor: this is pred
+	successor = server;
+	logger.info('ServerId: '+ serverId + ' updated the successor server');
+	handleNewSucc(payload.failure.seqNum);
     }
     else if(type == 'predecessor') {    // change predecessor: this is succ
-        predecessor = server;
+	predecessor = server;
 	var payload = {
 		'seqNum' : lastSentReq
 	};
+	logger.info('ServerId: '+ serverId + ' updated the predecessor server');
 	return payload;
     }
 }
@@ -468,6 +473,7 @@ function handleChainFailure(payload) {
  * sentReq anomalies by synchronizing the sentReq
  */
 function handleNewSucc(lastSeqSucc) {
+    logger.info('ServerId: '+ serverId + ' sending sync requests to the new successor');
     for(i = 0; i < sentReq.length; i++) {
 	if(sentReq[i].reqId > lastSeqSucc) {
 	    var reqId = sentReq[i].reqId;
@@ -482,6 +488,7 @@ function handleNewSucc(lastSeqSucc) {
 	    send(reqponse, successor, 'sendSyncReq');   
 	}
     }
+    logger.info('ServerId: '+ serverId + ' sync requests sent');
 }
 
 /**
@@ -582,11 +589,12 @@ var server = http.createServer(
                 }
                 else if (payload.failure) {
 		    res['result'] = handleChainFailure(payload);
-		    flag = true;
-                }
+		    if(payload.failure.type == "predecessor") {
+			flag = true;
+		    }
+		}
                 else if(payload.ack) {
                     res['result'] = handleAck(payload);
-		    flag = true;
                 }
                 else if(payload.checkLog) {
                     res = checkLogs(payload);
@@ -629,12 +637,12 @@ Fiber(function() {
     while(true) {
         // check for serverLifeTime limit IF NOT UNBOUNDED
         // before sending the heartbeat signal
-        if (serverLifeTime != 'UNBOUND') {
+        if (!serverLifeTime.UNBOUND) {
            checkMaxServiceLimit(); 
         }
         send(payload, config.master, 'sendHeartBeat');
         // sleep for delat time
-        util.sleep(heartBeatDelay/2);
+        util.sleep(2000);
     }
 }).run();
 

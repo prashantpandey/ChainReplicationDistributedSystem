@@ -26,6 +26,7 @@ var Fiber = require('fibers');
 var hostname = '';
 var port = '';
 var heartBeatDelay = '';
+var succSeqNum = -1;
 
 var bankServerMap = {};
 var bankServerList = {};
@@ -82,7 +83,7 @@ function prepareBankServerMap() {
 	bankServerMap[bankId] = serverDetails;
 	bankServerList[bankId] = config.bank[i].servers;
 	bankClientMap[bankId] = clients;
-        // logger.info('Master: Bank entry added: ' + id + ' ' + JSON.stringify(bankServerMap[id]));
+	// logger.info('Master: Bank entry added: ' + id + ' ' + JSON.stringify(bankServerList[bankId]));
     }
     // logger.info('Master: Added ' + i + ' entries to the bank details');
 }
@@ -98,19 +99,27 @@ function handleHeartBeat(payload) {
 
     // check if their is already a timestamp from the server
     var obj = serverTSMap[payload.serverId];
-    serverTSMap[payload.serverId] = {
-        'serverId' : payload.serverId,
-	'bankId' : payload.bankId,
-        'type' : payload.type,
-	'timestamp' : new Date().getTime()
-    };
     if(obj) {
-        serverTSHeap.updateItem(obj);
+        // logger.info('Master: Updating old timestamp');
+	obj.timestamp = new Date().getTime();
+	serverTSHeap.updateItem(obj);
     }
     else {
-        obj = serverTSMap[payload.serverId];
-        serverTSHeap.push(obj);
+	serverTSMap[payload.serverId] = {
+	    'serverId' : payload.serverId,
+	    'bankId' : payload.bankId,
+	    'type' : payload.type,
+	    'timestamp' : new Date().getTime()
+	};
+	// logger.info('Master: Adding new timestamp');
+        serverTSHeap.push(serverTSMap[payload.serverId]);
     }
+    // logger.info('Master: timestamp updated ' + JSON.stringify(serverTSMap[payload.serverId]));
+    /*
+    for(var i = 0; i < serverTSHeap.toArray().length; i++) {
+	logger.info('Master: Heap ' + JSON.stringify(serverTSHeap.toArray()[i]));
+    }
+    */
     logger.info('Master: heart beat msg processed');
 }
 
@@ -135,23 +144,29 @@ function handleServerFailure(serverId, bankId, type) {
                     'bankId' : bankId
                     }
                 };
+	    logger.info('Master: new relation: ' + JSON.stringify(newHead));
             notifyClient(bankId, payload);
             send(payload, newHead, 'notifyHead'); // notify new head 
             break;
         case 1:
             var newSuccPred = updateChain(bankId, serverId, type);
-            new payload = {
+            var payload = {
                 'failure' : {
                     'type' : 'predecessor',
                     'server' : newSuccPred.predecessor
                     }
                 };
-	    var seqNum = send(payload, newSuccPred.successor, 'InformSuccessor'); // notify successor
-            payload.failure['type'] = 'successor';
-            payload.failure['server'] = newSuccPred.successor;
-	    payload.failure['seqNum'] = seqNum;
-            send(payload, newSuccPred.successor, 'InformPredecessor'); // notify successor
-            break;
+	    logger.info('Master: new relation: ' + JSON.stringify(newSuccPred));
+	    send(payload, newSuccPred.successor, 'InformSuccessor'); // notify successor
+            for(;succSeqNum == -1;) {
+		util.sleep(1000);
+	    }
+	    payload.failure['type'] = 'successor';
+	    payload.failure['server'] = newSuccPred.successor;
+	    payload.failure['seqNum'] = succSeqNum;
+	    send(payload, newSuccPred.predecessor, 'InformPredecessor'); // notify successor
+	    succSeqNum = -1;
+	    break;
         case 2:
             var newTail = updateChain(bankId, serverId, type);
             var payload = {
@@ -161,6 +176,7 @@ function handleServerFailure(serverId, bankId, type) {
                     'bankId' : bankId
                     }
                 };
+	    logger.info('Master: new relation: ' + JSON.stringify(newTail));
             notifyClient(bankId, payload);
             send(payload, newHead, 'notifyTail'); // notify new tail 
             break;
@@ -177,7 +193,8 @@ function updateChain(bankId, serverId, type) {
     switch(type) {
         case 0:
             // update server list
-            for(var i = 0; i < bankServerList[bankId].length; i++) {
+            var i = 0;
+	    for(i = 0; i < bankServerList[bankId].length; i++) {
                 if(serverId == bankServerList[bankId][i].serverId) {
                     bankServerList[bankId].splice(i, 1);
                     break;
@@ -192,11 +209,12 @@ function updateChain(bankId, serverId, type) {
                     }
                 };
             // update server map
-            bankServerMap[bankId].serverDetails.headServer = newHead;
+            bankServerMap[bankId].headServer = newHead;
             return newHead;
         case 1:
             // update server list
-            for(var i = 0; i < bankServerList[bankId].length; i++) {
+            var i = 0;
+	    for(i = 0; i < bankServerList[bankId].length; i++) {
                 if(serverId == bankServerList[bankId][i].serverId) {
                     bankServerList[bankId].splice(i, 1);
                     break;
@@ -215,7 +233,8 @@ function updateChain(bankId, serverId, type) {
             return newServers;
         case 2:
             // update server list
-            for(var i = 0; i < bankServerList[bankId].length; i++) {
+            var i = 0;
+	    for(i = 0; i < bankServerList[bankId].length; i++) {
                 if(serverId == bankServerList[bankId][i].serverId) {
                     bankServerList[bankId].splice(i, 1);
                     break;
@@ -230,7 +249,7 @@ function updateChain(bankId, serverId, type) {
                     }
                 };
             // update server map
-            bankServerMap[bankId].serverDetails.headServer = newTail;
+            bankServerMap[bankId].tailServer = newTail;
             return newTail;
         default:
             logger.info('Master: Unknown server type. ServerId: ' + serverId + ' Type: ' + type);            
@@ -276,10 +295,12 @@ function send(data, dest, context) {
         });
         response.on('end', function(){
             logger.info('Master: ' + context + ': Acknowledgement received' + str);
-            logger.info(context + ': Acknowledgement received' + str);
-	    var payload = JSON.parse(str);
-	    if(payload.result.seqNum) {
-		return payload.seqNum;
+	    if(data.failure.type == 'predecessor') {
+		var payload = JSON.parse(str);
+		logger.info('Master: failure response: ' + JSON.stringify(payload));
+		if(payload.result.seqNum) {
+		    succSeqNum = payload.seqNum;
+		}
 	    }
         });
     });
@@ -354,6 +375,7 @@ var master = http.createServer(
 hostname = config.master.hostname;
 port = config.master.port;
 heartBeatDelay = config.master.heartBeatDelay;
+prepareBankServerMap();
 master.listen(port);
 logger.info('Master running at http://127.0.0.1:' + port);
 
@@ -372,8 +394,9 @@ Fiber(function() {
         var server = serverTSHeap.peek();
         if(server && ((currTS - server.timestamp) > 5000)) { // server has failed
             logger.info('Master: ServerId: ' + server.serverId + ' failed');
-            // server = serverTSHeap.pop();
-            // handleServerFailure(server.serverId, server.bankId, server.type);
+	    logger.info('Master: ' + currTS + ' ' + server.timestamp);
+            server = serverTSHeap.pop();
+            handleServerFailure(server.serverId, server.bankId, server.type);
         }
         // else sleep for a sec
         util.sleep(1000);

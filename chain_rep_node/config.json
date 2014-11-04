@@ -3,7 +3,7 @@
     "master" : {
         "hostname" : "localhost",
         "port" : 8080,
-        "heartBeatDelay" : 6000
+        "heartBeatDelay" : 5000
     },
     "bank" : [
     {
@@ -33,7 +33,7 @@
                 "hostname" : "localhost",
                 "port" : 8102,
                 "startupDelay" : 5,
-                "serverLifeTime" : {"UNBOUND" : 1},
+                "serverLifeTime" : {"RecvNum" : 2},
                 "type" : 1
             },
             {
