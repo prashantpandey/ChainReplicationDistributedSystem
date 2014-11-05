@@ -14,7 +14,9 @@ var logger = require('./logger.js');
 var util = require('./util.js');
 
 /* Config File include */
-var config = require('./config.json');
+// var config = require('./config.json');
+// var config = require('./config_headFailure.json');
+var config = require('./config_tailFailure.json');
 
 /* System includes */
 var http = require('http');
@@ -71,12 +73,13 @@ function prepareBankServerMap() {
             "tailServer" : config.bank[i].tailServer
         };
 	var clients = [];
-	for(var j = 0; j < config.bank[i].clients; j++) {
+	for(var j = 0; j < config.bank[i].clients.length; j++) {
 	    var clientId = config.bank[i].clients[j].clientId;
-	    client[j] = {
+	    clients[j] = {
 		"hostname" : config.client[clientId].hostname,
 		"port" : config.client[clientId].port
 	    };     
+	    // logger.info('Client List: ' + JSON.stringify(config.client[clientId]));
 	}
         
 	var bankId = config.bank[i].bankId;
@@ -140,13 +143,13 @@ function handleServerFailure(serverId, bankId, type) {
             var payload = {
                 'failure' : {
                     'type' : 'head',
-                    'server' : newHead,
+                    'server' : newHead.head,
                     'bankId' : bankId
                     }
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newHead));
             notifyClient(bankId, payload);
-            send(payload, newHead, 'notifyHead'); // notify new head 
+            send(payload, newHead.head, 'notifyHead'); // notify new head 
             break;
         case 1:
             var newSuccPred = updateChain(bankId, serverId, type);
@@ -172,13 +175,13 @@ function handleServerFailure(serverId, bankId, type) {
             var payload = {
                 'failure' : {
                     'type' : 'tail',
-                    'server' : newTail,
+                    'server' : newTail.tail,
                     'bankId' : bankId
                     }
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newTail));
             notifyClient(bankId, payload);
-            send(payload, newHead, 'notifyTail'); // notify new tail 
+            send(payload, newTail.tail, 'notifyTail'); // notify new tail 
             break;
         default:
             logger.info('Master: Unknown server type. ServerId: ' + serverId + ' Type: ' + type);
@@ -240,7 +243,7 @@ function updateChain(bankId, serverId, type) {
                     break;
                 }
             }
-            var tailIdx = bankServerList[bankId].length;
+            var tailIdx = bankServerList[bankId].length - 1;
             bankServerList[bankId][tailIdx].type = 2; // i points to the new tail
             var newTail = {
                 'tail' : {
@@ -260,11 +263,13 @@ function updateChain(bankId, serverId, type) {
  * notify clients for the new head/tail server
  */
 function notifyClient(bankId, payload) {
+    logger.info('Master: entering notify client ' + bankClientMap[bankId].length);
     for(var i = 0; i < bankClientMap[bankId].length; i++) {
         var dest = {
             'hostname' : bankClientMap[bankId][i].hostname,
             'port' : bankClientMap[bankId][i].port
         };
+	logger.info('Master: Notifying client of bankId: ' + bankId + ' dest: ' + JSON.stringify(dest));
         send(payload, dest, 'notifyClient');
    } 
 }

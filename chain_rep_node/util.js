@@ -4,7 +4,9 @@ var exec = require('child_process').exec
 var Fiber = require('fibers');
 
 /* Config File includes */
-var config = require('./config.json');
+// var config = require('./config.json');
+// var config = require('./config_headFailure.json');
+var config = require('./config_tailFailure.json');
 
 /* Custom includes */
 var logger = require('./logger.js');

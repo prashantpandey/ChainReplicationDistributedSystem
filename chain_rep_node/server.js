@@ -11,7 +11,9 @@ var logger = require('./logger.js');
 var util = require('./util.js');
 
 /* Config File include */
-var config = require('./config.json');
+// var config = require('./config.json');
+// var config = require('./config_headFailure.json');
+var config = require('./config_tailFailure.json');
 
 /* System includes */
 var http = require('http');

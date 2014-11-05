@@ -4,11 +4,15 @@
  * The client communicates with server for banking operations.
  */
 
-var config = require('./config.json');
-//var reqData = require('./inconsistentHistoryPayload.json');
-//var reqData = require('./samePayload.json');
+// var config = require('./config.json');
+// var config = require('./config_headFailure.json');
+var config = require('./config_tailFailure.json');
+
+// var reqData = require('./inconsistentHistoryPayload.json');
+// var reqData = require('./samePayload.json');
 // var reqData = require('./randomPayload.json');
-var reqData = require('./payload.json');
+// var reqData = require('./payload.json');
+var reqData = require('./payloadMsgDrop.json');
 var logger = require('./logger.js');
 var util = require('./util.js');
 
@@ -196,9 +200,11 @@ var client = http.createServer(function(request, response) {
             if(resBody.failure) {
                 var server = resBody.failure.server;
                 if(resBody.failure.type == 'head') {
-                    bankServerMap[resBody.failure.bankId].headServer = server;
+                    logger.info('ClientId: ' + clientId  + ' Updating Head server');
+		    bankServerMap[resBody.failure.bankId].headServer = server;
                 }
                 else if(resBody.failure.type == 'tail') {
+                    logger.info('ClientId: ' + clientId  + ' Updating Tail server');
                     bankServerMap[resBody.failure.bankId].tailServer = server; 
                 }
 		if(resendFlag) {
@@ -255,8 +261,11 @@ function tryResending(preReq) {
 		    };
 		    send(data, bankServerMap[preReq.bankId].tailServer, 'checkLog');
                              
-		    for(;checkLogFlag == -1;) {
+		    for(var i = 0;checkLogFlag == -1;) {
 			util.sleep(1000);
+			i++;
+			if(i == 5)
+			    break;
 		    }
                                         
 		    if(checkLogFlag == 0) {
