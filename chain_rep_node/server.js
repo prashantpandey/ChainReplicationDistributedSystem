@@ -55,12 +55,13 @@ var serverLifeTime = {};
 var serverStartupDelay = '';
 var heartBeatDelay = config.master.heartBeatDelay;
 
-var sentReq = {};
+var sentReq = [];
 var historyReq = {};
 var accDetails = {};
 var lastSentReq = '';
 var totalSentCnt = 0;
 var totalRecvCnt = 0;
+var globalSeqNum = 0;
 
 /* General functions */
 
@@ -111,7 +112,7 @@ function checkMaxServiceLimit() {
 }
 
 /**
- * Update the loacl history with the request payload
+ * Update the local history with the request payload
  * Returns "true" when the update is successful 
  * else returns "false"
  *
@@ -123,7 +124,10 @@ function applyUpdate(payload) {
     // logger.info('ServerId: '+ serverId + ' payload for sync req: ' + JSON.stringify(payload));
     var accNum = payload.payload.update.accNum;
     if(!checkRequest(reqId)) {
-        historyReq[reqId] = payload.payload;
+        historyReq[reqId] = {
+	    'payload' : payload.payload,
+	    'response' : payload
+	};
         accDetails[accNum] = payload.currBal;
         return true;
     }
@@ -143,7 +147,7 @@ function applyUpdate(payload) {
  */
 function appendSentReq(payload) {
     var reqId = payload.reqId;
-    sentReq[reqId] = payload.payload;
+    sentReq.push(payload);
     lastSentReq = reqId;
 }
 
@@ -289,7 +293,7 @@ function query(payload) {
 
     if(historyReq[reqId]) {
         var history = historyReq[reqId];
-	logger.info('ServerId: '+ serverId + ' history: ' + history);
+	logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(history));
         if(history.payload.query.accNum == accNum) {
             var response = history.response;
             logger.info('ServerId: '+ serverId + ' Query request already exists in history: ' + JSON.stringify(response));
@@ -400,7 +404,7 @@ function update(payload) {
         'response' : response    
     };
 
-    appendSentReq(payload);
+    appendSentReq(response);
     historyReq[reqId] = history;
 
     logger.info('ServerId: '+ serverId + ' Processed the update request');
@@ -416,6 +420,16 @@ function update(payload) {
 function handleAck(payload) {
     logger.info('ServerId: '+ serverId + ' Processing the acknowledgement ' + JSON.stringify(payload));
     var reqId = payload.reqId;
+    var i = 0;
+    logger.info(sentReq.length);
+    for(i = 0; i < sentReq.length; i++) {
+	logger.info('SentReq: ' + JSON.stringify(sentReq[i]));
+	if(reqId == sentReq[i].reqId) {
+	    break;    
+	}
+    }
+    sentReq.splice(0, i + 1);
+    /*
     var nums = reqId.split('.');
     for(i = 0; i < nums[1]; i++) {
         key = nums[0] + '.' + i;
@@ -424,6 +438,7 @@ function handleAck(payload) {
             // sentReq.remove(key);
         }
     }
+    */
     if(serverType != 0) {
         send(payload, predecessor, 'ack');
     }
@@ -474,18 +489,28 @@ function handleChainFailure(payload) {
  */
 function handleNewSucc(lastSeqSucc) {
     logger.info('ServerId: '+ serverId + ' sending sync requests to the new successor');
+    var flag = false;
+    var i = 0;
     for(i = 0; i < sentReq.length; i++) {
-	if(sentReq[i].reqId > lastSeqSucc) {
+	logger.info(JSON.stringify(sentReq[i]));
+	if(sentReq[i].reqId == lastSeqSucc) {
+	    flag = true;
+	    break;
+	}
+    }
+    if(!flag) {
+	for(i = 0; i < sentReq.length; i++) {
 	    var reqId = sentReq[i].reqId;
-	    var response = {
-		'reqId' : reqId,
-		'outcome' : historyReq[reqId].outcome,
-		'currBal' : historyReq[reqId].currBal,
-		'accNum' : historyReq[reqId].accNum,
-		'payload' : historyReq[reqId].payload,
-		'sync' : 1
-	    };	
-	    send(reqponse, successor, 'sendSyncReq');   
+	    logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
+	    send(historyReq[reqId].response, successor, 'sendSyncReq');   
+	}
+    }
+    else {
+	for(var j = i; j < sentReq.length; j++) {
+	    var reqId = sentReq[j].reqId;
+	    // logger.info(reqId);
+	    logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
+	    send(historyReq[reqId].response, successor, 'sendSyncReq');   
 	}
     }
     logger.info('ServerId: '+ serverId + ' sync requests sent');

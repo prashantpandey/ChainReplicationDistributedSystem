@@ -1,353 +1,340 @@
-2014-11-04T23:24:15.490Z - info: Master:  Preparing the bank server map
-2014-11-04T23:24:15.494Z - info: Master running at http://127.0.0.1:8080
-2014-11-04T23:24:15.494Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:16.499Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:16.542Z - info: ServerId: 103 Retrieve cmd line args: 100 103
-2014-11-04T23:24:16.546Z - info: Server running at http://127.0.0.1:8103
-2014-11-04T23:24:16.547Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:16.548Z - info: ServerId: 104 Retrieve cmd line args: 100 104
-2014-11-04T23:24:16.552Z - info: Server running at http://127.0.0.1:8104
-2014-11-04T23:24:16.552Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:16.556Z - info: ServerId: 102 Retrieve cmd line args: 100 102
-2014-11-04T23:24:16.560Z - info: Server running at http://127.0.0.1:8102
-2014-11-04T23:24:16.561Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:16.571Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:16.559Z - info: ServerId: 101 Retrieve cmd line args: 100 101
-2014-11-04T23:24:16.572Z - info: Master: heart beat msg processed
-2014-11-04T23:24:16.563Z - info: Server running at http://127.0.0.1:8101
-2014-11-04T23:24:16.564Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:16.574Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:16.575Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:16.577Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:16.574Z - info: Master: heart beat msg processed
-2014-11-04T23:24:16.575Z - info: Master: Processing heart beat signal from Server: 102
-2014-11-04T23:24:16.576Z - info: Master: heart beat msg processed
-2014-11-04T23:24:16.576Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:16.576Z - info: Master: heart beat msg processed
-2014-11-04T23:24:16.580Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:16.580Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:17.506Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:18.510Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:18.548Z - info: ClientId: 0 Client server running at http://127.0.0.1:8111
-2014-11-04T23:24:18.548Z - info: ClientId: 0 Preparing the bank server map
-2014-11-04T23:24:18.549Z - info: ClientId: 0 Starting to perform query/update operations
-2014-11-04T23:24:18.549Z - info: ClientId: 0 Processing request: 0.1
-2014-11-04T23:24:18.549Z - info: ClientId: 0 Performing request 0.1 on bank: 100
-2014-11-04T23:24:18.549Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
-2014-11-04T23:24:18.549Z - info: ClientId: 0 payload: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:18.552Z - info: ClientId: 0 Processing request: 0.2
-2014-11-04T23:24:18.553Z - info: ClientId: 0 Waiting for response: 0.1
-2014-11-04T23:24:18.562Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:18.563Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:18.564Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:18.564Z - info: Master: heart beat msg processed
-2014-11-04T23:24:18.565Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:18.567Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:18.567Z - error: ServerId: 104 Account number not found: 1000
-2014-11-04T23:24:18.567Z - info: ServerId: 104 Creating a new account with the given account number
-2014-11-04T23:24:18.567Z - info: ServerId: 104 Query request processed: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
-2014-11-04T23:24:18.567Z - info: ServerId: 104 Response: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
-2014-11-04T23:24:18.568Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:18.569Z - info: Master: heart beat msg processed
-2014-11-04T23:24:18.569Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:18.570Z - info: ClientId: 0 Received data: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
-2014-11-04T23:24:18.576Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:18.571Z - info: ClientId: 0 Adding response to db
-2014-11-04T23:24:18.576Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}}
-2014-11-04T23:24:18.579Z - info: Master: Processing heart beat signal from Server: 102
-2014-11-04T23:24:18.579Z - info: Master: heart beat msg processed
-2014-11-04T23:24:18.580Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:18.581Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:18.583Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:18.583Z - info: Master: heart beat msg processed
-2014-11-04T23:24:18.584Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:19.514Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:20.518Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:20.554Z - info: ClientId: 0 Performing request 0.2 on bank: 100
-2014-11-04T23:24:20.554Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
-2014-11-04T23:24:20.554Z - info: ClientId: 0 payload: {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:20.555Z - info: curr: 1 len: 5
-2014-11-04T23:24:20.555Z - info: ClientId: 0 Processing request: 0.3
-2014-11-04T23:24:20.556Z - info: ClientId: 0 Waiting for response: 0.2
-2014-11-04T23:24:20.559Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:20.559Z - error: ServerId: 101 Account number not found: 1000
-2014-11-04T23:24:20.560Z - info: ServerId: 101 Creating a new account with the given account number
-2014-11-04T23:24:20.560Z - info: ServerId: 101 Account info: {"1000":0}
-2014-11-04T23:24:20.562Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 100
-2014-11-04T23:24:20.562Z - info: ServerId: 101 Processed the update request
-2014-11-04T23:24:20.562Z - info: ServerId: 101 Update req response: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:20.562Z - info: ServerId: 101 Sending sync request from update
-2014-11-04T23:24:20.563Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
-2014-11-04T23:24:20.564Z - info: ClientId: 0 Received data: 
-2014-11-04T23:24:20.568Z - info: ServerId: 102 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:20.568Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:20.568Z - info: ServerId: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
-2014-11-04T23:24:20.570Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:20.568Z - info: ServerId: 102 Sync request processed
-2014-11-04T23:24:20.570Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:20.570Z - info: Master: heart beat msg processed
-2014-11-04T23:24:20.569Z - info: ServerId: 102 acc details: {"1000":100}
-2014-11-04T23:24:20.571Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:20.571Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:20.574Z - info: ServerId: 103 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:20.574Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
-2014-11-04T23:24:20.576Z - info: ServerId: 102 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:20.575Z - info: ServerId: 103 Sync request processed
-2014-11-04T23:24:20.575Z - info: ServerId: 103 acc details: {"1000":100}
-2014-11-04T23:24:20.577Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:20.577Z - info: Master: heart beat msg processed
-2014-11-04T23:24:20.578Z - info: ServerId: 104 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:20.578Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:20.578Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
-2014-11-04T23:24:20.579Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
-2014-11-04T23:24:20.580Z - info: ServerId: 104 Sync request processed
-2014-11-04T23:24:20.580Z - info: ServerId: 104 acc details: {"1000":100}
-2014-11-04T23:24:20.580Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:20.582Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
-2014-11-04T23:24:20.583Z - info: ServerId: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} ack
-2014-11-04T23:24:20.584Z - info: ServerId: 103 Processed the acknowledgement
-2014-11-04T23:24:20.585Z - info: ServerId: 104 sendAck: Acknowledgement received
-2014-11-04T23:24:20.584Z - info: ClientId: 0 Response received from Server
-2014-11-04T23:24:20.585Z - info: ClientId: 0 Received data: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}
-2014-11-04T23:24:20.585Z - info: ClientId: 0 Adding response to db
-2014-11-04T23:24:20.585Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:20.585Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}}
-2014-11-04T23:24:20.587Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
-2014-11-04T23:24:20.587Z - info: ServerId: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":0} ack
-2014-11-04T23:24:20.587Z - info: ServerId: 102 Processed the acknowledgement
-2014-11-04T23:24:20.588Z - info: ServerId: 103 ack: Acknowledgement received
-2014-11-04T23:24:20.589Z - info: Master: Processing heart beat signal from Server: 102
-2014-11-04T23:24:20.589Z - info: Master: heart beat msg processed
-2014-11-04T23:24:20.589Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
-2014-11-04T23:24:20.590Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:20.590Z - info: ServerId: 102 ack: Acknowledgement received
-2014-11-04T23:24:20.590Z - info: ServerId: 101 Processed the acknowledgement
-2014-11-04T23:24:20.590Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:20.591Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:20.591Z - info: Master: heart beat msg processed
-2014-11-04T23:24:20.592Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:21.524Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:22.526Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:22.562Z - info: ClientId: 0 Performing request 0.3 on bank: 100
-2014-11-04T23:24:22.562Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
-2014-11-04T23:24:22.562Z - info: ClientId: 0 payload: {"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:22.563Z - info: curr: 2 len: 5
-2014-11-04T23:24:22.563Z - info: ClientId: 0 Processing request: 0.4
-2014-11-04T23:24:22.563Z - info: ClientId: 0 Waiting for response: 0.3
-2014-11-04T23:24:22.564Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:22.564Z - info: ServerId: 101 Account info: {"1000":100}
-2014-11-04T23:24:22.564Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 90
-2014-11-04T23:24:22.564Z - info: ServerId: 101 Processed the update request
-2014-11-04T23:24:22.569Z - info: ServerId: 101 Update req response: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:22.570Z - info: ServerId: 101 Sending sync request from update
-2014-11-04T23:24:22.570Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
-2014-11-04T23:24:22.571Z - info: ClientId: 0 Received data: 
-2014-11-04T23:24:22.571Z - info: ServerId: 102 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:22.572Z - info: ServerId: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
-2014-11-04T23:24:22.572Z - info: ServerId: 102 Sync request processed
-2014-11-04T23:24:22.572Z - info: ServerId: 102 acc details: {"1000":90}
-2014-11-04T23:24:22.572Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:22.573Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:22.574Z - info: ServerId: 103 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:22.574Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:22.574Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
-2014-11-04T23:24:22.575Z - info: ServerId: 102 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:22.574Z - info: ServerId: 103 Sync request processed
-2014-11-04T23:24:22.575Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:22.575Z - info: ServerId: 103 acc details: {"1000":90}
-2014-11-04T23:24:22.576Z - info: Master: heart beat msg processed
-2014-11-04T23:24:22.576Z - info: ServerId: 104 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:22.576Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:22.577Z - info: Master: heart beat msg processed
-2014-11-04T23:24:22.577Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:22.578Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
-2014-11-04T23:24:22.576Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
-2014-11-04T23:24:22.577Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
-2014-11-04T23:24:22.577Z - info: ServerId: 104 Sync request processed
-2014-11-04T23:24:22.577Z - info: ServerId: 104 acc details: {"1000":90}
-2014-11-04T23:24:22.578Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:22.580Z - info: ClientId: 0 Response received from Server
-2014-11-04T23:24:22.580Z - info: ClientId: 0 Received data: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000}
-2014-11-04T23:24:22.580Z - info: ClientId: 0 Adding response to db
-2014-11-04T23:24:22.580Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
-2014-11-04T23:24:22.580Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000}}
-2014-11-04T23:24:22.581Z - info: ServerId: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} ack
-2014-11-04T23:24:22.581Z - info: ServerId: 103 Processed the acknowledgement
-2014-11-04T23:24:22.581Z - info: ServerId: 104 sendAck: Acknowledgement received
-2014-11-04T23:24:22.582Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
-2014-11-04T23:24:22.583Z - info: ServerId: 103 ack: Acknowledgement received
-2014-11-04T23:24:22.582Z - info: ServerId: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":0} ack
-2014-11-04T23:24:22.582Z - info: ServerId: 102 Processed the acknowledgement
-2014-11-04T23:24:22.584Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
-2014-11-04T23:24:22.584Z - info: ServerId: 101 Processed the acknowledgement
-2014-11-04T23:24:22.585Z - info: ServerId: 102 ack: Acknowledgement received
-2014-11-04T23:24:22.586Z - info: ServerId: 102 RECV request limit reached. Terminating server.
-2014-11-04T23:24:22.592Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:22.593Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:22.594Z - info: Master: heart beat msg processed
-2014-11-04T23:24:22.594Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:23.528Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:24.532Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:24.570Z - info: ClientId: 0 Performing request 0.4 on bank: 100
-2014-11-04T23:24:24.570Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
-2014-11-04T23:24:24.570Z - info: ClientId: 0 payload: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:24.571Z - info: curr: 3 len: 5
-2014-11-04T23:24:24.571Z - info: ClientId: 0 Processing request: 0.5
-2014-11-04T23:24:24.571Z - info: ClientId: 0 Waiting for response: 0.4
-2014-11-04T23:24:24.572Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:24.572Z - info: ServerId: 104 Query request processed: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
-2014-11-04T23:24:24.572Z - info: ServerId: 104 Response: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
-2014-11-04T23:24:24.576Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:24.576Z - info: ClientId: 0 Received data: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
-2014-11-04T23:24:24.576Z - info: ClientId: 0 Adding response to db
-2014-11-04T23:24:24.576Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000},"0.4":{"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}}
-2014-11-04T23:24:24.577Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:24.578Z - info: Master: heart beat msg processed
-2014-11-04T23:24:24.578Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:24.579Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:24.581Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:24.581Z - info: Master: heart beat msg processed
-2014-11-04T23:24:24.582Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:24.596Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:24.598Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:24.598Z - info: Master: heart beat msg processed
-2014-11-04T23:24:24.598Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:25.534Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:26.538Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:26.538Z - info: Master: ServerId: 102 failed
-2014-11-04T23:24:26.538Z - info: Master: 1415143466538 1415143460589
-2014-11-04T23:24:26.539Z - info: Master: Handling the server failure for ServerId: 102
-2014-11-04T23:24:26.539Z - info: Master: new relation: {"predecessor":{"hostname":"localhost","port":8101},"successor":{"hostname":"localhost","port":8103}}
-2014-11-04T23:24:26.539Z - info: Master: {"hostname":"localhost","port":8103} InformSuccessor
-2014-11-04T23:24:26.545Z - info: ServerId: 103 handling the server failure
-2014-11-04T23:24:26.545Z - info: ServerId: 103 updated the predecessor server
-2014-11-04T23:24:26.545Z - info: ServerId: 103 Response: {"result":{"seqNum":"0.3"}}
-2014-11-04T23:24:26.546Z - info: Master: InformSuccessor: Acknowledgement received{"result":{"seqNum":"0.3"}}
-2014-11-04T23:24:26.547Z - info: Master: failure response: {"result":{"seqNum":"0.3"}}
-2014-11-04T23:24:26.575Z - info: ClientId: 0 Performing request 0.5 on bank: 100
-2014-11-04T23:24:26.575Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
-2014-11-04T23:24:26.575Z - info: ClientId: 0 payload: {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:26.576Z - info: curr: 4 len: 5
-2014-11-04T23:24:26.577Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:26.582Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:26.583Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:26.577Z - info: ServerId: 101 Account info: {"1000":90}
-2014-11-04T23:24:26.584Z - info: ClientId: 0 Received data: 
-2014-11-04T23:24:26.577Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 100
-2014-11-04T23:24:26.585Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:26.585Z - info: Master: heart beat msg processed
-2014-11-04T23:24:26.586Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:26.586Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:26.586Z - info: Master: heart beat msg processed
-2014-11-04T23:24:26.588Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:26.577Z - info: ServerId: 101 Processed the update request
-2014-11-04T23:24:26.582Z - info: ServerId: 101 Update req response: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
-2014-11-04T23:24:26.583Z - info: ServerId: 101 Sending sync request from update
-2014-11-04T23:24:26.583Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
-2014-11-04T23:24:26.587Z - error: ServerId: 101 sendSyncReq: Problem occured while requestingError: connect ECONNREFUSED
-2014-11-04T23:24:26.596Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:26.598Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:26.598Z - info: Master: heart beat msg processed
-2014-11-04T23:24:26.599Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:27.547Z - info: Master: {"hostname":"localhost","port":8101} InformPredecessor
-2014-11-04T23:24:27.549Z - info: ServerId: 101 handling the server failure
-2014-11-04T23:24:27.549Z - info: ServerId: 101 updated the successor server
-2014-11-04T23:24:27.549Z - info: ServerId: 101 sending sync requests to the new successor
-2014-11-04T23:24:27.549Z - info: ServerId: 101 sync requests sent
-2014-11-04T23:24:27.550Z - info: Master: InformPredecessor: Acknowledgement received
-2014-11-04T23:24:28.553Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:28.581Z - info: ClientId: 0 Request timed out. Resending request: 0.5
-2014-11-04T23:24:28.582Z - info: ClientId: 0 Checking with Tail whether operation already performed: 0.5
-2014-11-04T23:24:28.582Z - info: ClientId: 0 payload: {"checkLog":1,"reqId":"0.5"}
-2014-11-04T23:24:28.583Z - info: ServerId: 104 Processing check Logs request
-2014-11-04T23:24:28.583Z - info: ServerId: 104 Check logs request processed
-2014-11-04T23:24:28.583Z - info: {"checkLog":0,"reqId":"0.5"}
-2014-11-04T23:24:28.583Z - info: ServerId: 104 Response: {"checkLog":0,"reqId":"0.5"}
-2014-11-04T23:24:28.584Z - info: ClientId: 0 Received data: {"checkLog":0,"reqId":"0.5"}
-2014-11-04T23:24:28.584Z - info: ClientId: 0 Check Logs response received
-2014-11-04T23:24:28.584Z - info: Client: 0 {"checkLog":0,"reqId":"0.5"}
-2014-11-04T23:24:28.588Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:28.588Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:28.591Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:28.591Z - info: Master: heart beat msg processed
-2014-11-04T23:24:28.591Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:28.591Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:28.591Z - info: Master: heart beat msg processed
-2014-11-04T23:24:28.591Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:28.603Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:28.605Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:28.605Z - info: Master: heart beat msg processed
-2014-11-04T23:24:28.605Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:29.557Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:29.586Z - info: ClientId: 0 Request not performed at the tail: 0.5
-2014-11-04T23:24:29.586Z - info: ClientId: 0 Performing request again: 0.5
-2014-11-04T23:24:29.586Z - info: ClientId: 0 Performing request 0.5 on bank: 100
-2014-11-04T23:24:29.586Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
-2014-11-04T23:24:29.586Z - info: ClientId: 0 payload: {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:29.589Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
-2014-11-04T23:24:29.592Z - info: ClientId: 0 Received data: {"result":{"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}}
-2014-11-04T23:24:29.592Z - info: ClientId: 0 Adding response to db
-2014-11-04T23:24:29.593Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000},"0.4":{"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000},"undefined":{"result":{"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}}}
-2014-11-04T23:24:29.589Z - info: ServerId: 101 history: [object Object]
-2014-11-04T23:24:29.590Z - info: ServerId: 101 Updated response: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}
-2014-11-04T23:24:29.591Z - info: ServerId: 101 Update request already exists in history: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}
-2014-11-04T23:24:29.591Z - info: ServerId: 101 Update req response: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}
-2014-11-04T23:24:29.591Z - info: ServerId: 101 Sending response from update
-2014-11-04T23:24:29.591Z - info: ServerId: 101 Response: {"result":{"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}}
-2014-11-04T23:24:30.561Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:30.593Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:30.593Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:30.594Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:30.595Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:30.595Z - info: Master: heart beat msg processed
-2014-11-04T23:24:30.595Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:30.595Z - info: Master: heart beat msg processed
-2014-11-04T23:24:30.596Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:30.609Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:30.610Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:30.610Z - info: Master: heart beat msg processed
-2014-11-04T23:24:30.611Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:31.567Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:31.588Z - info: ClientId: 0 Request timed out. Resending request: 0.5
-2014-11-04T23:24:31.589Z - info: ClientId: 0 Number of retries 2 exceeded the limit 2 Aborting request: 0.5
-2014-11-04T23:24:32.569Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:32.598Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:32.598Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:32.600Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:32.600Z - info: Master: heart beat msg processed
-2014-11-04T23:24:32.600Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:32.600Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:32.600Z - info: Master: heart beat msg processed
-2014-11-04T23:24:32.600Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:32.612Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:32.614Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:32.614Z - info: Master: heart beat msg processed
-2014-11-04T23:24:32.614Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:33.573Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:34.578Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:34.598Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:34.599Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:34.600Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:34.600Z - info: Master: heart beat msg processed
-2014-11-04T23:24:34.601Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:34.601Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:34.601Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:34.601Z - info: Master: heart beat msg processed
-2014-11-04T23:24:34.618Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:34.626Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:34.626Z - info: Master: heart beat msg processed
-2014-11-04T23:24:34.627Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:35.582Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:36.583Z - info: Master: probing the server heap for failure
-2014-11-04T23:24:36.602Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:36.603Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:36.605Z - info: Master: Processing heart beat signal from Server: 103
-2014-11-04T23:24:36.605Z - info: Master: heart beat msg processed
-2014-11-04T23:24:36.606Z - info: Master: Processing heart beat signal from Server: 104
-2014-11-04T23:24:36.606Z - info: Master: heart beat msg processed
-2014-11-04T23:24:36.606Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:36.607Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
-2014-11-04T23:24:36.627Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
-2014-11-04T23:24:36.628Z - info: Master: Processing heart beat signal from Server: 101
-2014-11-04T23:24:36.628Z - info: Master: heart beat msg processed
-2014-11-04T23:24:36.628Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:48.451Z - info: Master:  Preparing the bank server map
+2014-11-05T02:40:48.453Z - info: Master running at http://127.0.0.1:8080
+2014-11-05T02:40:48.454Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:49.458Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:49.512Z - info: ServerId: 104 Retrieve cmd line args: 100 104
+2014-11-05T02:40:49.515Z - info: Server running at http://127.0.0.1:8104
+2014-11-05T02:40:49.516Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:49.533Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:49.520Z - info: ServerId: 102 Retrieve cmd line args: 100 102
+2014-11-05T02:40:49.533Z - info: Master: heart beat msg processed
+2014-11-05T02:40:49.525Z - info: Server running at http://127.0.0.1:8102
+2014-11-05T02:40:49.525Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:49.536Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-05T02:40:49.536Z - info: Master: heart beat msg processed
+2014-11-05T02:40:49.538Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:49.539Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:49.525Z - info: ServerId: 103 Retrieve cmd line args: 100 103
+2014-11-05T02:40:49.544Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:49.532Z - info: Server running at http://127.0.0.1:8103
+2014-11-05T02:40:49.533Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:49.545Z - info: Master: heart beat msg processed
+2014-11-05T02:40:49.548Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:49.526Z - info: ServerId: 101 Retrieve cmd line args: 100 101
+2014-11-05T02:40:49.559Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:49.543Z - info: Server running at http://127.0.0.1:8101
+2014-11-05T02:40:49.560Z - info: Master: heart beat msg processed
+2014-11-05T02:40:49.544Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:49.562Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:50.465Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:51.469Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:51.461Z - info: ClientId: 0 Client server running at http://127.0.0.1:8111
+2014-11-05T02:40:51.462Z - info: ClientId: 0 Preparing the bank server map
+2014-11-05T02:40:51.462Z - info: ClientId: 0 Starting to perform query/update operations
+2014-11-05T02:40:51.462Z - info: ClientId: 0 Processing request: 0.1
+2014-11-05T02:40:51.462Z - info: ClientId: 0 Performing request 0.1 on bank: 100
+2014-11-05T02:40:51.462Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
+2014-11-05T02:40:51.463Z - info: ClientId: 0 payload: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:51.466Z - info: ClientId: 0 Processing request: 0.2
+2014-11-05T02:40:51.466Z - info: ClientId: 0 Waiting for response: 0.1
+2014-11-05T02:40:51.473Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.1","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:51.474Z - error: ServerId: 104 Account number not found: 1000
+2014-11-05T02:40:51.474Z - info: ServerId: 104 Creating a new account with the given account number
+2014-11-05T02:40:51.474Z - info: ServerId: 104 Query request processed: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
+2014-11-05T02:40:51.474Z - info: ServerId: 104 Response: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
+2014-11-05T02:40:51.477Z - info: ClientId: 0 Received data: {"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}
+2014-11-05T02:40:51.477Z - info: ClientId: 0 Adding response to db
+2014-11-05T02:40:51.482Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000}}
+2014-11-05T02:40:51.525Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:51.526Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:51.527Z - info: Master: heart beat msg processed
+2014-11-05T02:40:51.527Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:51.533Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:51.535Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-05T02:40:51.535Z - info: Master: heart beat msg processed
+2014-11-05T02:40:51.536Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:51.542Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:51.544Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:51.545Z - info: Master: heart beat msg processed
+2014-11-05T02:40:51.545Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:51.560Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:51.562Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:51.562Z - info: Master: heart beat msg processed
+2014-11-05T02:40:51.563Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:52.473Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:53.469Z - info: ClientId: 0 Performing request 0.2 on bank: 100
+2014-11-05T02:40:53.469Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-05T02:40:53.470Z - info: ClientId: 0 payload: {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:53.471Z - info: curr: 1 len: 5
+2014-11-05T02:40:53.471Z - info: ClientId: 0 Processing request: 0.3
+2014-11-05T02:40:53.471Z - info: ClientId: 0 Waiting for response: 0.2
+2014-11-05T02:40:53.474Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:53.474Z - error: ServerId: 101 Account number not found: 1000
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Creating a new account with the given account number
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Account info: {"1000":0}
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 100
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Processed the update request
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Update req response: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.475Z - info: ServerId: 101 Sending sync request from update
+2014-11-05T02:40:53.475Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
+2014-11-05T02:40:53.477Z - info: ClientId: 0 Received data: 
+2014-11-05T02:40:53.478Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:53.480Z - info: ServerId: 102 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.480Z - info: ServerId: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
+2014-11-05T02:40:53.480Z - info: ServerId: 102 Sync request processed
+2014-11-05T02:40:53.481Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:53.480Z - info: ServerId: 102 acc details: {"1000":100}
+2014-11-05T02:40:53.484Z - info: ServerId: 103 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.484Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
+2014-11-05T02:40:53.484Z - info: ServerId: 103 Sync request processed
+2014-11-05T02:40:53.485Z - info: ServerId: 103 acc details: {"1000":100}
+2014-11-05T02:40:53.485Z - info: ServerId: 102 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:53.486Z - info: ServerId: 104 Processing sync request: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.487Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
+2014-11-05T02:40:53.487Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
+2014-11-05T02:40:53.488Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:53.487Z - info: ServerId: 104 Sync request processed
+2014-11-05T02:40:53.488Z - info: ServerId: 104 acc details: {"1000":100}
+2014-11-05T02:40:53.489Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-05T02:40:53.491Z - info: ClientId: 0 Response received from Server
+2014-11-05T02:40:53.490Z - info: 1
+2014-11-05T02:40:53.490Z - info: SentReq: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.490Z - info: ServerId: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} ack
+2014-11-05T02:40:53.491Z - info: ServerId: 103 Processed the acknowledgement
+2014-11-05T02:40:53.491Z - info: ServerId: 104 sendAck: Acknowledgement received
+2014-11-05T02:40:53.491Z - info: ClientId: 0 Received data: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}
+2014-11-05T02:40:53.491Z - info: ClientId: 0 Adding response to db
+2014-11-05T02:40:53.492Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000}}
+2014-11-05T02:40:53.493Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-05T02:40:53.493Z - info: 1
+2014-11-05T02:40:53.493Z - info: SentReq: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.493Z - info: ServerId: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":0} ack
+2014-11-05T02:40:53.494Z - info: ServerId: 102 Processed the acknowledgement
+2014-11-05T02:40:53.494Z - info: ServerId: 103 ack: Acknowledgement received
+2014-11-05T02:40:53.495Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.2","serverId":"104"}
+2014-11-05T02:40:53.496Z - info: 1
+2014-11-05T02:40:53.496Z - info: SentReq: {"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.2","bankId":100,"accNum":1000,"amount":100,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:53.496Z - info: ServerId: 101 Processed the acknowledgement
+2014-11-05T02:40:53.497Z - info: ServerId: 102 ack: Acknowledgement received
+2014-11-05T02:40:53.530Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:53.531Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:53.532Z - info: Master: heart beat msg processed
+2014-11-05T02:40:53.532Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:53.536Z - info: ServerId: 102 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:53.537Z - info: Master: Processing heart beat signal from Server: 102
+2014-11-05T02:40:53.537Z - info: Master: heart beat msg processed
+2014-11-05T02:40:53.538Z - info: ServerId: 102 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:53.547Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:53.549Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:53.550Z - info: Master: heart beat msg processed
+2014-11-05T02:40:53.550Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:53.568Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:53.569Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:53.569Z - info: Master: heart beat msg processed
+2014-11-05T02:40:53.569Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:54.482Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:55.478Z - info: ClientId: 0 Performing request 0.3 on bank: 100
+2014-11-05T02:40:55.478Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-05T02:40:55.478Z - info: ClientId: 0 payload: {"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:55.479Z - info: curr: 2 len: 5
+2014-11-05T02:40:55.479Z - info: ClientId: 0 Processing request: 0.4
+2014-11-05T02:40:55.479Z - info: ClientId: 0 Waiting for response: 0.3
+2014-11-05T02:40:55.480Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:55.481Z - info: ServerId: 101 Account info: {"1000":100}
+2014-11-05T02:40:55.481Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 90
+2014-11-05T02:40:55.481Z - info: ServerId: 101 Processed the update request
+2014-11-05T02:40:55.481Z - info: ServerId: 101 Update req response: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.481Z - info: ServerId: 101 Sending sync request from update
+2014-11-05T02:40:55.481Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
+2014-11-05T02:40:55.482Z - info: ClientId: 0 Received data: 
+2014-11-05T02:40:55.483Z - info: ServerId: 102 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.483Z - info: ServerId: 102 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendSyncReq
+2014-11-05T02:40:55.484Z - info: ServerId: 102 Sync request processed
+2014-11-05T02:40:55.484Z - info: ServerId: 102 acc details: {"1000":90}
+2014-11-05T02:40:55.484Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:55.485Z - info: ServerId: 103 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.485Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
+2014-11-05T02:40:55.486Z - info: ServerId: 103 Sync request processed
+2014-11-05T02:40:55.486Z - info: ServerId: 103 acc details: {"1000":90}
+2014-11-05T02:40:55.486Z - info: ServerId: 102 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:55.487Z - info: ServerId: 104 Processing sync request: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.488Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:55.487Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
+2014-11-05T02:40:55.487Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
+2014-11-05T02:40:55.489Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
+2014-11-05T02:40:55.488Z - info: ServerId: 104 Sync request processed
+2014-11-05T02:40:55.488Z - info: ServerId: 104 acc details: {"1000":90}
+2014-11-05T02:40:55.489Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
+2014-11-05T02:40:55.490Z - info: ClientId: 0 Response received from Server
+2014-11-05T02:40:55.490Z - info: ClientId: 0 Received data: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000}
+2014-11-05T02:40:55.490Z - info: ClientId: 0 Adding response to db
+2014-11-05T02:40:55.490Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000}}
+2014-11-05T02:40:55.491Z - info: ServerId: 104 sendAck: Acknowledgement received
+2014-11-05T02:40:55.490Z - info: 1
+2014-11-05T02:40:55.490Z - info: SentReq: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.490Z - info: ServerId: 103 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} ack
+2014-11-05T02:40:55.490Z - info: ServerId: 103 Processed the acknowledgement
+2014-11-05T02:40:55.492Z - info: ServerId: 102 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
+2014-11-05T02:40:55.493Z - info: ServerId: 103 ack: Acknowledgement received
+2014-11-05T02:40:55.492Z - info: 1
+2014-11-05T02:40:55.492Z - info: SentReq: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.492Z - info: ServerId: 102 {"serverId":101,"hostname":"localhost","port":8101,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":0} ack
+2014-11-05T02:40:55.493Z - info: ServerId: 102 Processed the acknowledgement
+2014-11-05T02:40:55.494Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.3","serverId":"104"}
+2014-11-05T02:40:55.494Z - info: 1
+2014-11-05T02:40:55.494Z - info: SentReq: {"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000,"payload":{"update":{"reqId":"0.3","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":2,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:55.495Z - info: ServerId: 101 Processed the acknowledgement
+2014-11-05T02:40:55.495Z - info: ServerId: 102 ack: Acknowledgement received
+2014-11-05T02:40:55.532Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:55.534Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:55.534Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:55.534Z - info: Master: heart beat msg processed
+2014-11-05T02:40:55.538Z - info: ServerId: 102 RECV request limit reached. Terminating server.
+2014-11-05T02:40:55.553Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:55.554Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:55.554Z - info: Master: heart beat msg processed
+2014-11-05T02:40:55.554Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:55.569Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:55.571Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:55.571Z - info: Master: heart beat msg processed
+2014-11-05T02:40:55.571Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:56.490Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:57.486Z - info: ClientId: 0 Performing request 0.4 on bank: 100
+2014-11-05T02:40:57.486Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8104}
+2014-11-05T02:40:57.486Z - info: ClientId: 0 payload: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:57.486Z - info: curr: 3 len: 5
+2014-11-05T02:40:57.487Z - info: ClientId: 0 Processing request: 0.5
+2014-11-05T02:40:57.487Z - info: ClientId: 0 Waiting for response: 0.4
+2014-11-05T02:40:57.488Z - info: ServerId: 104 Processing the query request: {"query":{"reqId":"0.4","bankId":100,"accNum":1000,"amount":0,"destBankId":101,"destAccNum":1001,"operation":0,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:57.488Z - info: ServerId: 104 Query request processed: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
+2014-11-05T02:40:57.488Z - info: ServerId: 104 Response: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
+2014-11-05T02:40:57.488Z - info: ClientId: 0 Received data: {"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}
+2014-11-05T02:40:57.489Z - info: ClientId: 0 Adding response to db
+2014-11-05T02:40:57.489Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000},"0.4":{"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000}}
+2014-11-05T02:40:57.495Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:57.538Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:57.540Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:57.540Z - info: Master: heart beat msg processed
+2014-11-05T02:40:57.540Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:57.558Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:57.560Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:57.560Z - info: Master: heart beat msg processed
+2014-11-05T02:40:57.560Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:57.576Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:57.577Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:57.577Z - info: Master: heart beat msg processed
+2014-11-05T02:40:57.578Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:58.499Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:59.489Z - info: ClientId: 0 Performing request 0.5 on bank: 100
+2014-11-05T02:40:59.489Z - info: ClientId: 0 Destination info: {"hostname":"localhost","port":8101}
+2014-11-05T02:40:59.489Z - info: ClientId: 0 payload: {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:59.489Z - info: curr: 4 len: 5
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Processing the update request {"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}}
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Account info: {"1000":90}
+2014-11-05T02:40:59.492Z - info: ClientId: 0 Received data: 
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Transaction Outcome: 0 Current Bal: 100
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Processed the update request
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Update req response: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:40:59.491Z - info: ServerId: 101 Sending sync request from update
+2014-11-05T02:40:59.491Z - info: ServerId: 101 {"serverId":102,"hostname":"localhost","port":8102,"startupDelay":5,"serverLifeTime":{"RecvNum":2},"type":1} sendSyncReq
+2014-11-05T02:40:59.494Z - error: ServerId: 101 sendSyncReq: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-05T02:40:59.503Z - info: Master: probing the server heap for failure
+2014-11-05T02:40:59.503Z - info: Master: ServerId: 102 failed
+2014-11-05T02:40:59.503Z - info: Master: 1415155259503 1415155253537
+2014-11-05T02:40:59.504Z - info: Master: Handling the server failure for ServerId: 102
+2014-11-05T02:40:59.504Z - info: Master: new relation: {"predecessor":{"hostname":"localhost","port":8101},"successor":{"hostname":"localhost","port":8103}}
+2014-11-05T02:40:59.504Z - info: Master: {"hostname":"localhost","port":8103} InformSuccessor
+2014-11-05T02:40:59.510Z - info: ServerId: 103 handling the server failure
+2014-11-05T02:40:59.510Z - info: ServerId: 103 updated the predecessor server
+2014-11-05T02:40:59.510Z - info: ServerId: 103 Response: {"result":{"seqNum":"0.3"}}
+2014-11-05T02:40:59.511Z - info: Master: InformSuccessor: Acknowledgement received{"result":{"seqNum":"0.3"}}
+2014-11-05T02:40:59.513Z - info: Master: failure response: {"result":{"seqNum":"0.3"}}
+2014-11-05T02:40:59.544Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:59.545Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:40:59.545Z - info: Master: heart beat msg processed
+2014-11-05T02:40:59.545Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:59.561Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:59.563Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:40:59.563Z - info: Master: heart beat msg processed
+2014-11-05T02:40:59.563Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:40:59.581Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:40:59.583Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:40:59.583Z - info: Master: heart beat msg processed
+2014-11-05T02:40:59.583Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:00.513Z - info: Master: {"hostname":"localhost","port":8101} InformPredecessor
+2014-11-05T02:41:00.516Z - info: ServerId: 101 handling the server failure
+2014-11-05T02:41:00.516Z - info: ServerId: 101 updated the successor server
+2014-11-05T02:41:00.516Z - info: ServerId: 101 sending sync requests to the new successor
+2014-11-05T02:41:00.516Z - info: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.516Z - info: {"hostname":"localhost","port":8103} {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.519Z - info: Master: InformPredecessor: Acknowledgement received
+2014-11-05T02:41:00.517Z - info: ServerId: 101 {"hostname":"localhost","port":8103} sendSyncReq
+2014-11-05T02:41:00.520Z - info: ServerId: 103 Processing sync request: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.520Z - info: ServerId: 103 {"serverId":104,"hostname":"localhost","port":8104,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":2} sendSyncReq
+2014-11-05T02:41:00.519Z - info: ServerId: 101 sync requests sent
+2014-11-05T02:41:00.520Z - info: ServerId: 103 Sync request processed
+2014-11-05T02:41:00.520Z - info: ServerId: 103 acc details: {"1000":100}
+2014-11-05T02:41:00.521Z - info: ServerId: 101 sendSyncReq: Acknowledgement received
+2014-11-05T02:41:00.521Z - info: ServerId: 104 Processing sync request: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.521Z - info: ServerId: 104 {"hostname":"localhost","port":8111} sendResponse
+2014-11-05T02:41:00.522Z - info: ServerId: 104 {"serverId":103,"hostname":"localhost","port":8103,"startupDelay":5,"serverLifeTime":{"UNBOUND":1},"type":1} sendAck
+2014-11-05T02:41:00.523Z - info: ServerId: 103 sendSyncReq: Acknowledgement received
+2014-11-05T02:41:00.522Z - info: ServerId: 104 Sync request processed
+2014-11-05T02:41:00.522Z - info: ServerId: 104 acc details: {"1000":100}
+2014-11-05T02:41:00.523Z - info: ClientId: 0 Response received from Server
+2014-11-05T02:41:00.523Z - info: ServerId: 103 Processing the acknowledgement {"ack":1,"reqId":"0.5","serverId":"104"}
+2014-11-05T02:41:00.524Z - info: ClientId: 0 Received data: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}
+2014-11-05T02:41:00.524Z - info: ClientId: 0 Adding response to db
+2014-11-05T02:41:00.524Z - info: ClientId: 0 Responses: {"0.1":{"reqId":"0.1","outcome":0,"currBal":0,"accNum":1000},"0.2":{"reqId":"0.2","outcome":0,"currBal":100,"accNum":1000},"0.3":{"reqId":"0.3","outcome":0,"currBal":90,"accNum":1000},"0.4":{"reqId":"0.4","outcome":0,"currBal":90,"accNum":1000},"0.5":{"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000}}
+2014-11-05T02:41:00.523Z - info: 1
+2014-11-05T02:41:00.524Z - info: SentReq: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.524Z - info: ServerId: 103 {"hostname":"localhost","port":8101} ack
+2014-11-05T02:41:00.524Z - info: ServerId: 103 Processed the acknowledgement
+2014-11-05T02:41:00.525Z - info: ServerId: 104 sendAck: Acknowledgement received
+2014-11-05T02:41:00.525Z - info: ServerId: 101 Processing the acknowledgement {"ack":1,"reqId":"0.5","serverId":"104"}
+2014-11-05T02:41:00.525Z - info: 1
+2014-11-05T02:41:00.525Z - info: SentReq: {"reqId":"0.5","outcome":0,"currBal":100,"accNum":1000,"payload":{"update":{"reqId":"0.5","bankId":100,"accNum":1000,"amount":10,"destBankId":101,"destAccNum":1001,"operation":1,"port":8111,"hostname":"localhost","simFail":0}},"sync":1}
+2014-11-05T02:41:00.525Z - info: ServerId: 101 Processed the acknowledgement
+2014-11-05T02:41:00.526Z - info: ServerId: 103 ack: Acknowledgement received
+2014-11-05T02:41:01.518Z - info: Master: probing the server heap for failure
+2014-11-05T02:41:01.549Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:01.551Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:41:01.551Z - info: Master: heart beat msg processed
+2014-11-05T02:41:01.552Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:01.567Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:01.569Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:41:01.569Z - info: Master: heart beat msg processed
+2014-11-05T02:41:01.570Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:01.588Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:01.589Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:41:01.589Z - info: Master: heart beat msg processed
+2014-11-05T02:41:01.589Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:02.522Z - info: Master: probing the server heap for failure
+2014-11-05T02:41:03.526Z - info: Master: probing the server heap for failure
+2014-11-05T02:41:03.549Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:03.550Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:41:03.551Z - info: Master: heart beat msg processed
+2014-11-05T02:41:03.551Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:03.569Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:03.571Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:41:03.571Z - info: Master: heart beat msg processed
+2014-11-05T02:41:03.571Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:03.592Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:03.594Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:41:03.594Z - info: Master: heart beat msg processed
+2014-11-05T02:41:03.595Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:04.527Z - info: Master: probing the server heap for failure
+2014-11-05T02:41:05.528Z - info: Master: probing the server heap for failure
+2014-11-05T02:41:05.554Z - info: ServerId: 104 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:05.555Z - info: Master: Processing heart beat signal from Server: 104
+2014-11-05T02:41:05.555Z - info: Master: heart beat msg processed
+2014-11-05T02:41:05.555Z - info: ServerId: 104 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:05.575Z - info: ServerId: 103 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:05.576Z - info: Master: Processing heart beat signal from Server: 103
+2014-11-05T02:41:05.576Z - info: Master: heart beat msg processed
+2014-11-05T02:41:05.577Z - info: ServerId: 103 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:05.596Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T02:41:05.599Z - info: Master: Processing heart beat signal from Server: 101
+2014-11-05T02:41:05.599Z - info: Master: heart beat msg processed
+2014-11-05T02:41:05.600Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T02:41:06.530Z - info: Master: probing the server heap for failure
