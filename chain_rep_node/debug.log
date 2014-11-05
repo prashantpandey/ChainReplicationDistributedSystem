@@ -477,3 +477,16 @@
 2014-11-05T04:38:18.519Z - info: Master: Processing heart beat signal from Server: 101
 2014-11-05T04:38:18.520Z - info: Master: heart beat msg processed
 2014-11-05T04:38:18.520Z - info: ServerId: 101 sendHeartBeat: Acknowledgement received
+2014-11-05T06:09:38.902Z - info: Master:  Preparing the bank server map
+2014-11-05T06:09:38.904Z - info: Master running at http://127.0.0.1:8080
+2014-11-05T06:09:38.905Z - info: Master: probing the server heap for failure
+2014-11-05T06:09:39.907Z - info: Master: probing the server heap for failure
+2014-11-05T06:09:40.914Z - info: Master: probing the server heap for failure
+2014-11-05T06:09:41.918Z - info: Master: probing the server heap for failure
+2014-11-05T07:50:14.739Z - info: ServerId: undefined Retrieve cmd line args: undefined undefined
+2014-11-05T07:50:30.694Z - info: ServerId: 101 Retrieve cmd line args: 100 101
+2014-11-05T07:50:30.696Z - info: Server running at http://127.0.0.1:8101
+2014-11-05T07:50:30.697Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T07:50:30.704Z - error: ServerId: 101 sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED
+2014-11-05T07:50:32.700Z - info: ServerId: 101 {"hostname":"localhost","port":8080,"heartBeatDelay":5000} sendHeartBeat
+2014-11-05T07:50:32.703Z - error: ServerId: 101 sendHeartBeat: Problem occured while requestingError: connect ECONNREFUSED

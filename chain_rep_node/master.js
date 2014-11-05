@@ -14,9 +14,9 @@ var logger = require('./logger.js');
 var util = require('./util.js');
 
 /* Config File include */
-// var config = require('./config.json');
+var config = require('./config.json');
 // var config = require('./config_headFailure.json');
-var config = require('./config_tailFailure.json');
+// var config = require('./config_tailFailure.json');
 
 /* System includes */
 var http = require('http');
@@ -29,6 +29,7 @@ var hostname = '';
 var port = '';
 var heartBeatDelay = '';
 var succSeqNum = -1;
+var extendChainFlag = -1;
 
 var bankServerMap = {};
 var bankServerList = {};
@@ -307,6 +308,13 @@ function send(data, dest, context) {
 		    succSeqNum = payload.seqNum;
 		}
 	    }
+	    else if(data.extendChain != -1) {
+		var payload = JSON.parse(str);
+		logger.info('Master: extendChain response: ' + JSON.stringify(payload));
+		if(payload.result.ack) {
+		    extendChainFlag = payload.result.ack;
+		}
+	    }
         });
     });
 
@@ -318,15 +326,114 @@ function send(data, dest, context) {
 }
 
 /**
+ * Add new server to the chain as the new tail
+ *
+ * @payload: Will have all the attributes of the new Tail server
+ */
+function addServer(payload) {
+    logger.info('Master: Adding new server to the list ' + payload.serverId);
+    var data = {
+	'extendChain' : { 'flag' : 0 }
+    }; 
+    notifyClient(data, bankId);
+    var oldTail = bankServerMap[payload.bankId].serverDetails.tailServer;
+    // update bank server map
+    var newTail = {
+	'hostname' : payload.hostname,
+	'port' : payload.port
+    };
+    // update bank server list
+    bankServerList[payload.bankId].push(payload);
+    // notifying the new server of confirmation
+    // also changing the type as tail
+    data = {
+	'extendChain' : 1,
+	'type' : 2,
+	'predecessor' : oldTail
+    };
+    logger.info('Master: Notifying new Tail of chain extension');
+    send(data, newTail, 'extendChain');	// notify new server
+    for(var i = 0;extendChainFlag == -1;) {
+	util.sleep(1000);
+	i++;
+	if(i == 5)
+	    break;
+    }
+    if(extendChainFlag == -1) {
+	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
+	break awakeClient;
+    }
+    else if(extendChainFlag == 1) {
+	logger.info('Master: New tail activated successfully');
+	extendChainFlag = -1;
+    }
+    // notify the old tail of its new successor
+    logger.info('Master: New server added to the chain successfully.');
+    data = {
+	'extendChain' : 1,
+	'type' : 1,
+	'successor' : newTail
+    };
+    logger.info('Master: Notifying old Tail of chain extension');
+    send(data, oldTail, 'extendChain');
+    for(var i = 0;extendChainFlag == -1;) {
+	util.sleep(1000);
+	i++;
+	if(i == 8)
+	    break;
+    }
+    if(extendChainFlag == -1) {
+	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
+	var len = bankServerList[payload.bankId].length;
+	data = {
+	    'extendChain' : -1,
+	    'type' : 2
+	};
+	logger.info('Master: Notifying  old Tail of chain extension failure');
+	send(data, oldTail, 'extendChainFail');	// notify new server	
+	break awakeClient;
+    }
+    else if(extendChainFlag == 2) {
+	logger.info('Master: New tail synchronized with successfully');
+	bankServerMap[payload.bankId].serverDetails.tailServer = newTail;
+	bankServerList[payload.bankId].push(payload);
+	// notify the clients of the new tal server
+	data = {
+	    'extendChain' : {
+		'type' : 'tail',
+		'server' : newTail,
+		'bankId' : bankId,
+		'flag' : 1
+	    }
+	};
+	logger.info('Master: new relation: ' + JSON.stringify(newTail));
+	notifyClient(bankId, data); 
+	extendChainFlag = -1;
+	return;
+    }
+    awakeClient: 
+	data = {
+	    'extendChain' : {
+		'type' : 'tail',
+		'server' : oldTail,
+		'bankId' : bankId,
+		'flag' : 1
+	    }
+	};
+	logger.info('Master: new relation: ' + JSON.stringify(oldTail));
+	notifyClient(bankId, data); 	
+}
+
+/**
  * Will handle the extend chain request from a new server
  * The mater will update the server list corresponding to the chain
  * Also will inform the others servers in the chain
  *
  * @payload: received payload
  */
-function extendChain(payload) {
-
-}
+extendChain = Fiber(function (payload) {
+    addServer(payload);
+});
 
 var master = http.createServer(
     function(request, response) {
@@ -362,6 +469,13 @@ var master = http.createServer(
 		    handleHeartBeat(payload);
 		}
 		else if(payload.extendChain) {
+		    extendChain.run(payload.extendChain);
+		}
+		else if(payload.ack) {
+		    logger.info('Master: extendChain response: ' + JSON.stringify(payload));
+		    if(payload.ack) {
+			extendChainFlag = payload.ack;
+		    }
 		}
 		else {
 		    logger.info('Master: Unknown Request Type')

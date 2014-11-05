@@ -11,9 +11,7 @@ var logger = require('./logger.js');
 var util = require('./util.js');
 
 /* Config File include */
-// var config = require('./config.json');
-// var config = require('./config_headFailure.json');
-var config = require('./config_tailFailure.json');
+var config;
 
 /* System includes */
 var http = require('http');
@@ -55,7 +53,7 @@ var port = '';
 var bankId = '';
 var serverLifeTime = {};
 var serverStartupDelay = '';
-var heartBeatDelay = config.master.heartBeatDelay;
+var heartBeatDelay;
 
 var sentReq = [];
 var historyReq = {};
@@ -68,6 +66,11 @@ var globalSeqNum = 0;
 /* General functions */
 
 function loadServerConfig(bId, sId) {
+    config = require('./config.json');
+    // var config = require('./config_headFailure.json');
+    // var config = require('./config_tailFailure.json');
+    heartBeatDelay = config.master.heartBeatDelay;
+    
     var details = util.parseServerInfo(bId, sId);
     // logger.info('Fetched details using util: ' + JSON.stringify(details));
     bankId = bId;
@@ -519,6 +522,51 @@ function handleNewSucc(lastSeqSucc) {
 }
 
 /**
+ * handle the extend chain functionality of the server
+ * NewTail: Either set ack the master of getting added to the chain
+ * OldTail: Or update the new successor and send the sync to the new tail
+ *
+ * @payload: attributes received from master
+ */
+function handleExtendChain(payload) {
+    logger.info('ServerId: '+ serverId + ' Processing extend chain');
+    if(payload.extendChain == 2) {
+	logger.info('ServerId: '+ serverId + ' Starting to sync with the old tail');
+	accDetails = payload.accDetails;
+	sentReq = payload.sentReq;
+	historyReq = payload.historyReq;
+	logger.info('ServerId: '+ serverId + ' Sync completed with the old tail');
+	send( {'ack' : 2 }, config.master, 'SyncComplete');
+    }
+    else if(payload.extendChain == -1) {    // extend chain failed
+	serverType = 2;
+	logger.info('ServerId: '+ serverId + ' Old tail reverted back');	
+    }
+    else if(payload.type == 2) {	    // its the new tail
+	serverType = 2;
+	predecessor = payload.predecessor;
+	logger.info('ServerId: '+ serverId + ' Activating new tail and updating the predecessor');
+	return { 'ack' : 1 };
+    }
+    else if(payload.type == 1) {    // its the old tail
+	serverType = 1;
+	successor = payload.successor;
+	// sync the DB i.e. accDetails
+	// sync the history
+	// sync the sentReq as sync requests
+	var data = {
+	    'extendChain' : 2,
+	    'accDetails' : accDetails,
+	    'sentReq' : sentReq,
+	    'historyReq' : historyReq,
+	};
+	logger.info('ServerId: '+ serverId + ' Updated new successor and sync data with new tail');
+	send(data, successor, 'extendChain');
+    }
+    logger.info('ServerId: '+ serverId + ' processed extend chain request');
+}
+
+/**
  * check if the req has already been processed
  */
 function checkLogs(payload) {
@@ -541,9 +589,31 @@ function checkLogs(payload) {
     return response;
 }
 
+function contactMaster(payload) {
+    logger.info('ServerId: '+ serverId + ' contacting master to extend chain');
+    var data = { 'extendChain' : payload };
+    send(data, config.master, 'AddToChain');
+    logger.info('ServerId: '+ serverId + ' Extend chain done');
+}
+
 var arg = process.argv.splice(2);
 logger.info('ServerId: '+ arg[1] + ' Retrieve cmd line args: ' + arg[0] + ' ' + arg[1]);
-loadServerConfig(arg[0], arg[1]);
+
+if(arg[2]) {
+    onfig = require(arg[2]);
+    heartBeatDelay = config.master.heartBeatDelay;
+    bankId = arg[0];
+    serverId = arg[1];
+    hostname = config.server.hostname;
+    port = config.server.port;
+    serverLifeTime = config.server.serverLifeTime;
+    serverType = config.server.type;
+    
+    contactMaster(config.server);
+}
+else {
+    loadServerConfig(arg[0], arg[1]);
+}
 
 /*
  * create the server and start it
@@ -617,6 +687,12 @@ var server = http.createServer(
                 else if (payload.failure) {
 		    res['result'] = handleChainFailure(payload);
 		    if(payload.failure.type == "predecessor") {
+			flag = true;
+		    }
+		}
+		else if(payload.extendChain) {
+		    res['result'] = handleExtendChain(); 
+		    if(payload.type == 2) {
 			flag = true;
 		    }
 		}

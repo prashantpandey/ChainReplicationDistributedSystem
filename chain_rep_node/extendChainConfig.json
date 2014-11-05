@@ -1,0 +1,17 @@
+
+{
+    "master" : {
+        "hostname" : "localhost",
+        "port" : 8080,
+        "heartBeatDelay" : 5000
+    },
+    "server" : {
+	"bankId" : 100
+	"serverId" : 105,
+        "hostname" : "localhost",
+        "port" : 8105,
+        "startupDelay" : 0,
+        "serverLifeTime" : {"UNBOUND" : 1},
+        "type" : 2
+    }
+}

@@ -4,9 +4,9 @@
  * The client communicates with server for banking operations.
  */
 
-// var config = require('./config.json');
+var config = require('./config.json');
 // var config = require('./config_headFailure.json');
-var config = require('./config_tailFailure.json');
+// var config = require('./config_tailFailure.json');
 
 // var reqData = require('./inconsistentHistoryPayload.json');
 // var reqData = require('./samePayload.json');
@@ -45,6 +45,7 @@ var resendFlag = '';
 var currDelay = '';	// will hold the curr dealy for any in-transit req
 var currRetriesCnt = 0;    // will hold the curr retry cnt
 var checkLogFlag = -1;
+var extendChainSleepFlag = -1;
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -209,9 +210,19 @@ var client = http.createServer(function(request, response) {
                 }
 		if(resendFlag) {
 		    // TODO: Not Implemented right now. Been dealt via
-		    // resendDelat and num retries
+		    // resend logic and num retries
 		}
             }
+	    else if(resBody.extendChain) {
+		if(resBody.extendChain.flag == 0) {
+		    extendChainSleepFlag = 0;   
+		}
+                else if (resBody.extendChain.flag == 1) {
+                    logger.info('ClientId: ' + clientId  + ' Updating Tail server');
+                    bankServerMap[resBody.extendChain.bankId].tailServer = server; 
+		    extendChainSleepFlag = 1;   
+                }
+	    }
             else {
                 logger.info('ClientId: ' + clientId  + ' Adding response to db');
                 responses[resBody.reqId] = resBody;
@@ -219,7 +230,6 @@ var client = http.createServer(function(request, response) {
             }
         });
     }
-
 });
 
 var arg = process.argv.splice(2);
@@ -242,6 +252,13 @@ function tryResending(preReq) {
 	// handling the resend logic
 	var currTS = new Date().getTime();
 	if(currTS - currDelay > resendDelay) {
+	    if(extendChainSleepFlag == 0) {
+		logger.info('ClientId: ' + clientId  + ' Client sleeping while extend chain');
+		for(;extendChainSleepFlag == 1;) {
+		    util.sleep(2000);
+		}
+		logger.info('ClientId: ' + clientId  + ' Client awake after extend chain');
+	    }
 	    logger.info('ClientId: ' + clientId  + ' Request timed out. Resending request: ' + preReq.reqId);
 	    if(currRetriesCnt < numRetries) {
 		/*
