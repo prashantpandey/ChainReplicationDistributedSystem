@@ -29,7 +29,7 @@ class Server(process):
         self.serverId = config['serverId']
         self.accDetails = {}
         self.history = {}
-        self.sentReq = {}
+        self.sentReq = []
         self.clientProcessList = list(clients)
 
     # main function
@@ -138,7 +138,8 @@ class Server(process):
             hist['payload'] = req
             hist['response'] = res 
             history[reqId] = hist            # add request to the history object
-            sentReq[reqId] = req            # add request to the sent object
+            # sentReq[reqId] = req            # add request to the sent object
+            sentReq.append({reqId:req})            # add request to the sent object
             send(('Sync', res), to=succ)    # send Sync request
 
     # callback function to handle the Sync request from successor
@@ -150,7 +151,7 @@ class Server(process):
         clientId = req['payload']['clientId']
         accDetails[num] = req['currBal']
         history[reqId] = req['payload']
-        sentReq[reqId] = req['payload']
+        sentReq.append({reqId:req['payload']})
         if config['type'] == 2:
             client = clientProcessList[clientId]
             del req['payload']
@@ -165,13 +166,41 @@ class Server(process):
     def receive(msg=('Ack', reqId, serverId), from_=p):
         output("ServerId: " + str(serverId) + " Received Ack request: " + str(reqId))
         # output("ServerId: " + str(serverId) + " " + str(reqId))
-        nums = reqId.split(".")
-        for i in range(0, int(nums[1])):
-            key = nums[0] + '.' + str(i)
-            if key in sentReq:
-                del sentReq[key]
-
         
+	#nums = reqId.split(".")
+        #for i in range(0, int(nums[1])):
+        #    key = nums[0] + '.' + str(i)
+        #    if key in sentReq:
+        #        del sentReq[key]
+    
+	#for i in range(0, len(sentReq)):
+	#    if (sentReq[i] == reqId):
+	#	sentReq = sentReq[i:]
+
+    # Successor being notified about its predecessor
+    # Successor sends the last seqNum to the master which is used by predecessor
+    # to send back the requests not received by the successor
+    def receive(msg=('notifySucc', res), from_=p):
+	# TODO:: does successor need to do anything with the new predecessor?
+	send(('seqNum', sentReq[-1]), to=master) 
+
+
+    # Predecessor being notified about its predecessor
+    # Predecessor sends the all the requests greater than seqNum to the successor
+    def receive(msg=('notifyPred', res), from_=p):
+	seqNum = res['seqNum']
+	succId = res['serverId']
+	for i in range(0,len(sentReq)):
+	    if i[seqNum]:
+		break
+	for j in range(i,len(sentReq)):
+	    send(('seqNumToSucc', sentReq[i]), to=succId)
+	
+    # Successor updates its sentReq to reflect all the seqNum which are being sent by predecessor
+    def receive(msg=('seqNumToSucc', res), from_=p):
+	sentReq.append(res)
+        
+
 # Client class for performing operations on server
 class Client(process):
     # setup function for the client process
@@ -238,7 +267,12 @@ class Client(process):
         #numsLR = lastRecv.split(".")
         # output("last received updated: " + lastRecv)
         output("ClientId: " + str(clientId) + " Responses: " + json.dumps(responses))
-
+    
+    def receive(msg=('notifyClient',res)):
+	output("ClientId: " + str(clientId) + "Notified about the "+ str(serverId) + "failure.")
+	# Update client structures to let know the new bank head/tail
+	# TODO:: As the serverMap has been updated, client would not have to do anything. Right?
+	
 
 # count number of client and server processes
 # using the config file
@@ -267,7 +301,10 @@ def main():
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
-    
+   
+    # seqNum received from successor in case of internal server failure
+    seqNum = -1
+ 
     # calculate the number of client and servers needed
     count = countProcesses(config)
     
@@ -337,6 +374,7 @@ class GetTupleByTs(tuple):
          return self[2]<other[2]
 
 # Master class for failure detection and chain extension
+
 class Master(process):
 
     # setup function for the master process
@@ -350,8 +388,8 @@ class Master(process):
     # If a server entry is already there in the heap, just update the new timestamp when 
     # a heartbeat comes.
     # Else add a new entry for that server in the Server Timestamp list and the heap.
-    def receive(msg=('HeartBeat', bankId, serverId), from_=p):
 
+    def receive(msg=('HeartBeat', bankId, serverId), from_=p):
 	flag = 0;
 	output("Got a heartbeat message from server:" + str(serverId))
 	#update the DS for the timestamp corresponding to that bank
@@ -410,10 +448,11 @@ class Master(process):
 		    newHead = updateChain(bankId, serverId, serverType)
 
 		    payload['failure']['type'] = 0
-		    payload['failure']['server'] = newHead
+		    payload['failure']['server'] = newHead[0]
 		    payload['failure']['bankId'] = bankId
+		    payload['failure']['seqNum'] = -1
 		    
-		    notifyClient(bankId, payload);
+		    notifyClient(payload);
 		    # notify the server with id newHead that it is the new head server
 		    send(('notifyHead', payload), to=newHead)     
 		    break
@@ -424,17 +463,27 @@ class Master(process):
 		    newSuccPred = updateChain(bankId, serverId, serverType) 
 		    
 		    payload['failure']['type'] = 1
-		    payload['failure']['server'] = newSuccPred
+		    payload['failure']['server'] = newSuccPred[0]	    # is the new predecessor
 		    payload['failure']['bankId'] = bankId
+		    payload['failure']['seqNum'] = -1
 
 		    # TODO:: How to notify the successor of its predecessor.
 		    
-		    # Notify the successor about its new predecessor and return the last seq
-		    seqNum = notifyServer(bankId, payload, newSuccPred, -1)
+		    # Send a 'notifySucc' message to the successor about its new predecessor
+		    send(('notifySucc', payload), to=newSuccPred[1])
 		    
-		    # Notify the predecessor and send the seq retrieved from successor, so that the
-		    prdecessor can send remaining messages with > seqNumto the new successor
-		    notifyServer(bankId, payload, newSuccPred, seqNum)
+		    # TODO:: wait for the successor to reply with seqNum
+		    while(seqNum == -1) {
+			sleep(1000)
+		    }
+		    payload['failure']['type'] = 1
+		    payload['failure']['server'] = newSuccPred[1]	    # is the new successor
+		    payload['failure']['bankId'] = bankId
+		    payload['failure']['seqNum'] = seqNum
+		    
+		    # Send 'notifyPred' to the predecessor and send the seq retrieved from successor, so that the
+		    prdecessor can send remaining messages with > seqNum to the new successor
+		    send(('notifyPred', payload), to=newSuccPred[0])
 		    break
 							    
 	    case 2:
@@ -443,10 +492,11 @@ class Master(process):
 		    newTail = updateChain(bankId, serverId)
 		    
 		    payload['failure']['type'] = 2
-		    payload['failure']['server'] = newTail
+		    payload['failure']['server'] = newTail[0]
 		    payload['failure']['bankId'] = bankId
+		    payload['failure']['seqNum'] = -1
 		    
-		    notifyClient(bankId, payload, serverType);
+		    notifyClient(payload);
 		    
 		    # notify the server with id newTail that it is the new tail server
 		    send(('notifyTail', payload), to=newTail)     
@@ -454,46 +504,49 @@ class Master(process):
 	}
 
     # notify client of Head/Tail server failure of a bank
-    def notifyClient(bankId, serverId):
+    def notifyClient(payload):
 	# Retrieving all the clients of the bank whose server has failed
+	bankId = payload['failure']['bankId'] 
 	clientList = bankClientInfo[bankId]
-	send(('notifyClient', payload), to=clientList)
+	send(('notifyClient', bankId, payload), to=clientList)
 
-    def notifyServer(bankId, payload, serverId, seqNum):
-	if seqNum == -1:
-	    # has been called by a successor should return back its last seen SeqNum
-	    # to master
-	    # TODO:: retrieve the last seqNum from the sentReq
-	    send(('notifySucc', payload), to=serverId)
-	    # TODO:: wait for the successor to reply with seqNum
-	    return seqNum
-	
-	elif seqNum >=1:
-	    # has been called by prdecessor.
-	    # send all the requests with sequence number greater than seqNum to successor.
-	    send(('notifyPred', payload, seqNum), to=serverId)
-	    
-	pass
 
     # Update the chain in case of server failures, the data structures containing this mapping
-    # are modified
+    # are modified. Returns a list of server, in case of new head [NewHead], internal server failure
+    # [pred, succ] and in case of tail failure [newTail]
     def updateChain(bankId, serverId, type):
-	
 	output("Updating the chain after server failure!!")
 	switch(serverType) {
-	
 	    case 0: # Head Failure
 		    for item in serverMap:
-			if item['bankId'] == bankId && item["type"] == type:
-			    item['serverId'] = serverId
+			if item['bankId'] == bankId && item["type"] == type && item["serverId"] == serverId:
+			    del item
+			    flag = 1
 
-		    # TODO:: Remove from the bankClientList
-		    # also for anyserver type it would be same I think 		    
+			if flag == 1:		    # returning the next one as the new head
+			    item['type'] = 0;
+			    return [item['serverId']]
+			    
 	    case 1:
-	    case 2:
-		    # Tail Failure
 		    for item in serverMap:
-			if item['bankId'] == bankId && item["type"] == type:
-			    item['serverId'] = serverId
-	
+			index++
+			if item['bankId'] == bankId && item["type"] == type && item["serverId"] == serverId:
+			    del item
+			    flag = 1
+			break
+		    if flag == 1:
+			pred = serverMap[index-1]['serverId'] 
+			succ = serverMap[index+1]['serverId']
+			if pred and succ:
+			    return [pred, succ]
+	    case 2:
+		    index = 0
+		    for item in serverMap:
+			index++
+			if item['bankId'] == bankId && item["type"] == type && item["serverId"] == serverId:
+			    del item
+			    break
+		    # Update the previous entry in serverMap as the new tail
+		    serverMap[index-1]['type'] = 2
+		    return [serverMap[index-1]['serverId']]
 	}
