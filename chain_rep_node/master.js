@@ -168,7 +168,16 @@ function handleServerFailure(serverId, bankId, type) {
 	    payload.failure['type'] = 'successor';
 	    payload.failure['server'] = newSuccPred.successor;
 	    payload.failure['seqNum'] = succSeqNum;
-	    send(payload, newSuccPred.predecessor, 'InformPredecessor'); // notify successor
+	    send(payload, newSuccPred.predecessor, 'InformPredecessor'); // notify predecessor 
+	    succSeqNum = -1;
+            for(;succSeqNum == -1;) {
+		util.sleep(1000);
+		var currTS = new Date().getTime();
+		if(currTS - serverTSMap[newSuccPred.predecessor] > 5000) {
+		    logger.info('Master: The predecessor failed while recovery. Assigning new predecessor.');
+		    send(payload, newSuccPred.predecessor_, 'InformPredecessor'); // notify new predecessor      
+		}
+	    } 
 	    succSeqNum = -1;
 	    break;
         case 2:
@@ -225,11 +234,18 @@ function updateChain(bankId, serverId, type) {
                 }
             }
             var newServers = {
+                'predecessor_' : {
+		    'serverId' : bankServerList[bankId][i-2].serverId,
+                    'hostname' : bankServerList[bankId][i-2].hostname,
+                    'port' : bankServerList[bankId][i-2].port
+                    },
                 'predecessor' : {
+		    'serverId' : bankServerList[bankId][i-1].serverId,
                     'hostname' : bankServerList[bankId][i-1].hostname,
                     'port' : bankServerList[bankId][i-1].port
                     },
                 'successor' : {
+		    'serverId' : bankServerList[bankId][i].serverId,
                     'hostname' : bankServerList[bankId][i].hostname,
                     'port' : bankServerList[bankId][i].port
                     }

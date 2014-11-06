@@ -477,6 +477,10 @@ function handleChainFailure(payload) {
 	successor = server;
 	logger.info('ServerId: '+ serverId + ' updated the successor server');
 	handleNewSucc(payload.failure.seqNum);
+	var payload = {
+		'seqNum' : lastSentReq
+	};
+	return payload;
     }
     else if(type == 'predecessor') {    // change predecessor: this is succ
 	predecessor = server;
