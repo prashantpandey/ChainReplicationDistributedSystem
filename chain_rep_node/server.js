@@ -530,11 +530,14 @@ function handleNewSucc(lastSeqSucc) {
  */
 function handleExtendChain(payload) {
     logger.info('ServerId: '+ serverId + ' Processing extend chain');
-    if(payload.extendChain == 2) {
+    if(payload.extendChain == 3) {
 	logger.info('ServerId: '+ serverId + ' Starting to sync with the old tail');
 	accDetails = payload.accDetails;
 	sentReq = payload.sentReq;
 	historyReq = payload.historyReq;
+	logger.info(JSON.stringify(accDetails));
+	logger.info(JSON.stringify(historyReq));
+	logger.info(JSON.stringify(sentReq));
 	logger.info('ServerId: '+ serverId + ' Sync completed with the old tail');
 	send( {'ack' : 2 }, config.master, 'SyncComplete');
     }
@@ -549,17 +552,21 @@ function handleExtendChain(payload) {
 	return { 'ack' : 1 };
     }
     else if(payload.type == 1) {    // its the old tail
+	logger.info('ServerId: '+ serverId + ' Updating new successor and sync data with new tail');
 	serverType = 1;
 	successor = payload.successor;
 	// sync the DB i.e. accDetails
 	// sync the history
 	// sync the sentReq as sync requests
 	var data = {
-	    'extendChain' : 2,
+	    'extendChain' : 3,
 	    'accDetails' : accDetails,
 	    'sentReq' : sentReq,
 	    'historyReq' : historyReq,
 	};
+	logger.info(JSON.stringify(accDetails));
+	logger.info(JSON.stringify(historyReq));
+	logger.info(JSON.stringify(sentReq));
 	logger.info('ServerId: '+ serverId + ' Updated new successor and sync data with new tail');
 	send(data, successor, 'extendChain');
     }
@@ -600,7 +607,8 @@ var arg = process.argv.splice(2);
 logger.info('ServerId: '+ arg[1] + ' Retrieve cmd line args: ' + arg[0] + ' ' + arg[1]);
 
 if(arg[2]) {
-    onfig = require(arg[2]);
+    logger.info('ServerId: '+ arg[1] + ' Got the the new server config arg');
+    config = require(arg[2]);
     heartBeatDelay = config.master.heartBeatDelay;
     bankId = arg[0];
     serverId = arg[1];
@@ -680,7 +688,7 @@ var server = http.createServer(
                     }
                     else {
                         logger.info('ServerId: '+ serverId + ' Sending response from update');
-                        res['result'] = syncRes;
+                        res = syncRes;
 			flag = true;
                     }
                 }
@@ -691,8 +699,8 @@ var server = http.createServer(
 		    }
 		}
 		else if(payload.extendChain) {
-		    res['result'] = handleExtendChain(); 
-		    if(payload.type == 2) {
+		    res['result'] = handleExtendChain(payload); 
+		    if(payload.type == 2 && payload.predecessor) {
 			flag = true;
 		    }
 		}

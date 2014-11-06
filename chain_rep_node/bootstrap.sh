@@ -16,11 +16,14 @@ node ./server.js 100 102 &
 node ./server.js 100 103 &
 node ./server.js 100 104 &
 
-
 sleep 2s
 
 # start the clients [no grouping]
 # @arg1: clientId
 # @arg2: port
-node ./client.js 0
+node ./client.js 0 &
 
+sleep 5s
+
+# Adding the new server using extend chain
+node ./server.js 100 105 "./extendChainConfig.json"

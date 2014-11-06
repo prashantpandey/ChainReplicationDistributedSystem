@@ -214,6 +214,7 @@ var client = http.createServer(function(request, response) {
 		}
             }
 	    else if(resBody.extendChain) {
+                var server = resBody.extendChain.server;
 		if(resBody.extendChain.flag == 0) {
 		    extendChainSleepFlag = 0;   
 		}
@@ -254,7 +255,7 @@ function tryResending(preReq) {
 	if(currTS - currDelay > resendDelay) {
 	    if(extendChainSleepFlag == 0) {
 		logger.info('ClientId: ' + clientId  + ' Client sleeping while extend chain');
-		for(;extendChainSleepFlag == 1;) {
+		for(;extendChainSleepFlag == 0;) {
 		    util.sleep(2000);
 		}
 		logger.info('ClientId: ' + clientId  + ' Client awake after extend chain');

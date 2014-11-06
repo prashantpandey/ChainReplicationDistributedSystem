@@ -301,18 +301,22 @@ function send(data, dest, context) {
         });
         response.on('end', function(){
             logger.info('Master: ' + context + ': Acknowledgement received' + str);
-	    if(data.failure.type == 'predecessor') {
-		var payload = JSON.parse(str);
-		logger.info('Master: failure response: ' + JSON.stringify(payload));
-		if(payload.result.seqNum) {
-		    succSeqNum = payload.seqNum;
+	    if(data.failure) {
+		if(data.failure.type == 'predecessor') {
+		    var payload = JSON.parse(str);
+		    logger.info('Master: failure response: ' + JSON.stringify(payload));
+		    if(payload.result.seqNum) {
+			succSeqNum = payload.seqNum;
+		    }
 		}
 	    }
-	    else if(data.extendChain != -1) {
-		var payload = JSON.parse(str);
-		logger.info('Master: extendChain response: ' + JSON.stringify(payload));
-		if(payload.result.ack) {
-		    extendChainFlag = payload.result.ack;
+	    else if(data.extendChain) {
+		if(data.extendChain == 1) {
+		    var payload = JSON.parse(str);
+		    logger.info('Master: extendChain response: ' + JSON.stringify(payload));
+		    if(payload.result.ack) {
+			extendChainFlag = payload.result.ack;
+		    }
 		}
 	    }
         });
@@ -331,19 +335,20 @@ function send(data, dest, context) {
  * @payload: Will have all the attributes of the new Tail server
  */
 function addServer(payload) {
+    var bankId = payload.bankId;
     logger.info('Master: Adding new server to the list ' + payload.serverId);
     var data = {
 	'extendChain' : { 'flag' : 0 }
-    }; 
-    notifyClient(data, bankId);
-    var oldTail = bankServerMap[payload.bankId].serverDetails.tailServer;
+    };
+    notifyClient( bankId, data);
+    var oldTail = bankServerMap[bankId].tailServer;
     // update bank server map
     var newTail = {
 	'hostname' : payload.hostname,
 	'port' : payload.port
     };
     // update bank server list
-    bankServerList[payload.bankId].push(payload);
+    bankServerList[bankId].push(payload);
     // notifying the new server of confirmation
     // also changing the type as tail
     data = {
@@ -353,7 +358,7 @@ function addServer(payload) {
     };
     logger.info('Master: Notifying new Tail of chain extension');
     send(data, newTail, 'extendChain');	// notify new server
-    for(var i = 0;extendChainFlag == -1;) {
+    for(var i = 0; extendChainFlag == -1;) {
 	util.sleep(1000);
 	i++;
 	if(i == 5)
@@ -361,7 +366,8 @@ function addServer(payload) {
     }
     if(extendChainFlag == -1) {
 	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
-	break awakeClient;
+	awakeClient(bankId, OldTail);
+	return;
     }
     else if(extendChainFlag == 1) {
 	logger.info('Master: New tail activated successfully');
@@ -370,7 +376,7 @@ function addServer(payload) {
     // notify the old tail of its new successor
     logger.info('Master: New server added to the chain successfully.');
     data = {
-	'extendChain' : 1,
+	'extendChain' : 2,
 	'type' : 1,
 	'successor' : newTail
     };
@@ -384,45 +390,41 @@ function addServer(payload) {
     }
     if(extendChainFlag == -1) {
 	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
-	var len = bankServerList[payload.bankId].length;
+	var len = bankServerList[bankId].length;
 	data = {
 	    'extendChain' : -1,
 	    'type' : 2
 	};
 	logger.info('Master: Notifying  old Tail of chain extension failure');
 	send(data, oldTail, 'extendChainFail');	// notify new server	
-	break awakeClient;
+	awakeClient(bankId, OldTail);
+	return;
     }
     else if(extendChainFlag == 2) {
 	logger.info('Master: New tail synchronized with successfully');
-	bankServerMap[payload.bankId].serverDetails.tailServer = newTail;
-	bankServerList[payload.bankId].push(payload);
-	// notify the clients of the new tal server
-	data = {
-	    'extendChain' : {
-		'type' : 'tail',
-		'server' : newTail,
-		'bankId' : bankId,
-		'flag' : 1
-	    }
-	};
-	logger.info('Master: new relation: ' + JSON.stringify(newTail));
-	notifyClient(bankId, data); 
+	bankServerMap[bankId].tailServer = newTail;
+	bankServerList[bankId].push(payload);
+	// notify the clients of the new tail server
+	awakeClient(bankId, newTail);
 	extendChainFlag = -1;
 	return;
     }
-    awakeClient: 
-	data = {
-	    'extendChain' : {
-		'type' : 'tail',
-		'server' : oldTail,
-		'bankId' : bankId,
-		'flag' : 1
-	    }
-	};
-	logger.info('Master: new relation: ' + JSON.stringify(oldTail));
-	notifyClient(bankId, data); 	
 }
+
+function awakeClient(bankId, oldTail) {
+    data = {
+	'extendChain' : {
+	    'type' : 'tail',
+	    'server' : oldTail,
+	    'bankId' : bankId,
+	    'flag' : 1
+	}
+    };
+    logger.info('Master: new relation: ' + JSON.stringify(oldTail));
+    notifyClient(bankId, data); 	
+    logger.info('Master: Added new sever: ' + JSON.stringify(data));
+}
+    
 
 /**
  * Will handle the extend chain request from a new server
