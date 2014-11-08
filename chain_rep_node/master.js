@@ -235,9 +235,9 @@ function updateChain(bankId, serverId, type) {
             }
             var newServers = {
                 'predecessor_' : {
-		    'serverId' : bankServerList[bankId][i-2].serverId,
-                    'hostname' : bankServerList[bankId][i-2].hostname,
-                    'port' : bankServerList[bankId][i-2].port
+		    'serverId' : '',
+                    'hostname' : '',
+                    'port' : ''
                     },
                 'predecessor' : {
 		    'serverId' : bankServerList[bankId][i-1].serverId,

@@ -477,9 +477,9 @@ function handleChainFailure(payload) {
 	successor = server;
 	logger.info('ServerId: '+ serverId + ' updated the successor server');
 	handleNewSucc(payload.failure.seqNum);
-	var payload = {
-		'seqNum' : lastSentReq
-	};
+	var payload = {                 // this is just a place holder to avoid null error at master
+		'seqNum' : lastSentReq  // nothing specific to logic
+	};                              // don't take it seriously :)
 	return payload;
     }
     else if(type == 'predecessor') {    // change predecessor: this is succ
