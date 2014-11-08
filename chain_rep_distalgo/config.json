@@ -1,8 +1,6 @@
 
 {
     "master" : {
-        "hostname" : "localhost",
-        "port" : 8080,
 	"heartBeatDelay" : 5000
     },
     "bank" : [
@@ -17,25 +15,25 @@
             {
                 "serverId" : 0,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 0
             },
             {
                 "serverId" : 1,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"RecvNum" : 2},
                 "type" : 1
             },
             {
                 "serverId" : 2,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1
             },
             {
                 "serverId" : 3,
                 "startupDelay" : 5,
-                "serverLifeTime" : "UNBOUND",
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2
             } 
         ],
@@ -154,8 +152,8 @@
     "client" : [
         {
             "clientId" : 0,
-            "numRetries" : 5,
-            "resendDelay" : 5,
+            "numRetries" : 3,
+            "resendDelay" : 3,
             "resendFlag" : "true",
             "banks" : [
                 {
@@ -180,7 +178,7 @@
         },
         {
             "clientId" : 1,
-            "numRetries" : 5,
+            "numRetries" : 3,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
@@ -206,7 +204,7 @@
         },
         {
             "clientId" : 2,
-            "numRetries" : 5,
+            "numRetries" : 3,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
@@ -232,7 +230,7 @@
         },
         {
             "clientId" : 3,
-            "numRetries" : 5,
+            "numRetries" : 3,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
@@ -258,7 +256,7 @@
         },
         {
             "clientId" : 4,
-            "numRetries" : 5,
+            "numRetries" : 3,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [
@@ -284,7 +282,7 @@
         },
         {
             "clientId" : 5,
-            "numRetries" : 5,
+            "numRetries" : 3,
             "resendDelay" : 5,
             "resendFlag" : "true",
             "banks" : [

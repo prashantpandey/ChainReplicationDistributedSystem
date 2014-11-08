@@ -42,7 +42,7 @@
 		    "operation" : 2,
                     "port" : 8111,
                     "hostname" : "localhost",
-                    "simFail" : 0
+                    "simFail" : 1
 	        }
                 },
                 {
@@ -56,7 +56,7 @@
 		    "operation" : 0,
                     "port" : 8111,
                     "hostname" : "localhost",
-                    "simFail" : 0
+                    "simFail" : 2
 	        }
                 },
                 {
@@ -70,7 +70,7 @@
 		    "operation" : 1,
                     "port" : 8111,
                     "hostname" : "localhost",
-                    "simFail" : 0
+                    "simFail" : 2
 	        }
                 }
             ]

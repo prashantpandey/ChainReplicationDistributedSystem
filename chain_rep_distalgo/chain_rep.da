@@ -46,7 +46,7 @@ class Server(process):
         heartBeatMsg['type'] = config['type']
         while True:                 # send heart beat msg to master every 2 secs
             if(await(False)): pass
-            elif timeout(1):
+            elif timeout(2):
                 sendHeartBeatMsg(heartBeatMsg)
     
     # Check if the server life time is exceeded
@@ -54,10 +54,10 @@ class Server(process):
     def sendHeartBeatMsg(msg):
         # check the server life time
         if 'UNBOUND' not in serverLifeTime:
-            if serverLifeTime['RecvNum'] and serverLifeTime['RecvNum'] == totalRecvCnt:
+            if 'RecvNum' in serverLifeTime.keys() and serverLifeTime['RecvNum'] == totalRecvCnt:
                 output("ServerId: " + str(serverId) + " RECV request limit reached. Terminating server")
                 sys.exit()
-            elif serverLifeTime['SentNum'] and serverLifeTime['SentNum'] == totalSentCnt:
+            elif 'SentNum' in serverLifeTime.keys() and serverLifeTime['SentNum'] == totalSentCnt:
                 output("ServerId: " + str(serverId) + " SEND request limit reached. Terminating server")
                 sys.exit()
         output("ServerId: " + str(serverId) + " sending heart beat to master")
@@ -137,7 +137,7 @@ class Server(process):
                 res['accNum'] = num
                 res['currBal'] = 0
                 output("ServerId: " + str(serverId) + " Update request inconsistent with history: " + json.dumps(res))
-            if(req['simFail'] == 2):
+            if req['simFail'] == 2:
                 output("ServerId: " + str(serverId) + " Simulating msg drop from server-client.")
             else:
                 send(('Response', res), to=p)    # send the response back to client
@@ -186,15 +186,18 @@ class Server(process):
         reqId = req['reqId']
         clientId = req['payload']['clientId']
         accDetails[num] = req['currBal']
-        history[reqId] = req['payload']
+        history[reqId] = { 'payload' : req['payload'], 'response' : req }
         sentReq.append(req)     # add the response to the sent list. Will be used in server failure
         totalRecvCnt += 1   # increment total recv cnt
         
         if config['type'] == 2:
             client = clientProcessList[clientId]
-            del req['payload']
-            res = req
-            send(('Response', res), to=client)          # send reponse back to client 
+            if req['payload']['simFail'] == 2:
+                output("ServerId: " + str(serverId) + " Simulating msg drop from server-client.")
+            else:
+                res = req
+                del res['payload']
+                send(('Response', res), to=client)          # send reponse back to client 
             send(('Ack', reqId, serverId), to=pred)     # send ack back to the predecessor
         else:
             send(('Sync', req), to=succ)                # send Sync request to the successor
@@ -213,6 +216,20 @@ class Server(process):
         for item in sentReq:
             if item['reqId'] == reqId:
                 del item
+    
+    # callback handler for check log
+    def receive(msg=('CheckLog', req), from_=p):
+        reqId = req['reqId']
+        res = {}
+        output("ServerId: " + str(serverId) + " Processing check log for req: " + req['reqId'])
+        if reqId in history.keys():
+            res = history[reqId]['response']
+            res['checkLog'] = 1
+        else:
+            res['checkLog'] = 0
+            res['reqId'] = reqId
+        output("ServerId: " + str(serverId) + " Processed check log for req: " + req['reqId'])
+        send(('CheckLog', res), to=p)
     
     # callback function to handle the server failure request from master 
     # update the type if its head/tail server
@@ -290,7 +307,7 @@ class Client(process):
                 if clientId == item['clientId']:
                     for payload in item['payloads']:
                         if await(False): pass
-                        elif timeout(2): pass
+                        elif timeout(1): pass
 
                         # output("payload: " + json.dumps(payload['payload']))
                         req = payload['payload']
@@ -312,10 +329,10 @@ class Client(process):
                         retryLimit = True
                         idx = findServer(req['operation'], req['bankId'])
                         p = serverProcessList[idx]                        
+                        output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + str(idx))
                         if(req['simFail'] == 1):
                             output("ClientId: " + str(clientId) + " Simulating message failure between client-server")
                         else:
-                            output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + str(idx))
                             send((type, req), to=p) 
                         preReq = req
                         currDelay = int(time.time())
@@ -339,11 +356,11 @@ class Client(process):
 
     # handle the msg resend logic
     def tryResending(preReq, type):
-        output("ClientId: " + clientId + " Request timed out. Resending request: " + str(preReq['reqId']))
+        output("ClientId: " + str(clientId) + " Request timed out. " + str(preReq['reqId']))
         currTime = int(time.time())
         if currTime - currDelay > resendDelay:
             if currRetriesCnt < numRetries:
-                output("ClientId: " + clientId + "checking with tail whether operation already performed: " + str(preReq['reqId']))
+                output("ClientId: " + str(clientId) + " Checking with tail whether operation already performed: " + str(preReq['reqId']))
                 # Check to see if update opr has already been performed
                 data = {
                     "checkLog" : 1,
@@ -351,25 +368,39 @@ class Client(process):
                     };  
                 idx = findServer(4, preReq['bankId'])
                 p = serverProcessList[idx]
-                send(('checkLog', preReq), to=p)
+                send(('CheckLog', preReq), to=p)
                 if await(checkLogFlag == -1): pass          # Wait to get the response from tail if the request has been performed
                 elif timeout(5): pass                       # break if nothing received till 5 secs
                 
                 if checkLogFlag == 0:
-                    output("ClientId: " + clientId + " Request not performed at the tail: " + str(preReq['reqId']))
-                    output("ClientId: " + clientId + " Performing request again: " + str(preReq['reqId']))
+                    output("ClientId: " + str(clientId) + " Request not performed at the tail: " + str(preReq['reqId']))
+                    output("ClientId: " + str(clientId) + " Performing request again: " + str(preReq['reqId']))
                     checkLogFlag = -1
                     idx = findServer(preReq['operation'], preReq['bankId'])
                     p = serverProcessList[idx]
-                    send((type, preReq), to=p) 
+                    if(preReq['simFail'] == 1):
+                        output("ClientId: " + str(clientId) + " Simulating message failure between client-server")
+                    else:
+                        output("ClientId: " + str(clientId) + " Resending request: " + str(preReq['reqId']))
+                        send((type, preReq), to=p) 
                     currDelay = int(time.time())
                     currRetriesCnt += 1
                 elif checkLogFlag == 1:
                     checkLogFlag = -1
             else:
                 retryLimit = False
-                output("ClientId: " + clientId + " Number of retries " + currRetriesCnt + " exceeded the limit " + numRetries + " Aborting request " + str(preReq['reqId']))
+                output("ClientId: " + str(clientId) + " Number of retries " + str(currRetriesCnt) + " exceeded the limit " + str(numRetries) + " Aborting request " + str(preReq['reqId']))
         
+    # callback handler for check log
+    def receive(msg=('CheckLog', res), from_=p):
+        output("ClientId: " + str(clientId) + " Received check log response " + json.dumps(res))
+        checkLogFlag = res['checkLog']
+        if checkLogFlag == 1:
+            output("ClientId: " + str(clientId) + " Received response from server for request: " + str(res['reqId']))
+            output("ClientId: " + str(clientId) + " Current Balance: " + str(res['currBal']))
+            responses[res['reqId']] = res           # add the received response to the responses object
+            output("ClientId: " + str(clientId) + " Responses: " + json.dumps(responses))
+
 
 # Class for the master process to handle failure and chain extension
 class Master(process):
@@ -432,7 +463,7 @@ class Master(process):
         server = serverObj[0]
         timestamp = serverObj[1]
         if(int(time.time()) - timestamp > 5):
-            output("Master: ServerId: " + server['serverId'] + " failed!!")
+            output("Master: ServerId: " + str(server['serverId']) + " failed")
             handleServerFailure(server)
         else:
             addTimeStamp(server, timestamp)
@@ -451,7 +482,7 @@ class Master(process):
             payload = { 
                 "failure" : { 
                     "type" : "head",
-                    "server" : newHead,
+                    "server" : serverList[newHead],
                     "bankId" : bankId
                 } 
             }
@@ -463,13 +494,13 @@ class Master(process):
             payload = {
                 "failure" : {
                     "type" : "predecessor",
-                    "server" : newSuccPred[0]
+                    "server" : serverList[newSuccPred[0]]
                 }
             }
             send(('Failure', payload), to=serverList[newSuccPred[1]])
             await(succSeqNum != -1)  # await till successor send seqNum
             payload['failure']['type'] = "successor"
-            payload['failure']['server'] = newSuccPred[1]
+            payload['failure']['server'] = serverList[newSuccPred[1]]
             payload['failure']['seqNum'] = succSeqNum
             send(('Failure', payload), to=serverList[newSuccPred[0]])
             succSeqNum = -1
@@ -480,7 +511,7 @@ class Master(process):
             payload = {
                 "failure" : { 
                     "type" : "tail",
-                    "server" : newTail,
+                    "server" : serverList[newTail],
                     "bankId" : bankId
                 } 
             }
@@ -542,8 +573,9 @@ def main():
 
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/randomPayload.json')
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/samePayload.json')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payloadMsgDrop.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)

@@ -8,14 +8,18 @@ PatternExpr_4 = da.pat.TuplePattern([da.pat.ConstantPattern('Sync'), da.pat.Free
 PatternExpr_5 = da.pat.FreePattern('p')
 PatternExpr_6 = da.pat.TuplePattern([da.pat.ConstantPattern('Ack'), da.pat.FreePattern('reqId'), da.pat.FreePattern('serverId')])
 PatternExpr_7 = da.pat.FreePattern('p')
-PatternExpr_8 = da.pat.TuplePattern([da.pat.ConstantPattern('Failure'), da.pat.FreePattern('payload')])
+PatternExpr_8 = da.pat.TuplePattern([da.pat.ConstantPattern('CheckLog'), da.pat.FreePattern('req')])
 PatternExpr_9 = da.pat.FreePattern('p')
-PatternExpr_10 = da.pat.TuplePattern([da.pat.ConstantPattern('Response'), da.pat.FreePattern('res')])
+PatternExpr_10 = da.pat.TuplePattern([da.pat.ConstantPattern('Failure'), da.pat.FreePattern('payload')])
 PatternExpr_11 = da.pat.FreePattern('p')
-PatternExpr_12 = da.pat.TuplePattern([da.pat.ConstantPattern('HeartBeat'), da.pat.FreePattern('server')])
+PatternExpr_12 = da.pat.TuplePattern([da.pat.ConstantPattern('Response'), da.pat.FreePattern('res')])
 PatternExpr_13 = da.pat.FreePattern('p')
-PatternExpr_14 = da.pat.TuplePattern([da.pat.ConstantPattern('Failure'), da.pat.FreePattern('res')])
+PatternExpr_14 = da.pat.TuplePattern([da.pat.ConstantPattern('CheckLog'), da.pat.FreePattern('res')])
 PatternExpr_15 = da.pat.FreePattern('p')
+PatternExpr_16 = da.pat.TuplePattern([da.pat.ConstantPattern('HeartBeat'), da.pat.FreePattern('server')])
+PatternExpr_17 = da.pat.FreePattern('p')
+PatternExpr_18 = da.pat.TuplePattern([da.pat.ConstantPattern('Failure'), da.pat.FreePattern('res')])
+PatternExpr_19 = da.pat.FreePattern('p')
 import sys
 import json
 import pickle
@@ -42,7 +46,7 @@ class Server(da.DistProcess):
 
     def __init__(self, parent, initq, channel, props):
         super().__init__(parent, initq, channel, props)
-        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_0', PatternExpr_0, sources=[PatternExpr_1], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_0]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_1', PatternExpr_2, sources=[PatternExpr_3], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_1]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_2', PatternExpr_4, sources=[PatternExpr_5], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_2]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_3', PatternExpr_6, sources=[PatternExpr_7], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_3]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_4', PatternExpr_8, sources=[PatternExpr_9], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_4])])
+        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_0', PatternExpr_0, sources=[PatternExpr_1], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_0]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_1', PatternExpr_2, sources=[PatternExpr_3], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_1]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_2', PatternExpr_4, sources=[PatternExpr_5], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_2]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_3', PatternExpr_6, sources=[PatternExpr_7], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_3]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_4', PatternExpr_8, sources=[PatternExpr_9], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_4]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ServerReceivedEvent_5', PatternExpr_10, sources=[PatternExpr_11], destinations=None, timestamps=None, record_history=None, handlers=[self._Server_handler_5])])
 
     def main(self):
         self.output((('ServerId: ' + str(self.serverId)) + ' starting the server operations'))
@@ -62,7 +66,7 @@ class Server(da.DistProcess):
                     self.sendHeartBeatMsg(heartBeatMsg)
                     _st_label_39 += 1
                 else:
-                    super()._label('_st_label_39', block=True, timeout=1)
+                    super()._label('_st_label_39', block=True, timeout=2)
                     _st_label_39 -= 1
             else:
                 if (_st_label_39 != 2):
@@ -72,9 +76,9 @@ class Server(da.DistProcess):
 
     def setup(self, clients, master, config, pred, succ):
         self.clients = clients
+        self.succ = succ
         self.config = config
         self.pred = pred
-        self.succ = succ
         self.master = master
         self.serverId = config['serverId']
         self.serverLifeTime = config['serverLifeTime']
@@ -88,10 +92,10 @@ class Server(da.DistProcess):
 
     def sendHeartBeatMsg(self, msg):
         if (not ('UNBOUND' in self.serverLifeTime)):
-            if (self.serverLifeTime['RecvNum'] and (self.serverLifeTime['RecvNum'] == self.totalRecvCnt)):
+            if (('RecvNum' in self.serverLifeTime.keys()) and (self.serverLifeTime['RecvNum'] == self.totalRecvCnt)):
                 self.output((('ServerId: ' + str(self.serverId)) + ' RECV request limit reached. Terminating server'))
                 sys.exit()
-            elif (self.serverLifeTime['SentNum'] and (self.serverLifeTime['SentNum'] == self.totalSentCnt)):
+            elif (('SentNum' in self.serverLifeTime.keys()) and (self.serverLifeTime['SentNum'] == self.totalSentCnt)):
                 self.output((('ServerId: ' + str(self.serverId)) + ' SEND request limit reached. Terminating server'))
                 sys.exit()
         self.output((('ServerId: ' + str(self.serverId)) + ' sending heart beat to master'))
@@ -112,7 +116,7 @@ class Server(da.DistProcess):
             for j in range(0, len(self.sentReq)):
                 self._send(('Sync', self.sentReq[j]), self.succ)
 
-    def _Server_handler_0(self, req, p):
+    def _Server_handler_0(self, p, req):
         self.output(((((('ServerId: ' + str(self.serverId)) + ' Received Query request: ') + str(req['reqId'])) + ' from client: ') + str(req['clientId'])))
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['accNum']
@@ -218,21 +222,24 @@ class Server(da.DistProcess):
     _Server_handler_1._labels = None
     _Server_handler_1._notlabels = None
 
-    def _Server_handler_2(self, p, req):
+    def _Server_handler_2(self, req, p):
         self.output(((('ServerId: ' + str(self.serverId)) + ' Received Sync request: ') + str(req['reqId'])))
         self.output(((('ServerId: ' + str(self.serverId)) + ' ') + json.dumps(req)))
         num = req['payload']['accNum']
         reqId = req['reqId']
         clientId = req['payload']['clientId']
         self.accDetails[num] = req['currBal']
-        self.history[reqId] = req['payload']
+        self.history[reqId] = {'payload': req['payload'], 'response': req}
         self.sentReq.append(req)
         self.totalRecvCnt += 1
         if (self.config['type'] == 2):
             client = self.clientProcessList[clientId]
-            del req['payload']
-            res = req
-            self._send(('Response', res), client)
+            if (req['payload']['simFail'] == 2):
+                self.output((('ServerId: ' + str(self.serverId)) + ' Simulating msg drop from server-client.'))
+            else:
+                res = req
+                del res['payload']
+                self._send(('Response', res), client)
             self._send(('Ack', reqId, self.serverId), self.pred)
         else:
             self._send(('Sync', req), self.succ)
@@ -240,7 +247,7 @@ class Server(da.DistProcess):
     _Server_handler_2._labels = None
     _Server_handler_2._notlabels = None
 
-    def _Server_handler_3(self, serverId, p, reqId):
+    def _Server_handler_3(self, serverId, reqId, p):
         self.output(((('ServerId: ' + str(serverId)) + ' Received Ack request: ') + str(reqId)))
         for item in self.sentReq:
             if (item['reqId'] == reqId):
@@ -248,7 +255,22 @@ class Server(da.DistProcess):
     _Server_handler_3._labels = None
     _Server_handler_3._notlabels = None
 
-    def _Server_handler_4(self, payload, p):
+    def _Server_handler_4(self, req, p):
+        reqId = req['reqId']
+        res = {}
+        self.output(((('ServerId: ' + str(self.serverId)) + ' Processing check log for req: ') + req['reqId']))
+        if (reqId in self.history.keys()):
+            res = self.history[reqId]['response']
+            res['checkLog'] = 1
+        else:
+            res['checkLog'] = 0
+            res['reqId'] = reqId
+        self.output(((('ServerId: ' + str(self.serverId)) + ' Processed check log for req: ') + req['reqId']))
+        self._send(('CheckLog', res), p)
+    _Server_handler_4._labels = None
+    _Server_handler_4._notlabels = None
+
+    def _Server_handler_5(self, payload, p):
         self.output((('ServerId: ' + str(self.serverId)) + ' handling the server failure'))
         server = payload['failure']['server']
         type = payload['failure']['type']
@@ -266,14 +288,14 @@ class Server(da.DistProcess):
             self.pred = server
             res = {'seqNum': self.lastSeqNum}
             self._send(('Failure', res), p)
-    _Server_handler_4._labels = None
-    _Server_handler_4._notlabels = None
+    _Server_handler_5._labels = None
+    _Server_handler_5._notlabels = None
 
 class Client(da.DistProcess):
 
     def __init__(self, parent, initq, channel, props):
         super().__init__(parent, initq, channel, props)
-        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ClientReceivedEvent_0', PatternExpr_10, sources=[PatternExpr_11], destinations=None, timestamps=None, record_history=None, handlers=[self._Client_handler_5])])
+        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_ClientReceivedEvent_0', PatternExpr_12, sources=[PatternExpr_13], destinations=None, timestamps=None, record_history=None, handlers=[self._Client_handler_6]), da.pat.EventPattern(da.pat.ReceivedEvent, '_ClientReceivedEvent_1', PatternExpr_14, sources=[PatternExpr_15], destinations=None, timestamps=None, record_history=None, handlers=[self._Client_handler_7])])
 
     def main(self):
         self.output((('ClientId: ' + str(self.clientId)) + ' starting the client operations'))
@@ -281,23 +303,23 @@ class Client(da.DistProcess):
             for item in d['data']:
                 if (self.clientId == item['clientId']):
                     for payload in item['payloads']:
-                        _st_label_223 = 0
+                        _st_label_236 = 0
                         self._timer_start()
-                        while (_st_label_223 == 0):
-                            _st_label_223 += 1
+                        while (_st_label_236 == 0):
+                            _st_label_236 += 1
                             if False:
                                 pass
-                                _st_label_223 += 1
+                                _st_label_236 += 1
                             elif self._timer_expired:
                                 pass
-                                _st_label_223 += 1
+                                _st_label_236 += 1
                             else:
-                                super()._label('_st_label_223', block=True, timeout=2)
-                                _st_label_223 -= 1
+                                super()._label('_st_label_236', block=True, timeout=1)
+                                _st_label_236 -= 1
                         else:
-                            if (_st_label_223 != 2):
+                            if (_st_label_236 != 2):
                                 continue
-                        if (_st_label_223 != 2):
+                        if (_st_label_236 != 2):
                             break
                         req = payload['payload']
                         req['clientId'] = self.clientId
@@ -311,68 +333,68 @@ class Client(da.DistProcess):
                         nums = reqId.split('.')
                         if (int(nums[1]) > 1):
                             while self.retryLimit:
-                                _st_label_237 = 0
+                                _st_label_250 = 0
                                 self._timer_start()
-                                while (_st_label_237 == 0):
-                                    _st_label_237 += 1
+                                while (_st_label_250 == 0):
+                                    _st_label_250 += 1
                                     if (self.preReq['reqId'] in self.responses):
                                         self.retryLimit = False
-                                        _st_label_237 += 1
+                                        _st_label_250 += 1
                                     elif self._timer_expired:
                                         self.tryResending(self.preReq, type)
-                                        _st_label_237 += 1
+                                        _st_label_250 += 1
                                     else:
-                                        super()._label('_st_label_237', block=True, timeout=int(self.resendDelay))
-                                        _st_label_237 -= 1
+                                        super()._label('_st_label_250', block=True, timeout=int(self.resendDelay))
+                                        _st_label_250 -= 1
                                 else:
-                                    if (_st_label_237 != 2):
+                                    if (_st_label_250 != 2):
                                         continue
-                                if (_st_label_237 != 2):
+                                if (_st_label_250 != 2):
                                     break
                         self.retryLimit = True
                         idx = self.findServer(req['operation'], req['bankId'])
                         p = self.serverProcessList[idx]
+                        self.output(((((('ClientId: ' + str(self.clientId)) + ' Sending request:') + str(req['reqId'])) + ' to server: ') + str(idx)))
                         if (req['simFail'] == 1):
                             self.output((('ClientId: ' + str(self.clientId)) + ' Simulating message failure between client-server'))
                         else:
-                            self.output(((((('ClientId: ' + str(self.clientId)) + ' Sending request:') + str(req['reqId'])) + ' to server: ') + str(idx)))
                             self._send((type, req), p)
                         self.preReq = req
                         self.currDelay = int(time.time())
                         self.currRetriesCnt = 1
                     while self.retryLimit:
-                        _st_label_251 = 0
+                        _st_label_264 = 0
                         self._timer_start()
-                        while (_st_label_251 == 0):
-                            _st_label_251 += 1
+                        while (_st_label_264 == 0):
+                            _st_label_264 += 1
                             if (self.preReq['reqId'] in self.responses):
                                 pass
-                                _st_label_251 += 1
+                                _st_label_264 += 1
                             elif self._timer_expired:
                                 self.tryResending(self.preReq, type)
-                                _st_label_251 += 1
+                                _st_label_264 += 1
                             else:
-                                super()._label('_st_label_251', block=True, timeout=self.resendDelay)
-                                _st_label_251 -= 1
+                                super()._label('_st_label_264', block=True, timeout=self.resendDelay)
+                                _st_label_264 -= 1
                         else:
-                            if (_st_label_251 != 2):
+                            if (_st_label_264 != 2):
                                 continue
-                        if (_st_label_251 != 2):
+                        if (_st_label_264 != 2):
                             break
                     self.retryLimit = True
-        _st_label_255 = 0
-        while (_st_label_255 == 0):
-            _st_label_255 += 1
+        _st_label_268 = 0
+        while (_st_label_268 == 0):
+            _st_label_268 += 1
             if False:
-                _st_label_255 += 1
+                _st_label_268 += 1
             else:
-                super()._label('_st_label_255', block=True)
-                _st_label_255 -= 1
+                super()._label('_st_label_268', block=True)
+                _st_label_268 -= 1
 
     def setup(self, servers, config, data):
         self.servers = servers
-        self.config = config
         self.data = data
+        self.config = config
         self.clientId = config['clientId']
         self.resendDelay = config['resendDelay']
         self.numRetries = config['numRetries']
@@ -395,84 +417,99 @@ class Client(da.DistProcess):
                     return bank['headServer']
 
     def tryResending(self, preReq, type):
-        self.output(((('ClientId: ' + self.clientId) + ' Request timed out. Resending request: ') + str(preReq['reqId'])))
+        self.output(((('ClientId: ' + str(self.clientId)) + ' Request timed out. ') + str(preReq['reqId'])))
         currTime = int(time.time())
         if ((currTime - self.currDelay) > self.resendDelay):
             if (self.currRetriesCnt < self.numRetries):
-                self.output(((('ClientId: ' + self.clientId) + 'checking with tail whether operation already performed: ') + str(preReq['reqId'])))
+                self.output(((('ClientId: ' + str(self.clientId)) + ' Checking with tail whether operation already performed: ') + str(preReq['reqId'])))
                 self.data = {'checkLog': 1, 'reqId': preReq['reqId']}
                 idx = self.findServer(4, preReq['bankId'])
                 p = self.serverProcessList[idx]
-                self._send(('checkLog', preReq), p)
-                _st_label_271 = 0
+                self._send(('CheckLog', preReq), p)
+                _st_label_284 = 0
                 self._timer_start()
-                while (_st_label_271 == 0):
-                    _st_label_271 += 1
+                while (_st_label_284 == 0):
+                    _st_label_284 += 1
                     if (self.checkLogFlag == (- 1)):
                         pass
-                        _st_label_271 += 1
+                        _st_label_284 += 1
                     elif self._timer_expired:
                         pass
-                        _st_label_271 += 1
+                        _st_label_284 += 1
                     else:
-                        super()._label('_st_label_271', block=True, timeout=5)
-                        _st_label_271 -= 1
+                        super()._label('_st_label_284', block=True, timeout=5)
+                        _st_label_284 -= 1
                 if (self.checkLogFlag == 0):
-                    self.output(((('ClientId: ' + self.clientId) + ' Request not performed at the tail: ') + str(preReq['reqId'])))
-                    self.output(((('ClientId: ' + self.clientId) + ' Performing request again: ') + str(preReq['reqId'])))
+                    self.output(((('ClientId: ' + str(self.clientId)) + ' Request not performed at the tail: ') + str(preReq['reqId'])))
+                    self.output(((('ClientId: ' + str(self.clientId)) + ' Performing request again: ') + str(preReq['reqId'])))
                     self.checkLogFlag = (- 1)
                     idx = self.findServer(preReq['operation'], preReq['bankId'])
                     p = self.serverProcessList[idx]
-                    self._send((type, preReq), p)
+                    if (preReq['simFail'] == 1):
+                        self.output((('ClientId: ' + str(self.clientId)) + ' Simulating message failure between client-server'))
+                    else:
+                        self.output(((('ClientId: ' + str(self.clientId)) + ' Resending request: ') + str(preReq['reqId'])))
+                        self._send((type, preReq), p)
                     self.currDelay = int(time.time())
                     self.currRetriesCnt += 1
                 elif (self.checkLogFlag == 1):
                     self.checkLogFlag = (- 1)
             else:
                 self.retryLimit = False
-                self.output(((((((('ClientId: ' + self.clientId) + ' Number of retries ') + self.currRetriesCnt) + ' exceeded the limit ') + self.numRetries) + ' Aborting request ') + str(preReq['reqId'])))
+                self.output(((((((('ClientId: ' + str(self.clientId)) + ' Number of retries ') + str(self.currRetriesCnt)) + ' exceeded the limit ') + str(self.numRetries)) + ' Aborting request ') + str(preReq['reqId'])))
 
-    def _Client_handler_5(self, p, res):
+    def _Client_handler_6(self, p, res):
         self.output(((('ClientId: ' + str(self.clientId)) + ' Received response from server for request: ') + str(res['reqId'])))
         self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
         self.responses[res['reqId']] = res
         self.output(((('ClientId: ' + str(self.clientId)) + ' Responses: ') + json.dumps(self.responses)))
-    _Client_handler_5._labels = None
-    _Client_handler_5._notlabels = None
+    _Client_handler_6._labels = None
+    _Client_handler_6._notlabels = None
+
+    def _Client_handler_7(self, res, p):
+        self.output(((('ClientId: ' + str(self.clientId)) + ' Received check log response ') + json.dumps(res)))
+        self.checkLogFlag = res['checkLog']
+        if (self.checkLogFlag == 1):
+            self.output(((('ClientId: ' + str(self.clientId)) + ' Received response from server for request: ') + str(res['reqId'])))
+            self.output(((('ClientId: ' + str(self.clientId)) + ' Current Balance: ') + str(res['currBal'])))
+            self.responses[res['reqId']] = res
+            self.output(((('ClientId: ' + str(self.clientId)) + ' Responses: ') + json.dumps(self.responses)))
+    _Client_handler_7._labels = None
+    _Client_handler_7._notlabels = None
 
 class Master(da.DistProcess):
 
     def __init__(self, parent, initq, channel, props):
         super().__init__(parent, initq, channel, props)
-        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_MasterReceivedEvent_0', PatternExpr_12, sources=[PatternExpr_13], destinations=None, timestamps=None, record_history=None, handlers=[self._Master_handler_6]), da.pat.EventPattern(da.pat.ReceivedEvent, '_MasterReceivedEvent_1', PatternExpr_14, sources=[PatternExpr_15], destinations=None, timestamps=None, record_history=None, handlers=[self._Master_handler_7])])
+        self._events.extend([da.pat.EventPattern(da.pat.ReceivedEvent, '_MasterReceivedEvent_0', PatternExpr_16, sources=[PatternExpr_17], destinations=None, timestamps=None, record_history=None, handlers=[self._Master_handler_8]), da.pat.EventPattern(da.pat.ReceivedEvent, '_MasterReceivedEvent_1', PatternExpr_18, sources=[PatternExpr_19], destinations=None, timestamps=None, record_history=None, handlers=[self._Master_handler_9])])
 
     def main(self):
         self.output('Master: Master process started')
         while True:
-            _st_label_299 = 0
+            _st_label_323 = 0
             self._timer_start()
-            while (_st_label_299 == 0):
-                _st_label_299 += 1
+            while (_st_label_323 == 0):
+                _st_label_323 += 1
                 if False:
                     pass
-                    _st_label_299 += 1
+                    _st_label_323 += 1
                 elif self._timer_expired:
                     self.probeServerFailure()
-                    _st_label_299 += 1
+                    _st_label_323 += 1
                 else:
-                    super()._label('_st_label_299', block=True, timeout=1)
-                    _st_label_299 -= 1
+                    super()._label('_st_label_323', block=True, timeout=1)
+                    _st_label_323 -= 1
             else:
-                if (_st_label_299 != 2):
+                if (_st_label_323 != 2):
                     continue
-            if (_st_label_299 != 2):
+            if (_st_label_323 != 2):
                 break
 
     def setup(self, bankClientMap, bankServerMap, heartBeatDelay, clients, servers):
-        self.bankClientMap = bankClientMap
-        self.clients = clients
         self.bankServerMap = bankServerMap
+        self.clients = clients
         self.servers = servers
+        self.bankClientMap = bankClientMap
         self.heartBeatDelay = heartBeatDelay
         self.serverTimeStampMap = {}
         self.serverTimeStampHeap = []
@@ -509,7 +546,7 @@ class Master(da.DistProcess):
         server = serverObj[0]
         timestamp = serverObj[1]
         if ((int(time.time()) - timestamp) > 5):
-            self.output((('Master: ServerId: ' + server['serverId']) + ' failed!!'))
+            self.output((('Master: ServerId: ' + str(server['serverId'])) + ' failed'))
             self.handleServerFailure(server)
         else:
             self.addTimeStamp(server, timestamp)
@@ -522,31 +559,31 @@ class Master(da.DistProcess):
         if (type == 0):
             newHead = self.updateChain(bankId, serverId, type)
             self.output(('Master: New head upated. ServerId: ' + str(newHead)))
-            payload = {'failure': {'type': 'head', 'server': newHead, 'bankId': bankId}}
+            payload = {'failure': {'type': 'head', 'server': self.serverList[newHead], 'bankId': bankId}}
             self.notifyClient(bankId, payload)
             self._send(('Failure', payload), self.serverList[newHead])
         elif (type == 1):
             newSuccPred = self.updateChain(bankId, serverId, type)
             self.output(('Master: New relation: ' + json.dumps(newSuccPred)))
-            payload = {'failure': {'type': 'predecessor', 'server': newSuccPred[0]}}
+            payload = {'failure': {'type': 'predecessor', 'server': self.serverList[newSuccPred[0]]}}
             self._send(('Failure', payload), self.serverList[newSuccPred[1]])
-            _st_label_348 = 0
-            while (_st_label_348 == 0):
-                _st_label_348 += 1
+            _st_label_372 = 0
+            while (_st_label_372 == 0):
+                _st_label_372 += 1
                 if (not (self.succSeqNum == (- 1))):
-                    _st_label_348 += 1
+                    _st_label_372 += 1
                 else:
-                    super()._label('_st_label_348', block=True)
-                    _st_label_348 -= 1
+                    super()._label('_st_label_372', block=True)
+                    _st_label_372 -= 1
             payload['failure']['type'] = 'successor'
-            payload['failure']['server'] = newSuccPred[1]
+            payload['failure']['server'] = self.serverList[newSuccPred[1]]
             payload['failure']['seqNum'] = self.succSeqNum
             self._send(('Failure', payload), self.serverList[newSuccPred[0]])
             self.succSeqNum = (- 1)
         elif (type == 2):
             newTail = self.updateChain(bankId, serverId, type)
             self.output(('Master: New Tail upated. ServerId: ' + str(newHead)))
-            payload = {'failure': {'type': 'tail', 'server': newTail, 'bankId': bankId}}
+            payload = {'failure': {'type': 'tail', 'server': self.serverList[newTail], 'bankId': bankId}}
             self.notifyClient(bankId, payload)
             self._send(('Failure', payload), self.serverList[newTail])
         else:
@@ -576,17 +613,17 @@ class Master(da.DistProcess):
             return self.bankServerMap[bankId][(length - 2)]
         self.output(('Master: Updated the chain for the bank: ' + str(bankId)))
 
-    def _Master_handler_6(self, p, server):
+    def _Master_handler_8(self, server, p):
         self.output(('Master: Received heart beat msg from server: ' + str(server['serverId'])))
         self.addTimeStamp(server, int(time.time()))
-    _Master_handler_6._labels = None
-    _Master_handler_6._notlabels = None
+    _Master_handler_8._labels = None
+    _Master_handler_8._notlabels = None
 
-    def _Master_handler_7(self, res, p):
+    def _Master_handler_9(self, res, p):
         self.output('Master: received the seqNum from the successor')
         self.succSeqNum = res['seqNum']
-    _Master_handler_7._labels = None
-    _Master_handler_7._notlabels = None
+    _Master_handler_9._labels = None
+    _Master_handler_9._notlabels = None
 
 def countProcesses(config):
     count = {}
@@ -602,7 +639,7 @@ def countProcesses(config):
 def main():
     da.api.config(clock='Lamport')
     print('Bootstraping: loading and parsing the config file')
-    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payloadMsgDrop.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
     cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
