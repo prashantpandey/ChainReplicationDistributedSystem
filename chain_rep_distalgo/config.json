@@ -14,27 +14,39 @@
         "servers" : [
             {
                 "serverId" : 0,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
-                "type" : 0
+                "type" : 0,
+                "extendChain" : 0
             },
             {
                 "serverId" : 1,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : {"RecvNum" : 2},
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 2,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 3,
+                "startupDelay" : 0,
+                "serverLifeTime" : {"UNBOUND" : 1},
+                "type" : 2,
+                "extendChain" : 0
+
+            }, 
+            {
+                "serverId" : 12,
                 "startupDelay" : 5,
                 "serverLifeTime" : {"UNBOUND" : 1},
-                "type" : 2
+                "type" : 1,
+                "extendChain" : 1
             } 
         ],
         "clients" : [
@@ -62,27 +74,32 @@
         "servers" : [
             {
                 "serverId" : 4,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 0
+                "type" : 0,
+                "extendChain" : 0
             },
             {
                 "serverId" : 5,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 6,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 7,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 2
+                "type" : 2,
+                "extendChain" : 0
+
             } 
         ],
         "clients" : [
@@ -110,27 +127,32 @@
         "servers" : [
             {
                 "serverId" : 8,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 0
+                "type" : 0,
+                "extendChain" : 0
+
             },
             {
                 "serverId" : 9,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 10,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1
+                "type" : 1,
+                "extendChain" : 0
             },
             {
                 "serverId" : 11,
-                "startupDelay" : 5,
+                "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 2 
+                "type" : 2,
+                "extendChain" : 0
             } 
         ],
         "clients" : [
