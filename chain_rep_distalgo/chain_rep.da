@@ -41,23 +41,20 @@ class Server(process):
     # main function
     # a place holder to keep the server alive
     def main():
+        if extendChain == 1:
+            if await(False): pass
+            elif timeout(startupDelay): pass        # wait for the startup delay
+            contactMaster(config['bankId'])         # contact master for extending the chain    
+            if await(extendChain == 0): pass           # await till the extend Chain operation completes
+
         output("ServerId: " + str(serverId) + " starting the server operations")
         heartBeatMsg = {}
         heartBeatMsg['serverId'] = serverId
         heartBeatMsg['bankId'] = config['bankId']
         heartBeatMsg['type'] = config['type']
-       
-        # The new server is actually alive after the startupDelay
-        bankId = config['bankId']
-
-        if(await(False)): pass
-        elif timeout(startupDelay): pass
-        # Contact master to extend the chain
-        if extendChain == 1:
-            contactMaster(bankId)
 
         while True:                 # send heart beat msg to master every 2 secs
-            if(await(False)): pass
+            if await(False): pass
             elif timeout(2):
                 sendHeartBeatMsg(heartBeatMsg)
     
@@ -69,29 +66,26 @@ class Server(process):
         data = {'extendChain' : payload}
         send(('AddToChain', data), to=master)
     
-    def receive(msg=('extendChain', req), from_=p):
-        if req['serverId']:
-            serverId = req['serverId']
-        if 'predecessor' in req.keys():
+    def receive(msg=('ExtendChain', req), from_=p):
+        output("ServerId: "+ str(serverId) + " handling extend chain") 
+        if req['type'] == 2:                                            # Its the new tail
+            config['type'] = 2
             pred = req['predecessor']
-        if req['type'] == 2:   # Its the new tail
-            serverType = 2
             output("ServerId: "+ str(serverId) + " activating as new tail and updated the predecessor")
             res = {}
             res['ack'] = 1
-            send(('PredUpdated', res), to=master)
-
-        elif req['type'] == 1: # Its the old tail
+            # send(('ExtendChainAck', res), to=p)
+            # output("ServerId: "+ str(serverId) + " sending ack to master")
+        elif req['type'] == 1:                                          # Its the old tail
             output("ServerId: "+ str(serverId) + " Updating new successor and sync data with new tail")
-            serverType = 1
+            config['type'] = 1
             succ = req['successor']
             data = {}
             data['extendChain'] = 3
             data['accDetails'] = accDetails
             data['sentReq'] = sentReq
             data['history'] = history
-            send(('extendChain', data), to=serverList[succ])
-      
+            send(('ExtendChain', data), to=succ) 
         if req['extendChain'] == 3:     # Syncing data sent from the old tail 
             accDetails = data['accDetails']
             sentReq = data['sentReq']
@@ -99,13 +93,13 @@ class Server(process):
             res = {}
             res['ack'] = 2
             output("ServerId: "+ str(serverId) + " Sync completed with old tail")
-            send(('SyncComplete', res), to=master)
-        
+            send(('SyncComplete', res), to=p) 
+            extendChain = 0
         if req['extendChain'] == -1:
             serverType = 2
-            output("ServerId: "+ str(serverId) + " OLd tail reveretd") 
+            output("ServerId: "+ str(serverId) + " Old tail reveretd") 
             
-    # Check if the server life time is exceeded
+    # Chec if the server life time is exceeded
     # if not then send heart beat signal to the master
     def sendHeartBeatMsg(msg):
         # check the server life time
@@ -343,23 +337,30 @@ class Client(process):
         self.retryLimit = True
         self.checkLogFlag = -1
         self.extendChainSleepFlag = -1
+        self.bankServerMap = {}
 
     # will return the process corresponding to the 
     # head/tail server of the given bank
-    def findServer(opr, bankId):
-        if opr == 0 or opr == 4:            # opr 3 means checklog operation
-            for bank in config['banks']:
-                if bankId == bank['bankId']:
-                    return bank['tailServer']
+    def prepareServerMap(bankId):
+        if bankId in bankServerMap.keys():
+            return None
         else:
             for bank in config['banks']:
                 if bankId == bank['bankId']:
-                    return bank['headServer']
+                    bankServerMap[bankId] = {}
+                    bankServerMap[bankId]['tailServer'] = bank['tailServer']
+                    bankServerMap[bankId]['headServer'] = bank['headServer']
+        output("ClientId: " + str(clientId) + " " + json.dumps(bankServerMap))
+    
+    def findServer(opr, bankId):
+        if opr == 0 or opr == 4:
+            return bankServerMap[bankId]['tailServer']
+        else:
+            return bankServerMap[bankId]['headServer']
 
     # main function to read the payload file and
     # invoke requests to the server
-    def main():
-        
+    def main(): 
         output("ClientId: " + str(clientId) + " starting the client operations")
         for d in data:
             for item in d['data']:
@@ -373,6 +374,8 @@ class Client(process):
                         req['clientId'] = clientId
                         reqId = req['reqId']
                         type = ''
+                        idx = -1
+                        prepareServerMap(req['bankId'])
                         if req['operation'] == 0:
                             type = 'Query'
                         else:
@@ -387,7 +390,7 @@ class Client(process):
                         
                         retryLimit = True
                         idx = findServer(req['operation'], req['bankId'])
-                        p = serverProcessList[idx]                        
+                        p = serverProcessList[idx]
                         output("ClientId: " + str(clientId) + " Sending request:" + str(req['reqId']) + " to server: " + str(idx))
                         if(req['simFail'] == 1):
                             output("ClientId: " + str(clientId) + " Simulating message failure between client-server")
@@ -415,8 +418,11 @@ class Client(process):
 
     # handle the msg resend logic
     def tryResending(preReq, type):
-        if await(extendChainSleepFlag == 0): pass # let the client sleep till extend chain completes
-        extendChainSleepFlag = -1
+        if extendChainSleepFlag == 0:
+            output("ClientId: " + str(clientId) + " sleeping while the extend chain completes")
+            if await(extendChainSleepFlag == 1): pass
+            extendChainSleepFlag = -1
+            output("ClientId: " + str(clientId) + " awakes after receiing the message")
         
         output("ClientId: " + str(clientId) + " Request timed out. " + str(preReq['reqId']))
         currTime = int(time.time())
@@ -463,16 +469,29 @@ class Client(process):
             responses[res['reqId']] = res           # add the received response to the responses object
             output("ClientId: " + str(clientId) + " Responses: " + json.dumps(responses))
 
-    def receive(msg=('extendChain', res), from_=p):
+    # update the chain old in case of chain extension
+    # or sleep for the time period the chain is getting extended
+    def receive(msg=('ExtendChain', res), from_=p):
+        output("ClientId: " + str(clientId) + " received extained chain request: " + json.dumps(res))
         if res['extendChain']['flag'] == 0:
             extendChainSleepFlag = 0
         elif res['extendChain']['flag'] == 1:
+            server = res['extendChain']['server']
             extendChainSleepFlag = 1
-            #bank server map update to include the new tail server
-        else:
-            extendChainSleepFlag = -1
-            
-
+            bankId = res['extendChain']['bankId']
+            bankServerMap[bankId]['tailServer'] = server
+ 
+    # update the tail/head server for the respective banks in case of failure
+    def receive(msg=('Failure', res), from_=p):
+        output("ClientId: " + str(clientId) + " received failure request")
+        bankId = res['failure']['bankId']
+        server = res['failure']['server']
+        if res['failure']['type'] == 'tail':
+            bankServerMap[bankId]['tailServer'] = server
+        elif res['failure']['type'] == 'head':
+            bankServerMap[bankId]['headServer'] = server
+           
+   
 # Class for the master process to handle failure and chain extension
 class Master(process):
     # setup function for the client process
@@ -598,9 +617,9 @@ class Master(process):
         output("Master: entering notify clients.") 
         for client in bankClientMap[bankId]:
             output("Master: Notifying client of bankId: " + str(bankId) + " dest: " + str(client))
-            if payload['extendChain'] != None:
+            if 'extendChain' in payload.keys():
                 output("Master: Extend Chain operation being communicated with client.")
-                send(('extendChain', payload), to=clientList[client])
+                send(('ExtendChain', payload), to=clientList[client])
             else:
                 output("Master: Server failure being communicated with clients.")
                 send(('Failure', payload), to=clientList[client])
@@ -625,69 +644,88 @@ class Master(process):
         output("Master: Updated the chain for the bank: " + str(bankId)) 
    
     # Received predecessor updation from the new tail
-    def receive(msg=('PredUpdated', data), from_=p):
-        if data['ack'] == 1:
-            extendChainFlag = 1
+    def receive(msg=('ExtendChainAck', data), from_=p):
+        output("Master: received extend chain ack " + json.dumps(data))
+        extendChainFlag = data['ack']
 
     # Add a new server to the chain as the new tail
     def receive(msg=('AddToChain', data), from_=p):
-        payload = data['extendChain']
-        serverId = payload['serverId']
-        bankId = payload['bankId']
-        output("Master: Adding new server for the bank" + str(bankId) + " to the list. Server Id " + str(serverId))
+        serverId = data['extendChain']['serverId']
+        bankId = data['extendChain']['bankId']
+        output("Master: Adding new server for the bank " + str(bankId) + " to the chain. Server Id " + str(serverId))
         
-        data = {'extendChain': { 'flag' : 0 }}
-        # Make the client sleep
-        notifyClient(bankId, data)
-        
+        # notify all the client for the corresponding bank 
+        data = {'extendChain': { 'flag' : 0 }}              # Make the client sleep
+        notifyClient(bankId, data) 
+       
         servers = bankServerMap[bankId]
-        for i in range(0, len(servers)):
-            if servers[i] == serverId:
-                break
-        pred = servers[i-1]
-        
+        oldTail = servers[len(servers) - 1]                 # extract the old tail
+     
         # Calling extend chain on new tail
-        data = {'extendChain' : 1, 'type' : 2, 'predecessor': pred, 'serverId': serverId}
-        send(('extendChain', data), to=serverList[serverId])
+        data = {}
+        data['extendChain'] = 1 
+        data['type'] = 2
+        data['predecessor'] = serverList[oldTail] 
+        output("Master: notifying the new tail: " + str(serverId))
+        send(('ExtendChain', data), to=serverList[serverId])
 
-        if(await(extendChainFlag == -1)): pass
-        elif timeout(5): output("Master: Cannot extend chain. The new server failed.")
-        
-        if extendChainFlag == 1:
+        output("Master: " + str(extendChainFlag))
+        if await(extendChainFlag == 1): pass
+        elif timeout(5): pass                       # wait for 5 secs to receive the response
+         
+        if extendChainFlag == -1:
+            output("Master: Cannot extend chain. The new server failed.")
+            awakeClient(bankId, oldTail)
+            return
+        elif extendChainFlag == 1:
             output("Master: New tail activated successfully.")
             # Calling extend chain on old tail, to notify that the chain has extended
-            data = {}
-            data = {'extendChain' : 2, 'type' : 1, 'successor': serverId}
-            output("Master: Notifying old tail of chain extension")
-            send(('extendChain', data), to=serverList[pred])        
             extendChainFlag = -1
-        
-        if(await(extendChainFlag == -1)): pass
-        elif timeout(10): output("Master: Cannot extend chain. The new server failed. Reverting back to the old chain")
+       
+        # notify the old tail of its new successor
+        output("Master: New server added to the chain successfully")
+        data = {}
+        data['extendChain'] = 2
+        data['type'] = 1
+        data['successor'] = serverList[serverId]
+        output("Master: Notifying old tail of chain extension")
+        send(('ExtendChain', data), to=serverList[oldTail])         
+      
+        if await(extendChainFlag == 2): pass
+        elif timeout(5): pass
        
         if extendChainFlag == -1: 
+            output("Master: Cannot extend chain. The new server failed. Reverting back to the old chain")
             data = {}
-            data = {'extendChain': -1, 'type': 2, 'serverId': serverId}
-            output("Master: Notifying of chain extension failure")
-            send(('extendChain', data), to=serverList[pred])
-
+            data['extendChain'] = -1
+            data['type'] = 2
+            output("Master: Notifying the old tail of chain extension failure")
+            send(('ExtendChain', data), to=serverList[oldTail])
+            awakeClient(bankId, oldTail)
+            return
         elif extendChainFlag == 2:
             output("Master: New Tail synchronized successfully")
             bankServerMap[bankId].append(serverId)
-            data = {'extendChain': { 'flag' : 1 }}
-            data['extendChain']['type'] = 2
-            data['extendChain']['server'] = pred
-            data['extendChain']['bankId'] = bankId
-            notifyClient(bankId, data)
+            awakeClient(bankId, serverId)
             extendChainFlag = -1
-        
-    
-    
+         
     # callback to handle the response from the successor in case of internal failure
     def receive(msg=('Failure', res), from_=p):
         output("Master: received the seqNum from the successor")
-        succSeqNum = res['seqNum']
-     
+        succSeqNum = res['seqNum'] 
+
+    # awake client processes
+    def awakeClient(bankId, tail):
+        data = {}
+        extendChain = {}
+        extendChain['type'] = 'tail'
+        extendChain['server'] = tail
+        extendChain['bankId'] = bankId
+        extendChain['flag'] = 1
+        data['extendChain'] = extendChain
+        output("Master: notifying clients for bank: " + str(bankId))
+        notifyClient(bankId, data)
+
 # count number of client and server processes
 # using the config file
 def countProcesses(config):
@@ -712,9 +750,9 @@ def main():
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/samePayload.json')
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payload.json')
     #dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/inconsistentHistoryPayload.json')
-    dataFile = open('/home/kavita/course_work/cse535/chain_rep_distalgo/payloadMsgDrop.json')
+    dataFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/payloadMsgDrop.json')
     data = json.load(dataFile, cls=ConcatJSONDecoder)
-    cfgFile = open('/home/kavita/course_work/cse535/chain_rep_distalgo/config.json')
+    cfgFile = open('/home/ppandey/async/cse535/chain_rep_distalgo/config.json')
     config = json.load(cfgFile, cls=ConcatJSONDecoder)
     
     # calculate the number of client and servers needed
@@ -734,21 +772,32 @@ def main():
             clientMap.append(client)
 
     # create a list of server config objects
+    extendchainConfig  = []
     serverMap = []
     bankServerMap = {}  # list of bank vs servers
     for c in config:
         for bank in c['bank']:
             serverList = []
             for s in bank['servers']:
-                conf = {}
-                serverList.append(s['serverId'])
-                conf['bankId'] = bank['bankId']
-                conf['type'] = s['type']
-                conf['serverId'] = s['serverId']
-                conf['startupDelay'] = s['startupDelay']
-                conf['serverLifeTime'] = s['serverLifeTime']
-                conf['extendChain'] = s['extendChain']
-                serverMap.append(conf)
+                if s['extendChain'] == 0:
+                    conf = {}
+                    conf['bankId'] = bank['bankId']
+                    conf['type'] = s['type']
+                    conf['serverId'] = s['serverId']
+                    conf['startupDelay'] = s['startupDelay']
+                    conf['serverLifeTime'] = s['serverLifeTime']
+                    conf['extendChain'] = s['extendChain']
+                    serverMap.append(conf)
+                    serverList.append(s['serverId'])
+                else:
+                    conf = {}
+                    conf['bankId'] = bank['bankId']
+                    conf['type'] = 2
+                    conf['serverId'] = s['serverId']
+                    conf['startupDelay'] = s['startupDelay']
+                    conf['serverLifeTime'] = s['serverLifeTime']
+                    conf['extendChain'] = s['extendChain']
+                    extendchainConfig.append(conf)
             bankServerMap[bank['bankId']] = serverList
 
     # create a list of bank vs clients
@@ -770,14 +819,20 @@ def main():
     print('Bootstraping: Setting up client/server processes')
     i = 0
     serList = list(servers)
-    for process, config in zip(serList, serverMap):
+    # print(json.dumps(serverMap))
+    for config in serverMap:
+        # print("Setup Server: " + str(config['serverId']))
         if config['type'] == 0:
-            setup({process}, (clients, master, config, None, serList[i+1]))
+            setup(serList[config['serverId']], (clients, master, config, None, serList[i+1]))
         elif config['type'] == 2:
-            setup({process}, (clients, master, config, serList[i-1], None))
+            setup(serList[config['serverId']], (clients, master, config, serList[i-1], None))
         else:
-            setup({process}, (clients, master, config, serList[i-1], serList[i+1]))
+            setup(serList[config['serverId']], (clients, master, config, serList[i-1], serList[i+1]))
         i += 1
+
+    # setup processed for chain extension
+    for config in extendchainConfig:
+        setup(serList[config['serverId']], (clients, master, config, None, None))
 
     # setup the client processes
     # the "clientId" of the client will be the index of the 

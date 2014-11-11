@@ -363,8 +363,6 @@ function addServer(payload) {
 	'hostname' : payload.hostname,
 	'port' : payload.port
     };
-    // update bank server list
-    bankServerList[bankId].push(payload);
     // notifying the new server of confirmation
     // also changing the type as tail
     data = {
@@ -382,7 +380,7 @@ function addServer(payload) {
     }
     if(extendChainFlag == -1) {
 	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
-	awakeClient(bankId, OldTail);
+	awakeClient(bankId, oldTail);
 	return;
     }
     else if(extendChainFlag == 1) {
@@ -413,12 +411,13 @@ function addServer(payload) {
 	};
 	logger.info('Master: Notifying  old Tail of chain extension failure');
 	send(data, oldTail, 'extendChainFail');	// notify new server	
-	awakeClient(bankId, OldTail);
+	awakeClient(bankId, oldTail);
 	return;
     }
     else if(extendChainFlag == 2) {
 	logger.info('Master: New tail synchronized with successfully');
-	bankServerMap[bankId].tailServer = newTail;
+	// update the local data structure with the new tail
+        bankServerMap[bankId].tailServer = newTail;
 	bankServerList[bankId].push(payload);
 	// notify the clients of the new tail server
 	awakeClient(bankId, newTail);

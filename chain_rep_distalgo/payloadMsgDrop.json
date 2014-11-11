@@ -12,8 +12,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 0,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 0
 	        }
                 },
@@ -26,8 +24,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 1,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 0
 	        }
                 },
@@ -40,8 +36,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 2,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 1
 	        }
                 },
@@ -54,8 +48,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 0,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 2
 	        }
                 },
@@ -68,8 +60,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 1,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 2
 	        }
                 },
@@ -82,8 +72,6 @@
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
 		    "operation" : 1,
-                    "port" : 8111,
-                    "hostname" : "localhost",
                     "simFail" : 2
 	        }
                 }
