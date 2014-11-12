@@ -14,7 +14,8 @@ var logger = require('./logger.js');
 var util = require('./util.js');
 
 /* Config File include */
-var config = require('./config.json');
+// var config = require('./config.json');
+var config = require('./config_extendChain.json');
 // var config = require('./config_headFailure.json');
 // var config = require('./config_tailFailure.json');
 
@@ -106,6 +107,7 @@ function handleHeartBeat(payload) {
     if(obj) {
         // logger.info('Master: Updating old timestamp');
 	obj.timestamp = new Date().getTime();
+        obj.type = payload.type;
 	serverTSHeap.updateItem(obj);
     }
     else {
@@ -170,14 +172,17 @@ function handleServerFailure(serverId, bankId, type) {
 	    payload.failure['seqNum'] = succSeqNum;
 	    send(payload, newSuccPred.predecessor, 'InformPredecessor'); // notify predecessor 
 	    succSeqNum = -1;
+            
             for(;succSeqNum == -1;) {
 		util.sleep(1000);
 		var currTS = new Date().getTime();
-		if(currTS - serverTSMap[newSuccPred.predecessor] > 5000) {
+                logger.info('Predecessor: ' + JSON.stringify(serverTSMap));
+                if(currTS - serverTSMap[newSuccPred.predecessor.serverId].timestamp > 5000) {
 		    logger.info('Master: The predecessor failed while recovery. Assigning new predecessor.');
 		    send(payload, newSuccPred.predecessor_, 'InformPredecessor'); // notify new predecessor      
 		}
 	    } 
+            logger.info('Master: received acknowledgement from pred');
 	    succSeqNum = -1;
 	    break;
         case 2:
@@ -234,11 +239,6 @@ function updateChain(bankId, serverId, type) {
                 }
             }
             var newServers = {
-                'predecessor_' : {
-		    'serverId' : '',
-                    'hostname' : '',
-                    'port' : ''
-                    },
                 'predecessor' : {
 		    'serverId' : bankServerList[bankId][i-1].serverId,
                     'hostname' : bankServerList[bankId][i-1].hostname,
@@ -250,6 +250,13 @@ function updateChain(bankId, serverId, type) {
                     'port' : bankServerList[bankId][i].port
                     }
                 };
+            if(i > 1) {
+                newServers['predecessor_'] = {          
+		    'serverId' : bankServerList[bankId][i-2].serverId,
+                    'hostname' : bankServerList[bankId][i-2].hostname,
+                    'port' : bankServerList[bankId][i-2].port
+                    };
+            }
             return newServers;
         case 2:
             // update server list
@@ -318,7 +325,7 @@ function send(data, dest, context) {
         response.on('end', function(){
             logger.info('Master: ' + context + ': Acknowledgement received' + str);
 	    if(data.failure) {
-		if(data.failure.type == 'predecessor') {
+		if(data.failure.type == 'predecessor' || data.failure.type == 'successor') {
 		    var payload = JSON.parse(str);
 		    logger.info('Master: failure response: ' + JSON.stringify(payload));
 		    if(payload.result.seqNum) {
@@ -353,10 +360,13 @@ function send(data, dest, context) {
 function addServer(payload) {
     var bankId = payload.bankId;
     logger.info('Master: Adding new server to the list ' + payload.serverId);
+    
+    /*
     var data = {
 	'extendChain' : { 'flag' : 0 }
     };
     notifyClient( bankId, data);
+    */
     var oldTail = bankServerMap[bankId].tailServer;
     // update bank server map
     var newTail = {
@@ -528,6 +538,11 @@ Fiber(function() {
         logger.info('Master: probing the server heap for failure');
         var currTS = new Date().getTime();
         var server = serverTSHeap.peek();
+        
+        for(var i = 0; i < serverTSHeap.toArray().length; i++) {
+	    logger.info('Master: Heap ' + JSON.stringify(serverTSHeap.toArray()[i]));
+        }
+    
         if(server && ((currTS - server.timestamp) > 5000)) { // server has failed
             logger.info('Master: ServerId: ' + server.serverId + ' failed');
 	    logger.info('Master: ' + currTS + ' ' + server.timestamp);

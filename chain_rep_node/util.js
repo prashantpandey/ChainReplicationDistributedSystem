@@ -4,7 +4,8 @@ var exec = require('child_process').exec
 var Fiber = require('fibers');
 
 /* Config File includes */
-var config = require('./config.json');
+// var config = require('./config.json');
+var config = require('./config_extendChain.json');
 // var config = require('./config_headFailure.json');
 // var config = require('./config_tailFailure.json');
 
@@ -58,6 +59,7 @@ exports.parseServerInfo = function parseServerInfo(bankId, serverId) {
 		    serverDict['serverLifeTime'] = serversList[j].serverLifeTime;
 		    serverDict['successor'] = findSuccPredServer(bankId, serverId, 1); 
 		    serverDict['predecessor'] = findSuccPredServer(bankId, serverId, 0);
+		    serverDict['fail'] = serversList[j].fail;
 		    flag = 1;
 		    break;	    
 		}

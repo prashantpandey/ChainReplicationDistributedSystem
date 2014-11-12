@@ -253,6 +253,7 @@ function tryResending(preReq) {
 	// handling the resend logic
 	var currTS = new Date().getTime();
 	if(currTS - currDelay > resendDelay) {
+            /*
 	    if(extendChainSleepFlag == 0) {
 		logger.info('ClientId: ' + clientId  + ' Client sleeping while extend chain');
 		for(;extendChainSleepFlag == 0;) {
@@ -260,6 +261,7 @@ function tryResending(preReq) {
 		}
 		logger.info('ClientId: ' + clientId  + ' Client awake after extend chain');
 	    }
+            */
 	    logger.info('ClientId: ' + clientId  + ' Request timed out. Resending request: ' + preReq.reqId);
 	    if(currRetriesCnt < numRetries) {
 		/*

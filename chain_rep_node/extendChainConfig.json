@@ -12,6 +12,7 @@
         "port" : 8105,
         "startupDelay" : 0,
         "serverLifeTime" : {"UNBOUND" : 1},
-        "type" : 2
+        "type" : 2,
+        "fail" : 0
     }
 }

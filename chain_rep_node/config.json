@@ -196,8 +196,8 @@
     "client" : [
         {
             "clientId" : 0,
-            "numRetries" : 2,
-            "resendDelay" : 2000,
+            "numRetries" : 3,
+            "resendDelay" : 3000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8111,

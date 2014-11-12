@@ -54,11 +54,13 @@ var bankId = '';
 var serverLifeTime = {};
 var serverStartupDelay = '';
 var heartBeatDelay;
+var fail;
 
 var sentReq = [];
 var historyReq = {};
 var accDetails = {};
 var lastSentReq = '';
+var lastHistReq = '';
 var totalSentCnt = 0;
 var totalRecvCnt = 0;
 var globalSeqNum = 0;
@@ -66,7 +68,8 @@ var globalSeqNum = 0;
 /* General functions */
 
 function loadServerConfig(bId, sId) {
-    config = require('./config.json');
+    // config = require('./config.json');
+    config = require('./config_extendChain.json');
     // var config = require('./config_headFailure.json');
     // var config = require('./config_tailFailure.json');
     heartBeatDelay = config.master.heartBeatDelay;
@@ -80,6 +83,7 @@ function loadServerConfig(bId, sId) {
     serverType = details.type
     serverLifeTime = details.serverLifeTime;
     serverStartupDelay = details.serverStartupDelay;
+    fail = details.fail;
     // logger.info('ServerId: '+ serverId + ' Successor: ' + JSON.stringify(details.successor) + ' Predecessor: ' + JSON.stringify(details.predecessor));
     successor = details.successor;
     predecessor = details.predecessor;
@@ -133,6 +137,7 @@ function applyUpdate(payload) {
 	    'payload' : payload.payload,
 	    'response' : payload
 	};
+        lastHistReq = reqId;
         accDetails[accNum] = payload.currBal;
         return true;
     }
@@ -238,6 +243,11 @@ function sync(payload) {
     // TODO: Implement the transfer logic to be implement at the tail server
     logger.info('ServerId: '+ serverId + ' Processing sync request: ' + JSON.stringify(payload));
     var reqId = payload.reqId;
+
+    if(payload.fail && fail == 1) {
+        logger.info('ServerId: '+ serverId + ' exiting while receiving updates');
+        process.exit(0);
+    }
     applyUpdate(payload);
    
     if(serverType == 2) {
@@ -339,6 +349,7 @@ function query(payload) {
     };
 
     historyReq[reqId] = history;
+    lastHistReq = reqId;
 
     logger.info('ServerId: '+ serverId + ' Query request processed: ' + JSON.stringify(response));
     return response;
@@ -364,8 +375,8 @@ function update(payload) {
 	logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(history));
         if(history.payload.update.accNum == accNum && history.payload.update.amount == amount && history.payload.update.operation == oper) {
             var response = history.response;
-            delete response['payload'];
-            delete response['sync'];
+            // delete response['payload'];
+            // delete response['sync'];
             logger.info('ServerId: '+ serverId + ' Updated response: ' + JSON.stringify(history.response));
             logger.info('ServerId: '+ serverId + ' Update request already exists in history: ' + JSON.stringify(response));
             return response;
@@ -411,6 +422,7 @@ function update(payload) {
 
     appendSentReq(response);
     historyReq[reqId] = history;
+    lastHistReq = reqId;
 
     logger.info('ServerId: '+ serverId + ' Processed the update request');
     return response;
@@ -476,17 +488,24 @@ function handleChainFailure(payload) {
     else if(type == 'successor') {   // change successor: this is pred
 	successor = server;
 	logger.info('ServerId: '+ serverId + ' updated the successor server');
-	handleNewSucc(payload.failure.seqNum);
-	var payload = {                 // this is just a place holder to avoid null error at master
-		'seqNum' : lastSentReq  // nothing specific to logic
-	};                              // don't take it seriously :)
-	return payload;
+	handleNewSucc(payload.failure.seqNum)
+        if(fail == 0) {
+	    var payload = {                 // this is just a place holder to avoid null error at master
+	        'seqNum' : lastSentReq  // nothing specific to logic
+	    };
+            logger.info('ServerId: '+ serverId + ' sending ack to master') // don't take it seriously :)
+	    return payload;
+        }
     }
     else if(type == 'predecessor') {    // change predecessor: this is succ
 	predecessor = server;
-	var payload = {
-		'seqNum' : lastSentReq
-	};
+        var payload = {};
+        if (serverType == 2) {
+           payload['seqNum'] = lastHistReq;
+        }
+        else {
+	    payload['seqNum'] = lastSentReq;
+        }
 	logger.info('ServerId: '+ serverId + ' updated the predecessor server');
 	return payload;
     }
@@ -501,7 +520,7 @@ function handleNewSucc(lastSeqSucc) {
     var flag = false;
     var i = 0;
     for(i = 0; i < sentReq.length; i++) {
-	logger.info(JSON.stringify(sentReq[i]));
+	// logger.info(JSON.stringify(sentReq[i]));
 	if(sentReq[i].reqId == lastSeqSucc) {
 	    flag = true;
 	    break;
@@ -510,19 +529,30 @@ function handleNewSucc(lastSeqSucc) {
     if(!flag) {
 	for(i = 0; i < sentReq.length; i++) {
 	    var reqId = sentReq[i].reqId;
-	    logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
-	    send(historyReq[reqId].response, successor, 'sendSyncReq');   
+	    // logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
+            historyReq[reqId].response['fail'] = 1;
+	    send(historyReq[reqId].response, successor, 'sendSyncReq');
+            if(fail == 1) {
+                logger.info('ServerId: '+ serverId + ' exiting while sending updates to Successor');
+                process.exit(0);
+            }
 	}
     }
     else {
 	for(var j = i; j < sentReq.length; j++) {
 	    var reqId = sentReq[j].reqId;
 	    // logger.info(reqId);
-	    logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
+	    // logger.info(JSON.stringify(successor) + ' ' +JSON.stringify(historyReq[reqId].response));
+            historyReq[reqId].response['fail'] = 1;
 	    send(historyReq[reqId].response, successor, 'sendSyncReq');   
+            if(fail == 1) {
+                logger.info('ServerId: '+ serverId + ' exiting while sending updates to Successor');
+                process.exit(0);
+            }
 	}
     }
     logger.info('ServerId: '+ serverId + ' sync requests sent');
+    return true;
 }
 
 /**
@@ -535,15 +565,23 @@ function handleNewSucc(lastSeqSucc) {
 function handleExtendChain(payload) {
     logger.info('ServerId: '+ serverId + ' Processing extend chain');
     if(payload.extendChain == 3) {
-	logger.info('ServerId: '+ serverId + ' Starting to sync with the old tail');
-	accDetails = payload.accDetails;
-	sentReq = payload.sentReq;
-	historyReq = payload.historyReq;
-	logger.info(JSON.stringify(accDetails));
-	logger.info(JSON.stringify(historyReq));
-	logger.info(JSON.stringify(sentReq));
-	logger.info('ServerId: '+ serverId + ' Sync completed with the old tail');
-	send( {'ack' : 2 }, config.master, 'SyncComplete');
+	logger.info('ServerId: '+ serverId + ' Starting to sync with the old tail ' + JSON.stringify(payload));
+        if(payload.accDetails) {
+	    accDetails[payload.key] = payload.accDetails;
+            logger.info('ServerId: '+ serverId +  ' accDetails: ' + JSON.stringify(accDetails));
+        }
+        else if (payload.sentReq) {
+            sentReq.append(payload.sentReq)
+            logger.info('ServerId: '+ serverId +  ' sentReq: ' + JSON.stringify(sentReq));
+        }
+        else if(payload.historyReq) {   
+            historyReq[payload.key] = payload.historyReq;
+            logger.info('ServerId: '+ serverId +  ' historyReq: ' + JSON.stringify(historyReq));
+        }
+        if(payload.done == 1) {
+	    logger.info('ServerId: '+ serverId + ' Sync completed with the old tail');
+	    send( {'ack' : 2 }, config.master, 'SyncComplete');
+        }
     }
     else if(payload.extendChain == -1) {    // extend chain failed
 	serverType = 2;
@@ -562,17 +600,44 @@ function handleExtendChain(payload) {
 	// sync the DB i.e. accDetails
 	// sync the history
 	// sync the sentReq as sync requests
-	var data = {
-	    'extendChain' : 3,
-	    'accDetails' : accDetails,
-	    'sentReq' : sentReq,
-	    'historyReq' : historyReq,
-	};
-	logger.info(JSON.stringify(accDetails));
-	logger.info(JSON.stringify(historyReq));
-	logger.info(JSON.stringify(sentReq));
-	logger.info('ServerId: '+ serverId + ' Updated new successor and sync data with new tail');
+	logger.info("AccDetails: " + JSON.stringify(accDetails));
+	logger.info("History: " + JSON.stringify(historyReq));
+	logger.info("SentReq: " + JSON.stringify(sentReq));
+
+	logger.info("AccDetails: length " + accDetails.length);
+        for(var key in accDetails) {
+	    var data = {
+	        'extendChain' : 3,
+	        'accDetails' : accDetails[key],
+                'key' : key,
+                'done' : 0
+	    };
+	    send(data, successor, 'extendChain');
+        }
+        for(var i = 0; i < sentReq.length; i++) {
+	    var data = {
+	        'extendChain' : 3,
+	        'sentReq' : sentReq[i],
+                'done' : 0
+	    };
+	    send(data, successor, 'extendChain');
+        }
+        for(var key in historyReq) {
+	    var data = {
+	        'extendChain' : 3,
+	        'historyReq' : historyReq[key],
+                'key' : key,
+                'done' : 0
+	    };
+	    send(data, successor, 'extendChain');
+        }
+        var data  = {
+	        'extendChain' : 3,
+                'done' : 1 
+            } 
 	send(data, successor, 'extendChain');
+             
+	logger.info('ServerId: '+ serverId + ' Updated new successor and sync data with new tail');
     }
     logger.info('ServerId: '+ serverId + ' processed extend chain request');
 }
@@ -698,7 +763,7 @@ var server = http.createServer(
                 }
                 else if (payload.failure) {
 		    res['result'] = handleChainFailure(payload);
-		    if(payload.failure.type == "predecessor") {
+		    if(payload.failure.type == "predecessor" || payload.failure.type == "successor") {
 			flag = true;
 		    }
 		}
@@ -743,13 +808,14 @@ logger.info('Server running at http://127.0.0.1:' + port);
  * using Fiber to sleep on a thread
  */
 Fiber(function() {
-    var payload = {
-        'heartBeat' : 1,
-	'serverId' : serverId,
-	'bankId' : bankId,
-        'type' : serverType 
-    };
     while(true) {
+        var payload = {
+            'heartBeat' : 1,
+	    'serverId' : serverId,
+	    'bankId' : bankId,
+            'type' : serverType 
+        };
+        // logger.info('HeartBeat: ' + JSON.stringify(payload));
         // check for serverLifeTime limit IF NOT UNBOUNDED
         // before sending the heartbeat signal
         if (!serverLifeTime.UNBOUND) {
