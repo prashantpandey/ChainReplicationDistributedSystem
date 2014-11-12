@@ -193,19 +193,19 @@
                 {
                     "bankId" : 100,
                     "headServer" : 0,
-                    "tailServer" : 3,
+                    "tailServer" : 4,
                     "accNum" : 1001000
                 },
                 {
                     "bankId" : 200,
-                    "headServer" : 4,
-                    "tailServer" : 7,
+                    "headServer" : 5,
+                    "tailServer" : 8,
                     "accNum" : 2001000
                 },
                 {
                     "bankId" : 300,
-                    "headServer" : 8,
-                    "tailServer" : 11,
+                    "headServer" : 9,
+                    "tailServer" : 12,
                     "accNum" : 3001000
                 }
             ]
@@ -219,19 +219,19 @@
                 {
                     "bankId" : 100,
                     "headServer" : 0,
-                    "tailServer" : 3,
+                    "tailServer" : 4,
                     "accNum" : 1001001
                 },
                 {
                     "bankId" : 200,
-                    "headServer" : 4,
-                    "tailServer" : 7,
+                    "headServer" : 5,
+                    "tailServer" : 8,
                     "accNum" : 2001001
                 },
                 {
                     "bankId" : 300,
-                    "headServer" : 8,
-                    "tailServer" : 11,
+                    "headServer" : 9,
+                    "tailServer" : 12,
                     "accNum" : 3001001
                 }
             ]
@@ -245,19 +245,19 @@
                 {
                     "bankId" : 100,
                     "headServer" : 0,
-                    "tailServer" : 3,
+                    "tailServer" : 4,
                     "accNum" : 1001002
                 },
                 {
                     "bankId" : 200,
-                    "headServer" : 4,
-                    "tailServer" : 7,
+                    "headServer" : 5,
+                    "tailServer" : 8,
                     "accNum" : 2001002
                 },
                 {
                     "bankId" : 300,
-                    "headServer" : 8,
-                    "tailServer" : 11,
+                    "headServer" : 9,
+                    "tailServer" : 12,
                     "accNum" : 3001002
                 }
             ]

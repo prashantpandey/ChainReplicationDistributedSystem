@@ -1,6 +1,6 @@
 {
     "server" : {
-        "serverId" : 12,
+        "serverId" : 13,
         "startupDelay" : 10,
         "serverLifeTime" : {"UNBOUND" : 1},
         "type" : 2,
