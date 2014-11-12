@@ -35,6 +35,7 @@ var extendChainFlag = -1;
 var bankServerMap = {};
 var bankServerList = {};
 var bankClientMap = {};
+var extDelServer = [];
 
 /**
  * dictionary for keeping the serverId vs timestamp map
@@ -233,6 +234,7 @@ function updateChain(bankId, serverId, type) {
             // update server list
             var i = 0;
 	    for(i = 0; i < bankServerList[bankId].length; i++) {
+            logger.info("ServerList: " + JSON.stringify(bankServerList[bankId][i]));
                 if(serverId == bankServerList[bankId][i].serverId) {
                     bankServerList[bankId].splice(i, 1);
                     break;
@@ -409,26 +411,55 @@ function addServer(payload) {
     for(var i = 0;extendChainFlag == -1;) {
 	util.sleep(1000);
 	i++;
-	if(i == 8)
+	if(i == 4)
 	    break;
     }
     if(extendChainFlag == -1) {
-	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
+	logger.info('Master: Cannot extend the chain. Checking if the old Tail has failed.');
 	var len = bankServerList[bankId].length;
-	data = {
-	    'extendChain' : -1,
-	    'type' : 2
-	};
-	logger.info('Master: Notifying  old Tail of chain extension failure');
-	send(data, oldTail, 'extendChainFail');	// notify new server	
-	awakeClient(bankId, oldTail);
-	return;
+        var oldTailId = bankServerList[bankId][len-1].serverId;
+        
+        var newServer = {
+            'hostname' : bankServerList[bankId][len-2].hostname,
+            'port' : bankServerList[bankId][len-2].port
+        };
+        logger.info('Master: Old tail: ' + oldTailId);
+	var currTS = new Date().getTime();
+        if(currTS - serverTSMap[oldTailId].timestamp > 5000) {
+            logger.info('Master: The old tail failed while extend chain.');
+            send(data, newServer, 'extendChain');
+            bankServerList[bankId].splice((len-1), 1);   //delete the old tail
+            extDelServer.push(oldTailId);
+	}
+
+        else if (currTS - serverTSMap[newTail].timestamp > 5000) {
+    	    data = {
+	        'extendChain' : -1,
+	        'type' : 2
+	    };
+	    logger.info('Master: Notifying  old Tail of chain extension failure');
+	    send(data, oldTail, 'extendChainFail');	// notify new server	
+            awakeClient(bankId, oldTail);
+	    return;
+        }
     }
-    else if(extendChainFlag == 2) {
+    
+    for(var i = 0; extendChainFlag == -1;) {
+	util.sleep(1000);
+	i++;
+	if(i == 5)
+	    break;
+    }
+    
+    if(extendChainFlag == 2) {
 	logger.info('Master: New tail synchronized with successfully');
 	// update the local data structure with the new tail
         bankServerMap[bankId].tailServer = newTail;
 	bankServerList[bankId].push(payload);
+        logger.info('Payload: ' + JSON.stringify(payload));
+        for (var i = 0; i < bankServerList[bankId].length; i++) {
+            logger.info('Master: ' + JSON.stringify(bankServerList[bankId][i]));
+        }
 	// notify the clients of the new tail server
 	awakeClient(bankId, newTail);
 	extendChainFlag = -1;
@@ -542,12 +573,23 @@ Fiber(function() {
         for(var i = 0; i < serverTSHeap.toArray().length; i++) {
 	    logger.info('Master: Heap ' + JSON.stringify(serverTSHeap.toArray()[i]));
         }
-    
-        if(server && ((currTS - server.timestamp) > 5000)) { // server has failed
-            logger.info('Master: ServerId: ' + server.serverId + ' failed');
-	    logger.info('Master: ' + currTS + ' ' + server.timestamp);
-            server = serverTSHeap.pop();
-            handleServerFailure(server.serverId, server.bankId, server.type);
+
+        if(server && ((currTS - server.timestamp) > 6000)) { // server has failed
+            logger.info('Master: deleted list ' + extDelServer.toString());
+            var flag = true;
+            for(var i = 0; i < extDelServer.length; i++) {
+                if(extDelServer[i] == server.serverId) {
+                    server = serverTSHeap.pop(); // server deletion already handled during extend chain
+                    flag = false;
+                    logger.info('Master: server failure already handled');
+                }
+            }
+            if(flag) {
+                logger.info('Master: ServerId: ' + server.serverId + ' failed');
+                logger.info('Master: ' + currTS + ' ' + server.timestamp);
+                server = serverTSHeap.pop();
+                handleServerFailure(server.serverId, server.bankId, server.type);
+            }
         }
         // else sleep for a sec
         util.sleep(1000);

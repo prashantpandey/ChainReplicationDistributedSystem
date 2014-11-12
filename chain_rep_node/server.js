@@ -591,6 +591,10 @@ function handleExtendChain(payload) {
 	serverType = 2;
 	predecessor = payload.predecessor;
 	logger.info('ServerId: '+ serverId + ' Activating new tail and updating the predecessor');
+        if(fail == 1) {
+            logger.info('ServerId: '+ serverId + ' exiting while sending updates to Successor');
+            process.exit(0);
+        }
 	return { 'ack' : 1 };
     }
     else if(payload.type == 1) {    // its the old tail
@@ -600,11 +604,16 @@ function handleExtendChain(payload) {
 	// sync the DB i.e. accDetails
 	// sync the history
 	// sync the sentReq as sync requests
-	logger.info("AccDetails: " + JSON.stringify(accDetails));
-	logger.info("History: " + JSON.stringify(historyReq));
-	logger.info("SentReq: " + JSON.stringify(sentReq));
+	// logger.info("AccDetails: " + JSON.stringify(accDetails));
+	// logger.info("History: " + JSON.stringify(historyReq));
+	// logger.info("SentReq: " + JSON.stringify(sentReq));
 
-	logger.info("AccDetails: length " + accDetails.length);
+	// logger.info("AccDetails: length " + accDetails.length);
+        
+        if(fail == 1) {
+            logger.info('ServerId: '+ serverId + ' exiting while sending updates to Successor');
+            process.exit(0);
+        }
         for(var key in accDetails) {
 	    var data = {
 	        'extendChain' : 3,
@@ -685,6 +694,7 @@ if(arg[2]) {
     port = config.server.port;
     serverLifeTime = config.server.serverLifeTime;
     serverType = config.server.type;
+    fail = config.server.fail;
     
     contactMaster(config.server);
 }
@@ -823,7 +833,7 @@ Fiber(function() {
         }
         send(payload, config.master, 'sendHeartBeat');
         // sleep for delat time
-        util.sleep(2000);
+        util.sleep(3000);
     }
 }).run();
 
