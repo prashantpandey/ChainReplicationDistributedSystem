@@ -17,29 +17,40 @@
                 "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 0,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
             },
             {
                 "serverId" : 1,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"RecvNum" : 2},
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 1
             },
             {
                 "serverId" : 2,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"UNBOUND" : 1},
+                "serverLifeTime" : {"RecvNum" : 2},
                 "type" : 1,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
             },
             {
                 "serverId" : 3,
                 "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
+                "type" : 1,
+                "extendChain" : 0,
+                "fail" : 0
+            }, 
+            {
+                "serverId" : 4,
+                "startupDelay" : 0,
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2,
-                "extendChain" : 0
-
+                "extendChain" : 0,
+                "fail" : 0
             } 
         ],
         "clients" : [
@@ -66,32 +77,36 @@
         "tailServer" : 7,
         "servers" : [
             {
-                "serverId" : 4,
-                "startupDelay" : 0,
-                "serverLifeTime" : "UNBOUND",
-                "type" : 0,
-                "extendChain" : 0
-            },
-            {
                 "serverId" : 5,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1,
-                "extendChain" : 0
+                "type" : 0,
+                "extendChain" : 0,
+                "fail" : 0
             },
             {
                 "serverId" : 6,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
             },
             {
                 "serverId" : 7,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
+                "type" : 1,
+                "extendChain" : 0,
+                "fail" : 0
+            },
+            {
+                "serverId" : 8,
+                "startupDelay" : 0,
+                "serverLifeTime" : "UNBOUND",
                 "type" : 2,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
 
             } 
         ],
@@ -119,33 +134,37 @@
         "tailServer" : 11,
         "servers" : [
             {
-                "serverId" : 8,
-                "startupDelay" : 0,
-                "serverLifeTime" : "UNBOUND",
-                "type" : 0,
-                "extendChain" : 0
-
-            },
-            {
                 "serverId" : 9,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
-                "type" : 1,
-                "extendChain" : 0
+                "type" : 0,
+                "extendChain" : 0,
+                "fail" : 0
+
             },
             {
                 "serverId" : 10,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
                 "type" : 1,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
             },
             {
                 "serverId" : 11,
                 "startupDelay" : 0,
                 "serverLifeTime" : "UNBOUND",
+                "type" : 1,
+                "extendChain" : 0,
+                "fail" : 0
+            },
+            {
+                "serverId" : 12,
+                "startupDelay" : 0,
+                "serverLifeTime" : "UNBOUND",
                 "type" : 2,
-                "extendChain" : 0
+                "extendChain" : 0,
+                "fail" : 0
             } 
         ],
         "clients" : [

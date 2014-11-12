@@ -5,6 +5,7 @@
         "serverLifeTime" : {"UNBOUND" : 1},
         "type" : 2,
         "extendChain" : 1,
-        "bankId" : 100
+        "bankId" : 100,
+        "fail" : 0
     }
 }

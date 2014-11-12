@@ -53,7 +53,7 @@ class Server(process):
         heartBeatMsg['type'] = config['type']
         while True:                 # send heart beat msg to master every 2 secs
             if(await(False)): pass
-            elif timeout(2):
+            elif timeout(3):
                 sendHeartBeatMsg(heartBeatMsg)
     
     # Check if the server life time is exceeded
@@ -160,11 +160,8 @@ class Server(process):
                 output("ServerId: " + str(serverId) + " Update request inconsistent with history: " + json.dumps(res))
 
             # this is the case for req already existing in history, it should send the already processed response
-            # if req['simFail'] == 2:
-            #    output("ServerId: " + str(serverId) + " Simulating msg drop from server-client.")
-            #else:
-                send(('Response', res), to=p)    # send the response back to client
-                totalSentCnt += 1   # increment total sent cnt
+            send(('Response', res), to=p)    # send the response back to client
+            totalSentCnt += 1   # increment total sent cnt
         else:
             res['reqId'] = reqId
             res['accNum'] = num
@@ -172,7 +169,7 @@ class Server(process):
                 bal = accDetails[num]
                 if req['operation'] == 1:
                     accDetails[num] = bal + amt
-                    output("ServerId: " + str(serverId) + " Updating the bal: " + str(bal + num))
+                    output("ServerId: " + str(serverId) + " Updating the bal: " + str(bal))
                     res['outcome'] = 'Processed'
                 elif req['operation'] == 2:
                     if(bal < amt):
@@ -224,6 +221,7 @@ class Server(process):
                 send(('Response', res), to=client)          # send reponse back to client 
             send(('Ack', reqId, serverId), to=serverProcessMap[pred]) # send ack back to the predecessor
         else:
+            output("ServerId: " + str(serverId) + " Sending sync req to succ: " + str(succ)) 
             send(('Sync', req), to=serverProcessMap[succ])         # send Sync request to the successor
         totalSentCnt += 1                                           # increment total sent cnt
     
@@ -290,9 +288,15 @@ class Server(process):
         if flag == True:
             for j in range(i, len(sentReq)):
                 send(('Sync', sentReq[j]), to=serverProcessMap[succ])
+                if config['fail'] == 1:
+                    output("ServerId: " + str(serverId) + " Simulating server failure while recovery")
+                    sys.exit()
         else:
             for j in range(0, len(sentReq)):
                 send(('Sync', sentReq[j]), to=serverProcessMap[succ])
+                if config['fail'] == 1:
+                    output("ServerId: " + str(serverId) + " Simulating server failure while recovery")
+                    sys.exit()
 
         
 # Client class for performing operations on server
@@ -458,9 +462,11 @@ class Client(process):
         bankId = res['failure']['bankId']
         server = res['failure']['server']
         if res['failure']['type'] == 'tail':
-            bankServerMap[bankId]['tailServer'] = server
+            if bankId in bankServerMap.keys():
+                bankServerMap[bankId]['tailServer'] = server
         elif res['failure']['type'] == 'head':
-            bankServerMap[bankId]['headServer'] = server
+            if bankId in bankServerMap.keys():
+                bankServerMap[bankId]['headServer'] = server
 
 
 # Class for the master process to handle failure and chain extension
@@ -543,7 +549,7 @@ class Master(process):
             payload = { 
                 "failure" : { 
                     "type" : "head",
-                    "server" : serverProcessMap[newHead],
+                    "server" : newHead,
                     "bankId" : bankId
                 } 
             }
@@ -555,15 +561,22 @@ class Master(process):
             payload = {
                 "failure" : {
                     "type" : "predecessor",
-                    "server" : serverProcessMap[newSuccPred[0]]
+                    "server" : newSuccPred[0]
                 }
             }
             send(('Failure', payload), to=serverProcessMap[newSuccPred[1]])
             await(succSeqNum != -1)  # await till successor send seqNum
             payload['failure']['type'] = "successor"
-            payload['failure']['server'] = serverProcessMap[newSuccPred[1]]
+            payload['failure']['server'] = newSuccPred[1]
             payload['failure']['seqNum'] = succSeqNum
             send(('Failure', payload), to=serverProcessMap[newSuccPred[0]])
+            if await(False): pass
+            elif timeout(3): pass
+            if succSeqNum == -1:
+                output("Master: The predecessor failed while recovery")
+                if(int(time.time()) - serverTimeStampMap[newSuccPred[0]][0] > 5):
+                    handleServerFailure(serverTimeStampMap[newSuccPred[0]][2])
+
             succSeqNum = -1
             # TODO: implement the logic for predecessor failure while recovery
         elif type == 2:
@@ -572,7 +585,7 @@ class Master(process):
             payload = {
                 "failure" : { 
                     "type" : "tail",
-                    "server" : serverProcessMap[newTail],
+                    "server" : newTail,
                     "bankId" : bankId
                 } 
             }
@@ -635,11 +648,6 @@ class Master(process):
         bankId = req['bankId']
         serverId = req['serverId']
 
-        output("Master: notifying clients corresponding to the bank: " + str(bankId) + " of extend chain")
-        data = {}
-        data['extendChain'] = {'flag' : 0}
-        notifyClient(bankId, data, "ExtendChain")   # notify clients to sleep
-       
         servers = bankServerMap[bankId]
         oldTail = len(servers) - 1                 # extract the old tail
         
@@ -650,10 +658,15 @@ class Master(process):
         data['predecessor'] = serverProcessMap[oldTail] 
         output("Master: notifying the new tail: " + str(serverId))
         send(('ExtendChain', data), to=serverProcessMap[serverId])
+    
+        if await(extendChainFlag != -1): pass
         
-        if await(some(received(('Ack',), ))): pass
-        elif timeout(10): output("Master: timeout done..!!!") 
-
+        if extendChainFlag == 1:
+            output("Master: New server activated successfully")
+            extendChainFlag = -1
+        else:
+            output("Master: New server failed while extend chain.")
+             
 
 # count number of client and server processes
 # using the config file
@@ -720,6 +733,7 @@ def main():
                 conf['serverLifeTime'] = s['serverLifeTime']
                 conf['startupDelay'] = s['startupDelay']
                 conf['extendChain'] = s['extendChain']
+                conf['fail'] = s['fail']
                 serverMap.append(conf)
             bankServerMap[bank['bankId']] = serverList
 
@@ -787,6 +801,8 @@ def main():
     start(servers)
     start(clients)
 
+"""
     print("Bootstraping: Starting the server for extending the chain")
     for server in extendChainList:
         start(server)
+"""

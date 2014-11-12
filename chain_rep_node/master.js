@@ -165,8 +165,11 @@ function handleServerFailure(serverId, bankId, type) {
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newSuccPred));
 	    send(payload, newSuccPred.successor, 'InformSuccessor'); // notify successor
-            for(;succSeqNum == -1;) {
+            for(var i = 0;succSeqNum == -1;) {
 		util.sleep(1000);
+                i++;
+                if(i == 2)
+                    break;
 	    }
 	    payload.failure['type'] = 'successor';
 	    payload.failure['server'] = newSuccPred.successor;
@@ -174,14 +177,23 @@ function handleServerFailure(serverId, bankId, type) {
 	    send(payload, newSuccPred.predecessor, 'InformPredecessor'); // notify predecessor 
 	    succSeqNum = -1;
             
-            for(;succSeqNum == -1;) {
+            for(var i = 0;succSeqNum == -1;) {
 		util.sleep(1000);
 		var currTS = new Date().getTime();
-                logger.info('Predecessor: ' + JSON.stringify(serverTSMap));
+                // logger.info('Predecessor: ' + JSON.stringify(serverTSMap));
                 if(currTS - serverTSMap[newSuccPred.predecessor.serverId].timestamp > 5000) {
 		    logger.info('Master: The predecessor failed while recovery. Assigning new predecessor.');
-		    send(payload, newSuccPred.predecessor_, 'InformPredecessor'); // notify new predecessor      
+		    handleServerFailure(newSuccPred.predecessor.serverId, bankId, newSuccPred.predecessor.type);
+
+                    /*
+                    send(payload, newSuccPred.predecessor_, 'InformPredecessor'); // notify new predecessor      
+                    updateChain(bankId, newSuccPred.predecessor.serverId, type)   //delete the predecessor & assuming the predecessor is the not the head
+                    extDelServer.push(newSuccPred.predecessor.serverId);
+                    */
 		}
+                i++;
+                if(i == 2)
+                    break;
 	    } 
             logger.info('Master: received acknowledgement from pred');
 	    succSeqNum = -1;
@@ -224,7 +236,9 @@ function updateChain(bankId, serverId, type) {
             var newHead = {
                 'head' : {
                     'hostname' : bankServerList[bankId][i].hostname,
-                    'port' : bankServerList[bankId][i].port
+                    'port' : bankServerList[bankId][i].port,
+                    'type' : bankServerList[bankId][i].type,
+                    'serverId' : bankServerList[bankId][i].serverId
                     }
                 };
             // update server map
@@ -244,19 +258,22 @@ function updateChain(bankId, serverId, type) {
                 'predecessor' : {
 		    'serverId' : bankServerList[bankId][i-1].serverId,
                     'hostname' : bankServerList[bankId][i-1].hostname,
-                    'port' : bankServerList[bankId][i-1].port
+                    'port' : bankServerList[bankId][i-1].port,
+                    'type' : bankServerList[bankId][i-1].type
                     },
                 'successor' : {
 		    'serverId' : bankServerList[bankId][i].serverId,
                     'hostname' : bankServerList[bankId][i].hostname,
-                    'port' : bankServerList[bankId][i].port
+                    'port' : bankServerList[bankId][i].port,
+                    'type' : bankServerList[bankId][i].type
                     }
                 };
             if(i > 1) {
                 newServers['predecessor_'] = {          
 		    'serverId' : bankServerList[bankId][i-2].serverId,
                     'hostname' : bankServerList[bankId][i-2].hostname,
-                    'port' : bankServerList[bankId][i-2].port
+                    'port' : bankServerList[bankId][i-2].port,
+                    'type' : bankServerList[bankId][i-2].type
                     };
             }
             return newServers;
@@ -274,7 +291,9 @@ function updateChain(bankId, serverId, type) {
             var newTail = {
                 'tail' : {
                     'hostname' : bankServerList[bankId][tailIdx].hostname,
-                    'port' : bankServerList[bankId][tailIdx].port
+                    'port' : bankServerList[bankId][tailIdx].port,
+                    'type' : bankServerList[bankId][tailIdx].type,
+		    'serverId' : bankServerList[bankId][tailIdx].serverId
                     }
                 };
             // update server map
@@ -456,6 +475,7 @@ function addServer(payload) {
 	// update the local data structure with the new tail
         bankServerMap[bankId].tailServer = newTail;
 	bankServerList[bankId].push(payload);
+        // TODO: update the type of old tail in bankServerMap
         logger.info('Payload: ' + JSON.stringify(payload));
         for (var i = 0; i < bankServerList[bankId].length; i++) {
             logger.info('Master: ' + JSON.stringify(bankServerList[bankId][i]));
