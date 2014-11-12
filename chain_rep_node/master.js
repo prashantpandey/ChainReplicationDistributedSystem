@@ -411,6 +411,7 @@ function addServer(payload) {
     }
     if(extendChainFlag == -1) {
 	logger.info('Master: Cannot extend the chain. The new server failed. Reverting back to the old chain.');
+        extDelServer.push(payload.serverId);
 	awakeClient(bankId, oldTail);
 	return;
     }

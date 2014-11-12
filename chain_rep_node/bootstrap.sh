@@ -15,6 +15,7 @@ node ./server.js 100 101 &
 node ./server.js 100 102 &
 node ./server.js 100 103 &
 node ./server.js 100 104 &
+node ./server.js 100 105 &
 
 sleep 2s
 
@@ -26,4 +27,4 @@ node ./client.js 0 &
 sleep 5s
 
 # Adding the new server using extend chain
-node ./server.js 100 105 "./extendChainConfig.json"
+node ./server.js 100 106 "./extendChainConfig.json"

@@ -7,9 +7,9 @@
     },
     "server" : {
 	"bankId" : 100,
-	"serverId" : 105,
+	"serverId" : 106,
         "hostname" : "localhost",
-        "port" : 8105,
+        "port" : 8106,
         "startupDelay" : 0,
         "serverLifeTime" : {"UNBOUND" : 1},
         "type" : 2,

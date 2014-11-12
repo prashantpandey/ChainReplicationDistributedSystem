@@ -26,7 +26,7 @@
                 "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1,
                 "extendChain" : 0,
-                "fail" : 1
+                "fail" : 0
             },
             {
                 "serverId" : 2,
