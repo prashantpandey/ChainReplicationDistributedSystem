@@ -153,6 +153,7 @@ function handleServerFailure(serverId, bankId, type) {
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newHead));
             notifyClient(bankId, payload);
+            notifyAllTailServers(bankId, payload);
             send(payload, newHead.head, 'notifyHead'); // notify new head 
             break;
         case 1:
@@ -209,6 +210,7 @@ function handleServerFailure(serverId, bankId, type) {
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newTail));
             notifyClient(bankId, payload);
+            notifyAllTailServers(bankId, payload);
             send(payload, newTail.tail, 'notifyTail'); // notify new tail 
             break;
         default:
@@ -242,7 +244,8 @@ function updateChain(bankId, serverId, type) {
                     }
                 };
             // update server map
-            bankServerMap[bankId].headServer = newHead;
+            bankServerMap[bankId].headServer.hostname = newHead.head.hostname;
+            bankServerMap[bankId].headServer.port = newHead.head.port;
             return newHead;
         case 1:
             // update server list
@@ -297,7 +300,8 @@ function updateChain(bankId, serverId, type) {
                     }
                 };
             // update server map
-            bankServerMap[bankId].tailServer = newTail;
+            bankServerMap[bankId].tailServer.hostname = newTail.tail.hostname;
+            bankServerMap[bankId].tailServer.port = newTail.tail.port;
             return newTail;
         default:
             logger.info('Master: Unknown server type. ServerId: ' + serverId + ' Type: ' + type);            
@@ -316,6 +320,22 @@ function notifyClient(bankId, payload) {
         };
 	logger.info('Master: Notifying client of bankId: ' + bankId + ' dest: ' + JSON.stringify(dest));
         send(payload, dest, 'notifyClient');
+   } 
+}
+
+/**
+ * notify all bank's tail servers about the new head/tail server
+ */
+function notifyAllTailServers(bankId, payload) {
+    logger.info('Master: entering notify all Tail servers');
+
+    for (var key in bankServerMap) {
+        var dest = {
+            'hostname' : bankServerMap[key].tailServer.hostname,
+            'port' : bankServerMap[key].tailServer.port
+        };
+	logger.info('Master: Notifying tail server of bankId: ' + key + ' dest: ' + JSON.stringify(dest));
+        send(payload, dest, 'notifyTailServer');
    } 
 }
 
@@ -481,6 +501,9 @@ function addServer(payload) {
         for (var i = 0; i < bankServerList[bankId].length; i++) {
             logger.info('Master: ' + JSON.stringify(bankServerList[bankId][i]));
         }
+
+    
+	//logger.info('Master: New Chain for bankId: ' + bankId + ' is : ' + JSON.stringify(bankServerList[bankId]));
 	// notify the clients of the new tail server
 	awakeClient(bankId, newTail);
 	extendChainFlag = -1;
@@ -613,6 +636,6 @@ Fiber(function() {
             }
         }
         // else sleep for a sec
-        util.sleep(1000);
+        util.sleep(2000);
     }
 }).run();

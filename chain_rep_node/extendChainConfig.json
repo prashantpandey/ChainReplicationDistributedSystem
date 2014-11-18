@@ -14,5 +14,40 @@
         "serverLifeTime" : {"UNBOUND" : 1},
         "type" : 2,
         "fail" : 0
-    }
+    },
+    "bank" : [
+        {
+            "bankId" : 100,
+            "headServer" : {
+                "hostname" : "localhost",
+                "port" : 8101
+            },
+            "tailServer" : {
+                "hostname" : "localhost",
+                "port" : 8105
+            }
+        },
+        {
+            "bankId" : 200,
+            "headServer" : {
+                "hostname" : "localhost",
+                "port" : 8201
+            },
+            "tailServer" : {
+                "hostname" : "localhost",
+                "port" : 8205
+            }
+        },
+        {
+            "bankId" : 300,
+            "headServer" : {
+                "hostname" : "localhost",
+                "port" : 8301
+            },
+            "tailServer" : {
+                "hostname" : "localhost",
+                "port" : 8305
+            }
+        }
+    ]
 }

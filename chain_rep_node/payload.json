@@ -8,10 +8,10 @@
 		    "reqId" : "0.1",
             	    "bankId" : 100,
                     "accNum" : 1000,
-		    "amount" : 0,
+		    "amount" : 100,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
-		    "operation" : 0,
+		    "operation" : 1,
                     "port" : 8111,
                     "hostname" : "localhost",
                     "simFail" : 0
@@ -20,8 +20,8 @@
                 {
 	        "payload" : {
 		    "reqId" : "0.2",
-		    "bankId" : 100,
-		    "accNum" : 1000,
+		    "bankId" : 200,
+		    "accNum" : 2000,
 		    "amount" : 100,
 		    "destBankId" : 101,
 		    "destAccNum" : 1001,
@@ -34,12 +34,12 @@
                 {
 	        "payload" : {
 		    "reqId" : "0.3",
-		    "bankId" : 100,
-		    "accNum" : 1000,
+		    "bankId" : 300,
+		    "accNum" : 3000,
 		    "amount" : 10,
-		    "destBankId" : 101,
-		    "destAccNum" : 1001,
-		    "operation" : 2,
+		    "destBankId" : 200,
+		    "destAccNum" : 2000,
+		    "operation" : 3,
                     "port" : 8111,
                     "hostname" : "localhost",
                     "simFail" : 0

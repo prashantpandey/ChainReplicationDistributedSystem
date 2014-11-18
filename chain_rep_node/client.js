@@ -11,8 +11,8 @@ var config = require('./config.json');
 // var reqData = require('./inconsistentHistoryPayload.json');
 // var reqData = require('./samePayload.json');
 // var reqData = require('./randomPayload.json');
-// var reqData = require('./payload.json');
-var reqData = require('./payloadMsgDrop.json');
+var reqData = require('./payload.json');
+//var reqData = require('./payloadMsgDrop.json');
 var logger = require('./logger.js');
 var util = require('./util.js');
 
@@ -99,6 +99,13 @@ function performOperation(payload) {
     }
     else if (opr == Operation.Withdraw || opr == Operation.Deposit) {
         data['update'] = payload;
+        dest = bankServerMap[bankId].headServer;
+    }
+    else if (opr == Operation.Transfer) {
+        logger.info('ClientId: ' + clientId  + ' Sending transfer req with reqId ' + reqId + ' on src bank: ' + bankId);
+        data['transfer'] = payload;
+        data['withdraw'] = 1;           // Sending to the source bank
+        data['deposit'] = 0;            // Updated when src bank sends to dst bank
         dest = bankServerMap[bankId].headServer;
     }
     logger.info('ClientId: ' + clientId  + ' Performing request ' + reqId + ' on bank: ' + bankId);

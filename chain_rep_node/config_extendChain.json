@@ -9,7 +9,7 @@
     {
         "bankId" : 100,
         "bankName" : "HSBC",
-        "chainLength" : 4,
+        "chainLength" : 5,
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
@@ -43,7 +43,7 @@
                 "hostname" : "localhost",
                 "port" : 8103,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"RecvNum" : 2},
+                "serverLifeTime" : {"UNBOUND" : 2},
                 "type" : 1,
                 "fail" : 0
             },
@@ -61,7 +61,7 @@
                 "hostname" : "localhost",
                 "port" : 8105,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"UNBOUND" : 1},
+                "serverLifeTime" : {"RecvNum" : 1},
                 "type" : 2,
                 "fail" : 0
             } 
@@ -84,7 +84,7 @@
     {
         "bankId" : 200,
         "bankName" : "CITI",
-        "chainLength" : 4,
+        "chainLength" : 5,
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
@@ -92,7 +92,7 @@
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8204
+            "port" : 8205
         },
         "servers" : [
             {
@@ -128,6 +128,15 @@
                 "port" : 8204,
                 "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
+                "type" : 1,
+                "fail" : 0
+            }, 
+            {
+                "serverId" : 205,
+                "hostname" : "localhost",
+                "port" : 8205,
+                "startupDelay" : 0,
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2,
                 "fail" : 0
             } 
@@ -150,7 +159,7 @@
     {
         "bankId" : 300,
         "bankName" : "BOA",
-        "chainLength" : 4,
+        "chainLength" : 5,
         "numClient" : 6,
         "headServer" : {
             "hostname" : "localhost",
@@ -158,7 +167,7 @@
         },
         "tailServer" : {
             "hostname" : "localhost",
-            "port" : 8304
+            "port" : 8305
         },
         "servers" : [
             {
@@ -194,7 +203,16 @@
                 "port" : 8304,
                 "startupDelay" : 0,
                 "serverLifeTime" : {"UNBOUND" : 1},
-                "type" : 2, 
+                "type" : 1, 
+                "fail" : 0
+            },
+            {
+                "serverId" : 305,
+                "hostname" : "localhost",
+                "port" : 8305,
+                "startupDelay" : 0,
+                "serverLifeTime" : {"UNBOUND" : 1},
+                "type" : 2,
                 "fail" : 0
             } 
         ],
@@ -218,7 +236,7 @@
         {
             "clientId" : 0,
             "numRetries" : 2,
-            "resendDelay" : 2000,
+            "resendDelay" : 8000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8111,
