@@ -34,8 +34,8 @@
                 {
 	        "payload" : {
 		    "reqId" : "0.3",
-		    "bankId" : 300,
-		    "accNum" : 3000,
+		    "bankId" : 100,
+		    "accNum" : 1000,
 		    "amount" : 10,
 		    "destBankId" : 200,
 		    "destAccNum" : 2000,

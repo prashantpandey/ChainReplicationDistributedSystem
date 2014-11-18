@@ -334,7 +334,7 @@ function notifyAllTailServers(bankId, payload) {
             'hostname' : bankServerMap[key].tailServer.hostname,
             'port' : bankServerMap[key].tailServer.port
         };
-	logger.info('Master: Notifying tail server of bankId: ' + key + ' dest: ' + JSON.stringify(dest));
+	logger.info('Master: Notifying tail server of bankId: ' + key + ' dest: ' + JSON.stringify(dest) + 'Payload: '+ JSON.stringify(payload));
         send(payload, dest, 'notifyTailServer');
    } 
 }
@@ -506,6 +506,17 @@ function addServer(payload) {
 	//logger.info('Master: New Chain for bankId: ' + bankId + ' is : ' + JSON.stringify(bankServerList[bankId]));
 	// notify the clients of the new tail server
 	awakeClient(bankId, newTail);
+        // Notify all bank's tail servers about the extended chain
+        
+        var data = {
+	'extendChain' : {
+	    'type' : 'tail',
+	    'server' : newTail,
+	    'bankId' : bankId,
+	    'flag' : 1
+            }
+        };
+        notifyAllTailServers(bankId, data);
 	extendChainFlag = -1;
 	return;
     }

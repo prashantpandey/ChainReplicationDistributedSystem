@@ -76,7 +76,7 @@ function loadServerConfig(bId, sId) {
     heartBeatDelay = config.master.heartBeatDelay;
     
     var details = util.parseServerInfo(bId, sId);
-    logger.info('Fetched details using util: ' + JSON.stringify(details));
+    //logger.info('Fetched details using util: ' + JSON.stringify(details));
     bankId = bId;
     serverId = sId;
     hostname = details.hostname;
@@ -132,10 +132,12 @@ function applyUpdate(payload) {
     var reqId = payload.reqId;
     // logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(historyReq) + ' RequestId: ' + reqId);
     // logger.info('ServerId: '+ serverId + ' payload for sync req: ' + JSON.stringify(payload));
-    if (payload.payload.update)
+    if (payload.payload.update) {
         var accNum = payload.payload.update.accNum;
-    else if(payload.payload.transfer)
-        var accNum = payload.payload.transfer.accNum;
+    }
+    else if(payload.payload.transfer) {
+        var accNum = payload.accNum;
+    }
     if(!checkRequest(reqId)) {
         historyReq[reqId] = {
 	    'payload' : payload.payload,
@@ -182,18 +184,21 @@ function getBalance(accNum) {
  * @oper: operation type
  */
 function performUpdate(accNum, amount, oper) {
-    // logger.info('ServerId: '+ serverId + ' Performing update opr ' + accNum + ' ' + amount + ' ' + oper +' ' + accDetails[accNum] + ' ' + getBalance(accNum));
+    logger.info('ServerId: '+ serverId + ' Performing update opr ' + accNum + ' ' + amount + ' ' + oper +' ' + accDetails[accNum] + ' ' + getBalance(accNum));
     logger.info('ServerId: '+ serverId + ' Account info: ' + JSON.stringify(accDetails));
     switch(oper) {
         case Operation.Deposit:
             accDetails[accNum] = accDetails[accNum] + amount;
+            logger.info('After deposit acc Details: ' + JSON.stringify(accDetails));
             return Outcome.Processed;
         case Operation.Withdraw:
             if(accDetails[accNum] < amount) {
+                logger.info('Insufficient funds acc Details: ' + JSON.stringify(accDetails));
                 return Outcome.InsufficientFunds;
             }
             else {
                 accDetails[accNum] = accDetails[accNum] - amount;
+                logger.info('After withdraw acc Details: ' + JSON.stringify(accDetails));
                 return Outcome.Processed;
             }
         default: 
@@ -253,25 +258,47 @@ function sync(payload) {
         process.exit(0);
     }
     applyUpdate(payload);
-   
-    if(serverType == 2 && payload.transfer) {
-        logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail' + JSON.stringify(payload));
+  
+     
+    if(serverType == 2 && payload.transfer && payload.payload.withdraw == 1) {
+        logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of src bank' + JSON.stringify(payload));
 
         //@TODO:: Tail should send this to the head of the new bank
         //How to get the head of the new bank.
-        var dstBankId = payload.payload.transfer.destBankId;
+        var destBankId = payload.payload.transfer.destBankId;
         var dest = {
-            'hostname' : bankServerMap[dstBankId].headServer.hostname,
-            'port' : bankServerMap[dstBankId].headServer.port
+            'hostname' : bankServerMap[destBankId].headServer.hostname,
+            'port' : bankServerMap[destBankId].headServer.port
             }
         var data = {};
         data['transfer'] = payload.payload.transfer;
         data['deposit'] = 1;
         data['withdraw'] = 0;
-        send(data, dest, 'TransferToDstBank');
-        // Wait for the response to come from the dst bank then send the reply bank to the client.
+        send(data, dest, 'TransferToDestBank');
+        // Wait for the response to come from the dest bank then send the reply bank to the client.
         //var response = {'transfer' : 1};
         //return response;
+    }
+    if(serverType == 2 && payload.transfer && payload.payload.deposit == 1) {
+        // Transfer request has reached the tail of the dst bank.
+        // Send the reply back to the src tail
+        logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of dest bank' + JSON.stringify(payload));
+        logger.info('ServerId: '+ serverId + ' Bank Server Map' + JSON.stringify(bankServerMap));
+        var bankId = payload.payload.transfer.bankId;
+        var dest = {
+            'hostname' : bankServerMap[bankId].tailServer.hostname,
+            'port' : bankServerMap[bankId].tailServer.port
+            }
+        logger.info('ServerId: '+ serverId + ' Transfer being notified to src bank' + JSON.stringify(dest));
+        
+        var data = {};
+        data['transfer'] = payload.payload.transfer;
+        data['complete'] = 1;
+        data['outcome'] = payload.outcome;
+        data['destAccNum'] = payload.destAccNum;
+        data['destAccBal'] = payload.accNumk;
+        send(data, dest, 'TransferComplete');
+         
     }
     else if(serverType == 2 && payload.update) {
         var dest = { 
@@ -452,7 +479,6 @@ function update(payload) {
 }
 
 function transfer(payload) {
-    logger.info('ServerId: '+ serverId + ' Processing the transfer request ' + JSON.stringify(payload));
     var reqId = payload.transfer.reqId;
     var accNum = payload.transfer.accNum;
     var amount = payload.transfer.amount;
@@ -461,14 +487,16 @@ function transfer(payload) {
 
     //var oper1 = payload.transfer.operation;
     // If the req already exists, send back the same reply.
+
+    logger.info('ServerId: '+ serverId + ' Processing the transfer request from src acc ' + accNum + ' to dst acc ' + destAccNum);
+
+    // @TODO:: Do we need to check history for the destination bank?
+
     if(historyReq[reqId]) {
         var history = historyReq[reqId];
 	logger.info('ServerId: '+ serverId + ' history: ' + JSON.stringify(history));
         if(history.payload.transfer.accNum == accNum && history.payload.transfer.amount == amount && history.payload.transfer.destAccNum == destAccNum) {
             var response = history.response;
-            // delete response['payload'];
-            // delete response['sync'];
-            logger.info('ServerId: '+ serverId + ' Transfer response: ' + JSON.stringify(history.response));
             logger.info('ServerId: '+ serverId + ' Transfer request already exists in history: ' + JSON.stringify(response));
             return response;
         }
@@ -478,16 +506,16 @@ function transfer(payload) {
                 'outcome' : Outcome.InconsistentWithHistory,
                 'currBal' : 0,          // Should this balance be 0??
                 'accNum' : accNum,
-                'dstAccNum' : dstAccNum
-
+                'destAccNum' : destAccNum
             };
             logger.info('ServerId: '+ serverId + ' Transfer request Inconsistent with history: ' + JSON.stringify(response));
             return response;
         }
     }
-    logger.info('Reaching here ' + 'payload.withdraw = ' + payload.withdraw + ' payload.deposit = ' + payload.deposit )  ;
+    logger.info('ServerId: ' + serverId + ' payload.withdraw = ' + payload.withdraw + ' payload.deposit = ' + payload.deposit);
+
     if (payload.withdraw == 1) {              // on source bank's server
-        logger.info('ServerId: '+ serverId + ' On source bank ' + accNum);
+        logger.info('ServerId: '+ serverId + ' Transfer request received on source bank. Src acc no: ' + accNum);
         var currBal = getBalance(accNum);
         // Transfer cannot be made if no account exists or the currBal is less than the amt to be transferred
         if(currBal == undefined) {
@@ -500,7 +528,8 @@ function transfer(payload) {
                 'accNum' : accNum,
             };
             logger.info('ServerId: '+ serverId + ' Transfer request cannot be performed. No source account found: ' + JSON.stringify(response));
-        }
+            return response;
+            }
         else if(currBal < amount) {
             var response = {
                 'reqId' : reqId,
@@ -509,13 +538,13 @@ function transfer(payload) {
                 'accNum' : accNum
             };
             logger.info('ServerId: '+ serverId + ' Transfer request cannot be performed. Insufficient funds.' + JSON.stringify(response));
+            return response;
         }
         else {
             var outcome = performUpdate(accNum, amount, Operation.Withdraw);
             currBal = getBalance(accNum);
             logger.info('ServerId: '+ serverId + ' Transfer request, withdraw happened at source bank.' + outcome + ' Current Bal: ' + currBal);
-        }
-        var response = {
+            var response = {
             'reqId' : reqId,
             'outcome' : outcome,
             'currBal' : currBal,
@@ -523,35 +552,37 @@ function transfer(payload) {
             'payload' : payload,
             'sync' : 1,
             'transfer':1
-        };
-    }
-    if (payload.deposit == 1) {             // on dest bank's server           
-    logger.info('ServerId: '+ serverId + ' Reaching here ******* ' + 'payload.withdraw = ' + payload.withdraw + ' payload.deposit = ' + payload.deposit);
-        logger.info('ServerId: '+ serverId + ' On destination bank ' + dstAccNum);
-
-        var currBal = getBalance(dstAccNum);
-        if(currBal == undefined) {
-            logger.error('ServerId: '+ serverId + ' Account number not found: ' + dstAccNum);
-            logger.info('ServerId: '+ serverId + ' Creating a new account with the given account number');
-            accDetails[dstAccNum] = 0;
-            bal = 0; 
+            };
+        return response;
         }
-        var outcome = performUpdate(dstAccNum, amount, Operation.Deposit);
-        currBal = getBalance(dstAccNum);
+    }
+
+    if (payload.deposit == 1) {             // on dest bank's server           
+        logger.info('ServerId: '+ serverId + ' Transfer request received on destination bank. Dest acc no: ' + destAccNum);
+
+        var currBal = getBalance(destAccNum);
+        if(currBal == undefined) {
+            logger.error('ServerId: '+ serverId + ' Account number not found: ' + destAccNum);
+            logger.info('ServerId: '+ serverId + ' Creating a new account with the given account number');
+            accDetails[destAccNum] = 0;
+        }
+        var outcome = performUpdate(destAccNum, amount, Operation.Deposit);
+        currBal = getBalance(destAccNum);
         logger.info('ServerId: '+ serverId + ' Transfer request, deposit happened at destination bank.' + outcome + ' Current Bal: ' + currBal);
         var response = {
             'reqId' : reqId,
             'outcome' : outcome,
             'currBal' : currBal,
-            'accNum' : dstAccNum,
+            'accNum' : destAccNum,
             'payload' : payload,
             'sync' : 1,
             'transfer':1
         };
+        return response;
     }
 
     //add the payload and response to historyReq
-    /*
+    
     var history = {
         'payload' : payload,
         'response' : response    
@@ -559,8 +590,7 @@ function transfer(payload) {
     
     appendSentReq(response);
     historyReq[reqId] = history;
-    lastHistReq = reqId;*/
-    return response;
+    lastHistReq = reqId;
 }
 
 
@@ -929,31 +959,37 @@ var server = http.createServer(
                 else if(payload.transfer) {
                     totalRecvCnt++;
                     logger.info('ServerId: '+ serverId + ' Transfer req received: ' + JSON.stringify(payload));
-                    if(payload.withdraw == 1) {
-                    syncRes = transfer(payload);
+                    if(payload.withdraw == 1 || payload.deposit == 1) {
+                        syncRes = transfer(payload);
                         if(syncRes.sync) {
                             logger.info('ServerId: '+ serverId + ' Sending sync request from transfer');
                             send(syncRes, successor, 'sendSyncReq');                        
                             res['result'] = Outcome.InTransit;
                         }
                     }
-                    else if(payload.deposit == 1) { 
-                    res['result'] = transfer(payload); }
+                    else if(payload.complete == 1) {
+                        // On src bank's tail
+
+                        logger.info('ServerId: '+ serverId + ' Transfer successfully completed.');
+                        res = historyReq[reqId];
+                        logger.info('ServerId: '+ serverId + ' Response: ' + JSON.stringify(res));
+                        flag = true;
                     }
+                }
                 else if (payload.failure) {
                     // Update the bank Server Map
-                    logger.info('ServerId: '+ serverId + ' Before Updating the bankServerMap ' + JSON.stringify(bankServerMap));
                     bankId = payload.failure.bankId;
                     if (payload.failure.type == 'tail') {
+                        logger.info('ServerId: '+ serverId + ' tail #####################');
                         bankServerMap[bankId].tailServer.hostname = payload.failure.server.hostname;
                         bankServerMap[bankId].tailServer.port = payload.failure.server.port;
                     }
                     else if (payload.failure.type == 'head') {
+                        logger.info('ServerId: ' + serverId + ' head #####################');
                         bankServerMap[bankId].headServer.hostname = payload.failure.server.hostname;
                         bankServerMap[bankId].headServer.port = payload.failure.server.port;
                     
                     }
-                    logger.info('ServerId: '+ serverId + ' After Updating the bankServerMap ' + JSON.stringify(bankServerMap));
                     res['result'] = handleChainFailure(payload);
 		    if (payload.failure.type == "predecessor" || payload.failure.type == "successor") {
 			flag = true;
@@ -961,6 +997,12 @@ var server = http.createServer(
 		}
 		else if(payload.extendChain) {
 		    res['result'] = handleExtendChain(payload); 
+                    var bankId = payload.extendChain.bankId;
+		    if(payload.extendChain.type == 'tail') {
+                        logger.info("tail extend chain #####################");
+                        bankServerMap[bankId].tailServer.hostname = payload.extendChain.server.hostname;
+                        bankServerMap[bankId].tailServer.port = payload.extendChain.server.port;
+                    }
 		    if(payload.type == 2 && payload.predecessor) {
 			flag = true;
 		    }

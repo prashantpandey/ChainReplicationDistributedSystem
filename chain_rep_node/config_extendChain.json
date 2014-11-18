@@ -236,7 +236,7 @@
         {
             "clientId" : 0,
             "numRetries" : 2,
-            "resendDelay" : 8000,
+            "resendDelay" : 4000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8111,
