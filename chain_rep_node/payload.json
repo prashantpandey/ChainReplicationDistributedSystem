@@ -62,12 +62,12 @@
                 {
 	        "payload" : {
 		    "reqId" : "0.5",
-            	    "bankId" : 100,
-                    "accNum" : 1000,
-		    "amount" : 10,
-		    "destBankId" : 101,
-		    "destAccNum" : 1001,
-		    "operation" : 1,
+            	    "bankId" : 200,
+                    "accNum" : 2000,
+		    "amount" : 50,
+		    "destBankId" : 100,
+		    "destAccNum" : 1000,
+		    "operation" : 3,
                     "port" : 8111,
                     "hostname" : "localhost",
                     "simFail" : 0
