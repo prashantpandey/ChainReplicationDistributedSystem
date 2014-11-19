@@ -289,14 +289,15 @@ function sync(payload) {
             'hostname' : bankServerMap[bankId].tailServer.hostname,
             'port' : bankServerMap[bankId].tailServer.port
             }
-        logger.info('ServerId: '+ serverId + ' Transfer being notified to src bank' + JSON.stringify(dest));
         
         var data = {};
         data['transfer'] = payload.payload.transfer;
         data['complete'] = 1;
         data['outcome'] = payload.outcome;
-        data['destAccNum'] = payload.destAccNum;
-        data['destAccBal'] = payload.accNumk;
+        // Not required as destination never sends its acc bal, but added here to verify.
+        data['destAccBal'] = getBalance(payload.payload.transfer.destAccNum);
+
+        logger.info('ServerId: '+ serverId + ' Transfer being notified to src bank' + JSON.stringify(data));
         send(data, dest, 'TransferComplete');
          
     }
@@ -970,22 +971,26 @@ var server = http.createServer(
                     else if(payload.complete == 1) {
                         // On src bank's tail
 
-                        logger.info('ServerId: '+ serverId + ' Transfer successfully completed.');
-                        res = historyReq[reqId];
-                        logger.info('ServerId: '+ serverId + ' Response: ' + JSON.stringify(res));
-                        flag = true;
-                    }
+                        logger.info('ServerId: '+ serverId + ' Transfer successfully completed.' + JSON.stringify(payload));
+                        hist = historyReq[payload.transfer.reqId];
+                        response = hist.response;
+                        var dest = {}
+                        dest['hostname'] = response.payload.transfer.hostname;
+                        dest['port'] = response.payload.transfer.port;
+                        response['destAccBal'] = payload.destAccBal;
+                        response['transferComplete'] = 1;
+                        send(response, dest, 'TransferCompleteToClient');
+                        res['result'] = Outcome.InTransit;
+                     }
                 }
                 else if (payload.failure) {
                     // Update the bank Server Map
                     bankId = payload.failure.bankId;
                     if (payload.failure.type == 'tail') {
-                        logger.info('ServerId: '+ serverId + ' tail #####################');
                         bankServerMap[bankId].tailServer.hostname = payload.failure.server.hostname;
                         bankServerMap[bankId].tailServer.port = payload.failure.server.port;
                     }
                     else if (payload.failure.type == 'head') {
-                        logger.info('ServerId: ' + serverId + ' head #####################');
                         bankServerMap[bankId].headServer.hostname = payload.failure.server.hostname;
                         bankServerMap[bankId].headServer.port = payload.failure.server.port;
                     
@@ -999,7 +1004,6 @@ var server = http.createServer(
 		    res['result'] = handleExtendChain(payload); 
                     var bankId = payload.extendChain.bankId;
 		    if(payload.extendChain.type == 'tail') {
-                        logger.info("tail extend chain #####################");
                         bankServerMap[bankId].tailServer.hostname = payload.extendChain.server.hostname;
                         bankServerMap[bankId].tailServer.port = payload.extendChain.server.port;
                     }
