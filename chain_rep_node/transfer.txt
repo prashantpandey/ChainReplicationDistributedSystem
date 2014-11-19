@@ -1,0 +1,17 @@
+Transfer Implementation Details:-
+
+-> Created a new bank server map in server.js which maintains head and tail for each bank.
+-> The tail server gets notified when ever a failure/extend chain happens.
+-> Added the bank server map details in extendChainConfig so that the new server which is to be added also gets those details.
+-> Transfer req initiates at head1 -> sync- >sync-> tail1
+tail1->head2->syync->sync->tail2
+tail2->tail1
+tail1->client
+-> As of now the response contains destination bank details, for our verification, we will remove at end not now.
+-> At client, the client server just adds it to the db. No check has been put as of now corresponding to whether the type of response is transfer or not.
+-> TransferComplete flag is not being set in case of insufficient funds as of now. Add to provide consistency in the type of response coming.
+-> Check the ack and history updations
+-> synchronous call happening in the sense tail1 replies only after getting response from tail2 but in the meanwhile if the client timeout and no of retries expire then client calls checkLog and since the src withdrawal details are in history a response is sent. Check the flow of history/retries.
+-> extendchain and tail failure handled. but check for tail failure after sending the request to the dest bank head. I think this case works.
+-> remove extra logs at the end.
+ 

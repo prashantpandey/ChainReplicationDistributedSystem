@@ -635,11 +635,6 @@ function handleAck(payload) {
     return response;
 }
 
-function updateBankServerMap(payload) {
-    logger.info('ServerId: '+ serverId + ' Updating bank Server Map');
-
-}
-
 /**
  * handle the failure use case
  * update the server type in case of head/tail failure
