@@ -44,8 +44,9 @@ var resendDelay = '';
 var resendFlag = '';
 var currDelay = '';	// will hold the curr dealy for any in-transit req
 var currRetriesCnt = 0;    // will hold the curr retry cnt
-var checkLogFlag = -1;
-var extendChainSleepFlag = -1;
+var checkLogFlag = -1;      // will hold the flag when the client check with tail for a req
+var extendChainSleepFlag = -1;  // was used to sleep the client during extend chain
+                                // not used currently
 
 /**
  * will prepare a map of bankId vs the head and tail server
@@ -102,7 +103,7 @@ function performOperation(payload) {
         dest = bankServerMap[bankId].headServer;
     }
     else if (opr == Operation.Transfer) {
-        logger.info('ClientId: ' + clientId  + ' Sending transfer req with reqId ' + reqId + ' on src bank: ' + bankId);
+        // logger.info('ClientId: ' + clientId  + ' Sending transfer req with reqId ' + reqId + ' on src bank: ' + bankId);
         data['transfer'] = payload;
         data['withdraw'] = 1;           // Sending to the source bank
         data['deposit'] = 0;            // Updated when src bank sends to dst bank
@@ -260,6 +261,7 @@ function tryResending(preReq) {
 	// handling the resend logic
 	var currTS = new Date().getTime();
 	if(currTS - currDelay > resendDelay) {
+            // code commented since  client doesn't sleep during extend chain
             /*
 	    if(extendChainSleepFlag == 0) {
 		logger.info('ClientId: ' + clientId  + ' Client sleeping while extend chain');
@@ -434,7 +436,7 @@ Fiber(function() {
                     preReq = payload;
                 }
             }
-	    tryResending(preReq);	// perform the rend logic for the last request
+	    tryResending(preReq);	// perform the rsend logic for the last request
         }
     }
 }).run();
