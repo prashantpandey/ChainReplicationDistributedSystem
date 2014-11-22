@@ -28,8 +28,8 @@ sleep 2s
 # start the clients [no grouping]
 # @arg1: clientId
 # @arg2: port
-node ./client.js 0
-# node ./client.js 1 
+node ./client.js 0 &
+node ./client.js 1 
 
 # sleep 5s
 
