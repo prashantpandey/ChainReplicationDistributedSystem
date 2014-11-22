@@ -43,7 +43,7 @@
                 "hostname" : "localhost",
                 "port" : 8103,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"UNBOUND" : 2},
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 1,
                 "fail" : 0
             },
@@ -61,7 +61,7 @@
                 "hostname" : "localhost",
                 "port" : 8105,
                 "startupDelay" : 0,
-                "serverLifeTime" : {"RecvNum" : 1},
+                "serverLifeTime" : {"UNBOUND" : 1},
                 "type" : 2,
                 "fail" : 0
             } 
@@ -235,8 +235,8 @@
     "client" : [
         {
             "clientId" : 0,
-            "numRetries" : 2,
-            "resendDelay" : 4000,
+            "numRetries" : 3,
+            "resendDelay" : 5000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8111,
@@ -257,8 +257,8 @@
         },
         {
             "clientId" : 1,
-            "numRetries" : 2,
-            "resendDelay" : 2000,
+            "numRetries" : 3,
+            "resendDelay" : 5000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8112,

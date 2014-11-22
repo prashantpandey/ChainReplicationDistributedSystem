@@ -88,6 +88,7 @@ function loadServerConfig(bId, sId) {
     // logger.info('ServerId: '+ serverId + ' Successor: ' + JSON.stringify(details.successor) + ' Predecessor: ' + JSON.stringify(details.predecessor));
     successor = details.successor;
     predecessor = details.predecessor;
+    logger.info('ServerId: '+ serverId + ' ServerType: ' + serverType);
 }
 
 /**
@@ -250,7 +251,7 @@ function send(data, dest, context) {
 
 sendTransferReq = Fiber(function (args) {
     var data = args.data;
-    var destBankId = args.destBankId;
+    var destBankId = data.transfer.destBankId;
     var context = args.context;
     var currResend = 0;
     var dest = {
@@ -258,6 +259,13 @@ sendTransferReq = Fiber(function (args) {
         'port' : bankServerMap[destBankId].headServer.port
     };
     send(data, dest, context);
+
+    appendSentReq(data);
+    totalSentCnt++;
+    if(fail == 1) {
+        logger.info('ServerId: '+ serverId + ' exiting while processing transfer request');
+        process.exit(0);
+    }
     // Wait for the ack to come back from the dest bank head
     // else resend the transfer request
     // right now the num retries is hard coded assuming the channel
@@ -271,19 +279,19 @@ sendTransferReq = Fiber(function (args) {
         }
         if(transferAck == 1) {
             logger.info('ServerId: '+ serverId + ' transfer request ack received from th head ');
-            appendSentReq(payload);
-            totalSentCnt++;
+            
+            historyReq[data.transfer.reqId]['ack'] = 1;   
             var ack = {
                 'ack' : 1,
                 'reqId' : reqId,
                 'serverId' : serverId
             };
-            send(ack, predecessor, 'sendAck'); 
+            send(ack, predecessor, 'sendAck');
             transferAck = -1;
             break;
         }
         else if(transferAck == -1){
-            logger.info('ServerId: '+ serverId + ' transfer request ack not received. Sending the request again ' + data.reqId);
+            logger.info('ServerId: '+ serverId + ' transfer request ack not received. Sending the request again ' + data.transfer.reqId);
             dest = {
                 'hostname' : bankServerMap[destBankId].headServer.hostname,
                 'port' : bankServerMap[destBankId].headServer.port
@@ -293,7 +301,7 @@ sendTransferReq = Fiber(function (args) {
         }
     }
     if (currResend == 3) {
-        logger.info('ServerId: '+ serverId + ' retry limit reached. Aborting ' + data.reqId);
+        logger.info('ServerId: '+ serverId + ' retry limit reached. Aborting ' + data.transfer.reqId);
         
     }
 });
@@ -313,7 +321,7 @@ function sync(payload) {
     }
     applyUpdate(payload);
    
-    if(serverType == 2 && payload.transfer && payload.payload.withdraw == 1) {
+    if(serverType == 2 && payload.payload.transfer && payload.payload.withdraw == 1) {
         // it is the source bank tail
         // forward the request to the head of the dest bank
         logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of src bank' + JSON.stringify(payload));
@@ -343,6 +351,7 @@ function sync(payload) {
             var destBankId = payload.payload.transfer.destBankId;
             var data = {};
             data['transfer'] = payload.payload.transfer;
+            data['srcAccBal'] = payload.currBal;
             data['deposit'] = 1;
             data['withdraw'] = 0;
             if(payload.payload.transfer.simFail == 2) {
@@ -356,16 +365,9 @@ function sync(payload) {
                 // manage the resend logic
                 var args = {
                     'data' : data,
-                    'destBankId' : destBankId,
                     'context' : 'TransferToDestBank'
                     };
                 sendTransferReq.run(args);       
-                appendSentReq(payload);
-                totalSentCnt++;
-                if(fail == 1) {
-                    logger.info('ServerId: '+ serverId + ' exiting while processing transfer request');
-                    process.exit(0);
-                }
             }
         }
         // send the ack msg up-stream
@@ -376,7 +378,7 @@ function sync(payload) {
         };
         send(ack, predecessor, 'sendAck'); 
     }
-    else if(serverType == 2 && payload.transfer && payload.payload.deposit == 1) {
+    else if(serverType == 2 && payload.payload.transfer && payload.payload.deposit == 1) {
         // It is the dest bank tail
         // Send the reply back to the client
         logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of dest bank' + JSON.stringify(payload));
@@ -388,6 +390,7 @@ function sync(payload) {
             }
         
         var data = {};
+        data['reqId'] = reqId;
         data['transfer'] = payload.payload.transfer;
         data['complete'] = 1;
         data['outcome'] = payload.outcome;
@@ -401,6 +404,7 @@ function sync(payload) {
             // It is required to verify successfull transfer req. 
             // sends its acc bal, but added here to verify.
             data['destAccBal'] = getBalance(payload.payload.transfer.destAccNum);
+            data['srcAccBal'] = payload.payload.srcAccBal;
 
             logger.info('ServerId: '+ serverId + ' Transfer being notified to the client' + JSON.stringify(data));
             send(data, dest, 'sendTransferComplete');
@@ -414,7 +418,8 @@ function sync(payload) {
         };
         send(ack, predecessor, 'sendAck'); 
     }
-    else if(serverType == 2 && payload.update) {
+    else if(serverType == 2 && payload.payload.update) {
+        logger.info('ServerId: '+ serverId + ' Sending the response back to client');
         // send the response back to the client
         var dest = { 
             'hostname' : payload.payload.update.hostname,
@@ -600,6 +605,7 @@ function transfer(payload) {
     var oper = payload.transfer.operation; 
     var destAccNum = payload.transfer.destAccNum;
     var destBankId = payload.transfer.destBankId;
+    var response;
 
     // If the req already exists, send back the same reply.
 
@@ -627,7 +633,7 @@ function transfer(payload) {
     }
     logger.info('ServerId: ' + serverId + ' payload.withdraw = ' + payload.withdraw + ' payload.deposit = ' + payload.deposit);
 
-    if (payload.withdraw == 1) {              // on source bank's server
+    if (payload.withdraw == 1) {              // on source bank's head
         logger.info('ServerId: '+ serverId + ' Transfer request ' + reqId  + ' received on source bank. Src acc no: ' + accNum);
         var currBal = getBalance(accNum);
         // Transfer cannot be made if no account exists or the currBal is less than the amt to be transferred
@@ -642,15 +648,14 @@ function transfer(payload) {
         
         var outcome = performUpdate(accNum, amount, Operation.Withdraw);
         currBal = getBalance(accNum);
-        logger.info('ServerId: '+ serverId + ' Transfer request, withdraw happened at source bank.' + outcome + ' Current Bal: ' + currBal);
-        var response = {
+        logger.info('ServerId: '+ serverId + ' Transfer request, withdraw happened at source bank with outcome ' + outcome + ' Current Bal: ' + currBal);
+        response = {
             'reqId' : reqId,
             'outcome' : outcome,
             'currBal' : currBal,
             'accNum' : accNum,
             'payload' : payload,
-            'sync' : 1,
-            'transfer':1
+            'sync' : 1
         };
     }
     else if (payload.deposit == 1) {             // on dest bank's server   
@@ -670,17 +675,18 @@ function transfer(payload) {
         var outcome = performUpdate(destAccNum, amount, Operation.Deposit);
         currBal = getBalance(destAccNum);
         logger.info('ServerId: '+ serverId + ' Transfer request, deposit happened at destination bank.' + outcome + ' Current Bal: ' + currBal);
-        var response = {
+        response = {
             'reqId' : reqId,
             'outcome' : outcome,
             'currBal' : currBal,
             'accNum' : destAccNum,
             'payload' : payload,
-            'sync' : 1,
-            'transfer':1
+            'sync' : 1
         };
     }
 
+    
+    logger.info('ServerId: '+ serverId + ' Transfer request processed. ' + JSON.stringify(response));
     //add the payload and response to historyReq 
     var history = {
         'payload' : payload,
@@ -706,9 +712,9 @@ function handleAck(payload) {
     logger.info('ServerId: '+ serverId + ' Processing the acknowledgement ' + JSON.stringify(payload));
     var reqId = payload.reqId;
     var i = 0;
-    logger.info(sentReq.length);
+    // logger.info(sentReq.length);
     for(i = 0; i < sentReq.length; i++) {
-	logger.info('SentReq: ' + JSON.stringify(sentReq[i]));
+	logger.info('ServerId: '+ serverId + 'SentReq: ' + JSON.stringify(sentReq[i]));
 	if(reqId == sentReq[i].reqId) {
 	    break;    
 	}
@@ -752,6 +758,27 @@ function handleChainFailure(payload) {
     else if (type == 'tail') {   // change server type
         serverType = 2;
 	logger.info('ServerId: '+ serverId + ' updated the server type to TAIL');
+        // handle the transfer requests from the sentReq list
+	logger.info('ServerId: '+ serverId + ' probing the sent list to find any transfer request');         
+        for(i = 0; i < sentReq.length; i++) {
+	    logger.info('ServerId: '+ serverId + ' SentReq: ' + JSON.stringify(sentReq[i]));
+
+	    if(sentReq[i].payload.transfer) {    
+	        // its the transfer request whose ack is not received yet
+                // from the old tail
+	        logger.info('ServerId: '+ serverId + ' found a transfer request ' + sentReq[i].reqId);         
+                var data = {
+                    'transfer' : sentReq[i].payload.transfer,
+                    'withdraw' : 0,
+                    'deposit' : 1
+                    };
+                var args = {
+                    'data' : data,
+                    'context' : 'TransferToDestBank'
+                    };
+                sendTransferReq.run(args);
+	    }
+        }
     }
     else if(type == 'successor') {   // change successor: this is pred
 	successor = server;
@@ -928,7 +955,13 @@ function checkLogs(payload) {
     var reqId = payload.reqId;
     var history = checkRequest(reqId);
     var response = {};
-    if(history) {
+    if(history && history.payload.transfer) {
+        if (history.ack == 1) {
+	    var response = history['response'];
+	    response['checkLog'] = 1;
+        }
+    }
+    else if(history && history.payload.update || history.payload.query) {
 	var response = history['response'];
 	response['checkLog'] = 1;
     }
@@ -1070,6 +1103,8 @@ var server = http.createServer(
                             }
                         }
                     }
+                    /*
+                     * This is obsolete code. Not required since the destination bank tail is sending the response back to the client.
                     else if(payload.complete == 1) {
                         // On src bank's tail
                         logger.info('ServerId: '+ serverId + ' Transfer successfully completed.' + JSON.stringify(payload));
@@ -1083,6 +1118,7 @@ var server = http.createServer(
                         send(res, dest, 'TransferCompleteToClient');
                         res['result'] = Outcome.InTransit;
                      }
+                     */
                 }
                 else if (payload.failure) {
                     // logger.info('ServerId: '+ serverId + ' handling the server failure ' + JSON.stringify(payload));

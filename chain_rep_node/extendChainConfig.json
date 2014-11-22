@@ -13,7 +13,7 @@
         "startupDelay" : 0,
         "serverLifeTime" : {"UNBOUND" : 1},
         "type" : 2,
-        "fail" : 0
+        "fail" : 1
     },
     "bank" : [
         {

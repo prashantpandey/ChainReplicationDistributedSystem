@@ -153,8 +153,8 @@ function handleServerFailure(serverId, bankId, type) {
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newHead));
             notifyClient(bankId, payload);
-            notifyAllTailServers(bankId, payload);
             send(payload, newHead.head, 'notifyHead'); // notify new head 
+            notifyAllTailServers(bankId, payload);
             break;
         case 1:
             var newSuccPred = updateChain(bankId, serverId, type);
