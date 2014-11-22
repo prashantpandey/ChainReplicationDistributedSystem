@@ -64,6 +64,7 @@ var lastHistReq = '';
 var totalSentCnt = 0;
 var totalRecvCnt = 0;
 var globalSeqNum = 0;
+var transferAck = -1;
 
 /* General functions */
 
@@ -189,7 +190,7 @@ function performUpdate(accNum, amount, oper) {
     switch(oper) {
         case Operation.Deposit:
             accDetails[accNum] = accDetails[accNum] + amount;
-            logger.info('After deposit acc Details: ' + JSON.stringify(accDetails));
+            // logger.info('After deposit acc Details: ' + JSON.stringify(accDetails));
             return Outcome.Processed;
         case Operation.Withdraw:
             if(accDetails[accNum] < amount) {
@@ -198,7 +199,7 @@ function performUpdate(accNum, amount, oper) {
             }
             else {
                 accDetails[accNum] = accDetails[accNum] - amount;
-                logger.info('After withdraw acc Details: ' + JSON.stringify(accDetails));
+                // logger.info('After withdraw acc Details: ' + JSON.stringify(accDetails));
                 return Outcome.Processed;
             }
         default: 
@@ -233,6 +234,10 @@ function send(data, dest, context) {
         });
         response.on('end', function(){
             logger.info("ServerId: " + serverId + ' ' + context + ': Acknowledgement received' + str);
+            if(data.deposit == 1 && data.withdraw == 1) {
+                recAck = JSON.parse(str);
+                transferAck = recAck.transferAck;
+            } 
         });
     });
 
@@ -242,6 +247,56 @@ function send(data, dest, context) {
     });
     req.end();
 }
+
+sendTransferReq = Fiber(function (args) {
+    var data = args.data;
+    var destBankId = args.destBankId;
+    var context = args.context;
+    var currResend = 0;
+    var dest = {
+        'hostname' : bankServerMap[destBankId].headServer.hostname,
+        'port' : bankServerMap[destBankId].headServer.port
+    };
+    send(data, dest, context);
+    // Wait for the ack to come back from the dest bank head
+    // else resend the transfer request
+    // right now the num retries is hard coded assuming the channel
+    // is reliable 
+    while(currResend < 3) {
+        for (var i =0; transferAck == -1;) {
+            util.sleep(1000);
+            i++;
+            if(i==5)
+                break;
+        }
+        if(transferAck == 1) {
+            logger.info('ServerId: '+ serverId + ' transfer request ack received from th head ');
+            appendSentReq(payload);
+            totalSentCnt++;
+            var ack = {
+                'ack' : 1,
+                'reqId' : reqId,
+                'serverId' : serverId
+            };
+            send(ack, predecessor, 'sendAck'); 
+            transferAck = -1;
+            break;
+        }
+        else if(transferAck == -1){
+            logger.info('ServerId: '+ serverId + ' transfer request ack not received. Sending the request again ' + data.reqId);
+            dest = {
+                'hostname' : bankServerMap[destBankId].headServer.hostname,
+                'port' : bankServerMap[destBankId].headServer.port
+                }
+            send(data, dest, 'TransferToDestBank');
+            currResend++;
+        }
+    }
+    if (currResend == 3) {
+        logger.info('ServerId: '+ serverId + ' retry limit reached. Aborting ' + data.reqId);
+        
+    }
+});
 
 /**
  * process the sync request from the predecessor server.
@@ -257,9 +312,10 @@ function sync(payload) {
         process.exit(0);
     }
     applyUpdate(payload);
-  
-     
+   
     if(serverType == 2 && payload.transfer && payload.payload.withdraw == 1) {
+        // it is the source bank tail
+        // forward the request to the head of the dest bank
         logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of src bank' + JSON.stringify(payload));
         if (payload.outcome == Outcome.InsufficientFunds) {
             var dest = { 
@@ -282,53 +338,84 @@ function sync(payload) {
                 send(response, dest, 'sendResponse');
                 totalSentCnt++;
             }
-        
-            var ack = {
-                'ack' : 1,
-                'reqId' : reqId,
-                'serverId' : serverId
-            };
-            send(ack, predecessor, 'sendAck'); 
         }
         else {
             var destBankId = payload.payload.transfer.destBankId;
-            var dest = {
-                'hostname' : bankServerMap[destBankId].headServer.hostname,
-                'port' : bankServerMap[destBankId].headServer.port
-                }
             var data = {};
             data['transfer'] = payload.payload.transfer;
             data['deposit'] = 1;
             data['withdraw'] = 0;
-            send(data, dest, 'TransferToDestBank');
-            // Wait for the response to come from the dest bank then send the reply bank to the client.
-            //var response = {'transfer' : 1};
-            //return response;
+            if(payload.payload.transfer.simFail == 2) {
+                // response NOT SENT
+                // this will simulate the failure condition
+                // the packet dropped on the server <--> client channel
+                logger.info('ServerId: '+ serverId + ' Simulating msg failure between Server-Client');
+            }
+            else {   
+                // send the req to dest bank head and also 
+                // manage the resend logic
+                var args = {
+                    'data' : data,
+                    'destBankId' : destBankId,
+                    'context' : 'TransferToDestBank'
+                    };
+                sendTransferReq.run(args);       
+                appendSentReq(payload);
+                totalSentCnt++;
+                if(fail == 1) {
+                    logger.info('ServerId: '+ serverId + ' exiting while processing transfer request');
+                    process.exit(0);
+                }
+            }
         }
+        // send the ack msg up-stream
+        var ack = {
+            'ack' : 1,
+            'reqId' : reqId,
+            'serverId' : serverId
+        };
+        send(ack, predecessor, 'sendAck'); 
     }
     else if(serverType == 2 && payload.transfer && payload.payload.deposit == 1) {
-        // Transfer request has reached the tail of the dst bank.
-        // Send the reply back to the src tail
+        // It is the dest bank tail
+        // Send the reply back to the client
         logger.info('ServerId: '+ serverId + ' Transfer request reached till the tail of dest bank' + JSON.stringify(payload));
         logger.info('ServerId: '+ serverId + ' Bank Server Map' + JSON.stringify(bankServerMap));
         var bankId = payload.payload.transfer.bankId;
         var dest = {
-            'hostname' : bankServerMap[bankId].tailServer.hostname,
-            'port' : bankServerMap[bankId].tailServer.port
+            'hostname' : payload.payload.transfer.hostname,
+            'port' : payload.payload.transfer.port
             }
         
         var data = {};
         data['transfer'] = payload.payload.transfer;
         data['complete'] = 1;
         data['outcome'] = payload.outcome;
-        // Not required as destination never sends its acc bal, but added here to verify.
-        data['destAccBal'] = getBalance(payload.payload.transfer.destAccNum);
+        if(payload.payload.transfer.simFail == 2) {
+            // response NOT SENT
+            // this will simulate the failure condition
+            // the packet dropped on the server <--> client channel
+            logger.info('ServerId: '+ serverId + ' Simulating msg failure between Server-Client');
+        }
+        else {
+            // It is required to verify successfull transfer req. 
+            // sends its acc bal, but added here to verify.
+            data['destAccBal'] = getBalance(payload.payload.transfer.destAccNum);
 
-        logger.info('ServerId: '+ serverId + ' Transfer being notified to src bank' + JSON.stringify(data));
-        send(data, dest, 'TransferComplete');
-         
+            logger.info('ServerId: '+ serverId + ' Transfer being notified to the client' + JSON.stringify(data));
+            send(data, dest, 'sendTransferComplete');
+            totalSentCnt++;
+        } 
+        // send the ack msg up-stream
+        var ack = {
+            'ack' : 1,
+            'reqId' : reqId,
+            'serverId' : serverId
+        };
+        send(ack, predecessor, 'sendAck'); 
     }
     else if(serverType == 2 && payload.update) {
+        // send the response back to the client
         var dest = { 
             'hostname' : payload.payload.update.hostname,
             'port' : payload.payload.update.port
@@ -349,7 +436,7 @@ function sync(payload) {
             send(response, dest, 'sendResponse');
             totalSentCnt++;
         }
-        
+        // send the ack msg up-stream
         var ack = {
             'ack' : 1,
             'reqId' : reqId,
@@ -368,7 +455,7 @@ function sync(payload) {
         'outcome' : Outcome.Processed
     };
     logger.info('ServerId: '+ serverId + ' Sync request processed');
-    logger.info('ServerId: '+ serverId + ' acc details: ' + JSON.stringify(accDetails));
+    // logger.info('ServerId: '+ serverId + ' acc details: ' + JSON.stringify(accDetails));
     return response;
 }
 
@@ -566,9 +653,14 @@ function transfer(payload) {
             'transfer':1
         };
     }
-    else if (payload.deposit == 1) {             // on dest bank's server           
+    else if (payload.deposit == 1) {             // on dest bank's server   
         logger.info('ServerId: '+ serverId + ' Transfer request received on destination bank. Dest acc no: ' + destAccNum);
 
+        if(fail == 1) {
+            logger.info('ServerId: '+ serverId + ' exiting while processing transfer request');
+            process.exit(0);
+        }
+        
         var currBal = getBalance(destAccNum);
         if(currBal == undefined) {
             logger.error('ServerId: '+ serverId + ' Account number not found: ' + destAccNum);
@@ -880,7 +972,7 @@ else {
 prepareBankServerMap(); 
 
 function prepareBankServerMap() {
-    logger.info('ServerId: '+ serverId + ' Preparing the bank Server Map' + config.bank);
+    // logger.info('ServerId: '+ serverId + ' Preparing the bank Server Map' + config.bank);
     for(var i = 0; i < config.bank.length; i++) {
         var serverDetails = {
             "headServer" : config.bank[i].headServer,
@@ -889,7 +981,7 @@ function prepareBankServerMap() {
         var bankId = config.bank[i].bankId;
         bankServerMap[bankId] = serverDetails;
     }
-    logger.info('ServerId: '+ serverId + ' Bank Server Map: ' + JSON.stringify(bankServerMap));
+    // logger.info('ServerId: '+ serverId + ' Bank Server Map: ' + JSON.stringify(bankServerMap));
 }
 
 /*
@@ -968,13 +1060,18 @@ var server = http.createServer(
                         syncRes = transfer(payload);
                         if(syncRes.sync) {
                             logger.info('ServerId: '+ serverId + ' Sending sync request from transfer');
-                            send(syncRes, successor, 'sendSyncReq');                        
-                            res['result'] = Outcome.InTransit;
+                            send(syncRes, successor, 'sendSyncReq');
+                            
+                            // if it is dest bank head, send ack response
+                            // to the source bank tail 
+                            if(payload.deposit == 1) { 
+                                res['transferAck'] = 1;
+                                flag = true;
+                            }
                         }
                     }
                     else if(payload.complete == 1) {
                         // On src bank's tail
-
                         logger.info('ServerId: '+ serverId + ' Transfer successfully completed.' + JSON.stringify(payload));
                         hist = historyReq[payload.transfer.reqId];
                         res = hist.response;
@@ -988,18 +1085,25 @@ var server = http.createServer(
                      }
                 }
                 else if (payload.failure) {
+                    // logger.info('ServerId: '+ serverId + ' handling the server failure ' + JSON.stringify(payload));
+
                     // Update the bank Server Map
                     bankId = payload.failure.bankId;
-                    if (payload.failure.type == 'tail') {
-                        bankServerMap[bankId].tailServer.hostname = payload.failure.server.hostname;
-                        bankServerMap[bankId].tailServer.port = payload.failure.server.port;
+                    if(payload.other) {
+                        if (payload.failure.type == 'tail') {
+                            logger.info('ServerId: '+ serverId + ' Updating the new tail server ' + JSON.stringify(payload));
+                            bankServerMap[bankId].tailServer.hostname = payload.failure.server.hostname;
+                            bankServerMap[bankId].tailServer.port = payload.failure.server.port;
+                        }
+                        else if (payload.failure.type == 'head') {
+                            logger.info('ServerId: '+ serverId + ' Updating the new head server ' + JSON.stringify(payload));
+                            bankServerMap[bankId].headServer.hostname = payload.failure.server.hostname;
+                            bankServerMap[bankId].headServer.port = payload.failure.server.port;
+                        }
                     }
-                    else if (payload.failure.type == 'head') {
-                        bankServerMap[bankId].headServer.hostname = payload.failure.server.hostname;
-                        bankServerMap[bankId].headServer.port = payload.failure.server.port;
-                    
+                    else {
+                        res['result'] = handleChainFailure(payload);
                     }
-                    res['result'] = handleChainFailure(payload);
 		    if (payload.failure.type == "predecessor" || payload.failure.type == "successor") {
 			flag = true;
 		    }

@@ -210,7 +210,9 @@ function handleServerFailure(serverId, bankId, type) {
                 };
 	    logger.info('Master: new relation: ' + JSON.stringify(newTail));
             notifyClient(bankId, payload);
-            notifyAllTailServers(bankId, payload);
+            // no need to inform about tail failures 
+            // source bank will only contact the dest head
+            // notifyAllTailServers(bankId, payload);
             send(payload, newTail.tail, 'notifyTail'); // notify new tail 
             break;
         default:
@@ -328,13 +330,14 @@ function notifyClient(bankId, payload) {
  */
 function notifyAllTailServers(bankId, payload) {
     logger.info('Master: entering notify all Tail servers');
+    payload['other'] = 1;
 
     for (var key in bankServerMap) {
         var dest = {
             'hostname' : bankServerMap[key].tailServer.hostname,
             'port' : bankServerMap[key].tailServer.port
         };
-	logger.info('Master: Notifying tail server of bankId: ' + key + ' dest: ' + JSON.stringify(dest) + 'Payload: '+ JSON.stringify(payload));
+	logger.info('Master: Notifying tail server of bankId: ' + key + ' dest: ' + JSON.stringify(dest) + ' Payload: '+ JSON.stringify(payload));
         send(payload, dest, 'notifyTailServer');
    } 
 }
@@ -507,7 +510,8 @@ function addServer(payload) {
 	// notify the clients of the new tail server
 	awakeClient(bankId, newTail);
         // Notify all bank's tail servers about the extended chain
-        
+      
+        /*  
         var data = {
 	'extendChain' : {
 	    'type' : 'tail',
@@ -517,6 +521,7 @@ function addServer(payload) {
             }
         };
         notifyAllTailServers(bankId, data);
+        */
 	extendChainFlag = -1;
 	return;
     }
@@ -625,10 +630,11 @@ Fiber(function() {
         var currTS = new Date().getTime();
         var server = serverTSHeap.peek();
         
+        /*
         for(var i = 0; i < serverTSHeap.toArray().length; i++) {
 	    logger.info('Master: Heap ' + JSON.stringify(serverTSHeap.toArray()[i]));
         }
-
+        */
         if(server && ((currTS - server.timestamp) > 6000)) { // server has failed
             logger.info('Master: deleted list ' + extDelServer.toString());
             var flag = true;
