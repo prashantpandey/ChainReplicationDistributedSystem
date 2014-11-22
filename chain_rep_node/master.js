@@ -101,7 +101,7 @@ function prepareBankServerMap() {
  * @payload: received payload
  */
 function handleHeartBeat(payload) {
-    logger.info('Master: Processing heart beat signal from Server: ' +  payload.serverId);
+    // logger.info('Master: Processing heart beat signal from Server: ' +  payload.serverId);
 
     // check if their is already a timestamp from the server
     var obj = serverTSMap[payload.serverId];
@@ -127,7 +127,7 @@ function handleHeartBeat(payload) {
 	logger.info('Master: Heap ' + JSON.stringify(serverTSHeap.toArray()[i]));
     }
     */
-    logger.info('Master: heart beat msg processed');
+    // logger.info('Master: heart beat msg processed');
 }
 
 /**
@@ -253,7 +253,7 @@ function updateChain(bankId, serverId, type) {
             // update server list
             var i = 0;
 	    for(i = 0; i < bankServerList[bankId].length; i++) {
-            logger.info("ServerList: " + JSON.stringify(bankServerList[bankId][i]));
+            // logger.info("ServerList: " + JSON.stringify(bankServerList[bankId][i]));
                 if(serverId == bankServerList[bankId][i].serverId) {
                     bankServerList[bankId].splice(i, 1);
                     break;
@@ -351,7 +351,7 @@ function notifyAllTailServers(bankId, payload) {
  * @context: context info (who's invoking the function)
  */
 function send(data, dest, context) {
-    logger.info('Master: ' + JSON.stringify(dest) + ' ' + context);
+    // logger.info('Master: ' + JSON.stringify(dest) + ' ' + context);
     var options =
     {
         'host': dest.hostname,
@@ -367,11 +367,11 @@ function send(data, dest, context) {
             str += data;
         });
         response.on('end', function(){
-            logger.info('Master: ' + context + ': Acknowledgement received' + str);
+            // logger.info('Master: ' + context + ': Acknowledgement received' + str);
 	    if(data.failure) {
 		if(data.failure.type == 'predecessor' || data.failure.type == 'successor') {
 		    var payload = JSON.parse(str);
-		    logger.info('Master: failure response: ' + JSON.stringify(payload));
+		    // logger.info('Master: failure response: ' + JSON.stringify(payload));
 		    if(payload.result.seqNum) {
 			succSeqNum = payload.seqNum;
 		    }
@@ -380,7 +380,7 @@ function send(data, dest, context) {
 	    else if(data.extendChain) {
 		if(data.extendChain == 1) {
 		    var payload = JSON.parse(str);
-		    logger.info('Master: extendChain response: ' + JSON.stringify(payload));
+		    // logger.info('Master: extendChain response: ' + JSON.stringify(payload));
 		    if(payload.result.ack) {
 			extendChainFlag = payload.result.ack;
 		    }
@@ -626,7 +626,7 @@ logger.info('Master running at http://127.0.0.1:' + port);
  */
 Fiber(function() {
     while(true) {
-        logger.info('Master: probing the server heap for failure');
+        // logger.info('Master: probing the server heap for failure');
         var currTS = new Date().getTime();
         var server = serverTSHeap.peek();
         
@@ -636,7 +636,7 @@ Fiber(function() {
         }
         */
         if(server && ((currTS - server.timestamp) > 6000)) { // server has failed
-            logger.info('Master: deleted list ' + extDelServer.toString());
+            // logger.info('Master: deleted list ' + extDelServer.toString());
             var flag = true;
             for(var i = 0; i < extDelServer.length; i++) {
                 if(extDelServer[i] == server.serverId) {

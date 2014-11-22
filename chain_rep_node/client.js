@@ -171,8 +171,13 @@ function send(payload, dest, context) {
 		    checkLogFlag = resBody.checkLog;
 		    if(resBody.checkLog == 1) {
 			logger.info('ClientId: ' + clientId  + ' Adding response to db');
-			responses[resBody.reqId] = resBody;
-			logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+                        if (resBody.transfer) {
+                            // do nothing
+                        }
+                        else {
+			    responses[resBody.reqId] = resBody;
+			    logger.info('ClientId: ' + clientId  + ' Responses: ' + JSON.stringify(responses));
+                        }
 		    }
 		}
 	    }
