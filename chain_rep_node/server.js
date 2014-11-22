@@ -260,7 +260,6 @@ sendTransferReq = Fiber(function (args) {
     };
     send(data, dest, context);
 
-    appendSentReq(data);
     totalSentCnt++;
     if(fail == 1) {
         logger.info('ServerId: '+ serverId + ' exiting while processing transfer request');
@@ -320,6 +319,7 @@ function sync(payload) {
         process.exit(0);
     }
     applyUpdate(payload);
+    appendSentReq(payload);
    
     if(serverType == 2 && payload.payload.transfer && payload.payload.withdraw == 1) {
         // it is the source bank tail
@@ -450,7 +450,6 @@ function sync(payload) {
         send(ack, predecessor, 'sendAck'); 
     }
     else {
-        appendSentReq(payload);
         send(payload, successor, 'sendSyncReq');
         totalSentCnt++;
     }
@@ -714,7 +713,7 @@ function handleAck(payload) {
     var i = 0;
     // logger.info(sentReq.length);
     for(i = 0; i < sentReq.length; i++) {
-	logger.info('ServerId: '+ serverId + 'SentReq: ' + JSON.stringify(sentReq[i]));
+	logger.info('ServerId: '+ serverId + ' Handle Ack SentReq: ' + JSON.stringify(sentReq[i]));
 	if(reqId == sentReq[i].reqId) {
 	    break;    
 	}
@@ -761,7 +760,7 @@ function handleChainFailure(payload) {
         // handle the transfer requests from the sentReq list
 	logger.info('ServerId: '+ serverId + ' probing the sent list to find any transfer request');         
         for(i = 0; i < sentReq.length; i++) {
-	    logger.info('ServerId: '+ serverId + ' SentReq: ' + JSON.stringify(sentReq[i]));
+	    logger.info('ServerId: '+ serverId + ' handle transfer SentReq: ' + JSON.stringify(sentReq[i]));
 
 	    if(sentReq[i].payload.transfer) {    
 	        // its the transfer request whose ack is not received yet
