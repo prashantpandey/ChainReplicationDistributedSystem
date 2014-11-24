@@ -23,13 +23,23 @@ node ./server.js 200 203 &
 node ./server.js 200 204 &
 node ./server.js 200 205 &
 
+node ./server.js 300 301 &
+node ./server.js 300 302 &
+node ./server.js 300 303 &
+node ./server.js 300 304 &
+node ./server.js 300 305 &
+
 sleep 2s
 
 # start the clients [no grouping]
 # @arg1: clientId
 # @arg2: port
 node ./client.js 0 &
-node ./client.js 1 
+node ./client.js 1 & 
+node ./client.js 2 & 
+node ./client.js 3 & 
+node ./client.js 4 &  
+node ./client.js 5 
 
 # sleep 5s
 

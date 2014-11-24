@@ -279,8 +279,8 @@
         },
         {
             "clientId" : 2,
-            "numRetries" : 2,
-            "resendDelay" : 2000,
+            "numRetries" : 3,
+            "resendDelay" : 8000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8113,
@@ -323,8 +323,8 @@
         },
         {
             "clientId" : 4,
-            "numRetries" : 2,
-            "resendDelay" : 2000,
+            "numRetries" : 3,
+            "resendDelay" : 8000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8115,
@@ -345,8 +345,8 @@
         },
         {
             "clientId" : 5,
-            "numRetries" : 2,
-            "resendDelay" : 2000,
+            "numRetries" : 3,
+            "resendDelay" : 8000,
             "resendFlag" : "false",
 	    "hostname" : "localhost",
 	    "port" : 8116,
